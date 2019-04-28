@@ -21,6 +21,11 @@ public class FileValidator {
         File file = new File(filename);
 
         boolean result = file.exists() && file.isFile() && file.canRead() && (file.length() != 0);
+        logger.log(Level.DEBUG, "file exists: " + file.exists());
+        logger.log(Level.DEBUG, "isFile: " + file.isFile());
+        logger.log(Level.DEBUG, "canRead: " + file.canRead());
+        logger.log(Level.DEBUG, "length !=0 : " + (file.length() != 0));
+        logger.log(Level.DEBUG, "absolute path:" + file.getAbsolutePath());
         logger.log(Level.INFO, "file validation result is " + result);
         return result;
     }
