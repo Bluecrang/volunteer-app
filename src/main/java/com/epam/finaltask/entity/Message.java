@@ -1,24 +1,31 @@
 package com.epam.finaltask.entity;
 
-import java.sql.Clob;
-import java.sql.Date;
+import java.time.LocalDateTime;
+import java.time.OffsetDateTime;
 
 public class Message extends Entity {
     private long messageId;
-    private Clob message;
-    private long accountId;
-    private Date date;
-    private long topicId;
+    private String message;
+    private Account account;
+    private LocalDateTime date;
+    private Topic topic;
 
     public Message() {
     }
 
-    public Message(long messageId, Clob message, long accountId, Date date, long topicId) {
+    public Message(String message, Account account, LocalDateTime date, Topic topic) {
+        this.message = message;
+        this.account = account;
+        this.date = date;
+        this.topic = topic;
+    }
+
+    public Message(long messageId, String message, Account account, LocalDateTime date, Topic topic) {
         this.messageId = messageId;
         this.message = message;
-        this.accountId = accountId;
+        this.account = account;
         this.date = date;
-        this.topicId = topicId;
+        this.topic = topic;
     }
 
     public long getMessageId() {
@@ -29,36 +36,36 @@ public class Message extends Entity {
         this.messageId = messageId;
     }
 
-    public Clob getMessage() {
+    public String getMessage() {
         return message;
     }
 
-    public void setMessage(Clob message) {
+    public void setMessage(String message) {
         this.message = message;
     }
 
-    public long getAccountId() {
-        return accountId;
+    public Account getAccount() {
+        return account;
     }
 
-    public void setAccountId(long accountId) {
-        this.accountId = accountId;
+    public void setAccount(Account account) {
+        this.account = account;
     }
 
-    public Date getDate() {
+    public LocalDateTime getDate() {
         return date;
     }
 
-    public void setDate(Date date) {
+    public void setDate(LocalDateTime date) {
         this.date = date;
     }
 
-    public long getTopicId() {
-        return topicId;
+    public Topic getTopic() {
+        return topic;
     }
 
-    public void setTopicId(long topicId) {
-        this.topicId = topicId;
+    public void setTopic(Topic topic) {
+        this.topic = topic;
     }
 
     @Override
@@ -69,19 +76,19 @@ public class Message extends Entity {
         Message message1 = (Message) o;
 
         if (messageId != message1.messageId) return false;
-        if (accountId != message1.accountId) return false;
-        if (topicId != message1.topicId) return false;
         if (message != null ? !message.equals(message1.message) : message1.message != null) return false;
-        return date != null ? date.equals(message1.date) : message1.date == null;
+        if (account != null ? !account.equals(message1.account) : message1.account != null) return false;
+        if (date != null ? !date.equals(message1.date) : message1.date != null) return false;
+        return topic != null ? topic.equals(message1.topic) : message1.topic == null;
     }
 
     @Override
     public int hashCode() {
         int result = (int) (messageId ^ (messageId >>> 32));
         result = 31 * result + (message != null ? message.hashCode() : 0);
-        result = 31 * result + (int) (accountId ^ (accountId >>> 32));
+        result = 31 * result + (account != null ? account.hashCode() : 0);
         result = 31 * result + (date != null ? date.hashCode() : 0);
-        result = 31 * result + (int) (topicId ^ (topicId >>> 32));
+        result = 31 * result + (topic != null ? topic.hashCode() : 0);
         return result;
     }
 
@@ -89,10 +96,10 @@ public class Message extends Entity {
     public String toString() {
         final StringBuilder sb = new StringBuilder("Message{");
         sb.append("messageId=").append(messageId);
-        sb.append(", message=").append(message);
-        sb.append(", accountId=").append(accountId);
+        sb.append(", message='").append(message).append('\'');
+        sb.append(", account=").append(account);
         sb.append(", date=").append(date);
-        sb.append(", topicId=").append(topicId);
+        sb.append(", topic=").append(topic);
         sb.append('}');
         return sb.toString();
     }

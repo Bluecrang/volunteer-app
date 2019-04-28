@@ -1,23 +1,51 @@
 package com.epam.finaltask.entity;
 
+import java.sql.Blob;
+
 public class Account extends Entity {
     private long accountId;
     private String login;
-    private String password;
+    private String passwordHash;
     private String email;
-    private AccessLevel accountType;
+    private AccessLevel accessLevel;
     private int rating;
+    private boolean verified;
+    private boolean blocked;
+    private String salt;
+    private Blob avatar;
 
     public Account() {
     }
 
-    public Account(long accountId, String login, String password, String email, AccessLevel accountType, int rating) {
+    public Account(long accountId) {
+        this.accountId = accountId;
+    }
+
+    public Account(String login, String passwordHash, String email, AccessLevel accessLevel,
+                   int rating, boolean verified, boolean blocked, String salt, Blob avatar) {
+        this.login = login;
+        this.passwordHash = passwordHash;
+        this.email = email;
+        this.accessLevel = accessLevel;
+        this.rating = rating;
+        this.verified = verified;
+        this.blocked = blocked;
+        this.salt = salt;
+        this.avatar = avatar;
+    }
+
+    public Account(long accountId, String login, String passwordHash, String email, AccessLevel accessLevel,
+                   int rating, boolean verified, boolean blocked, String salt, Blob avatar) {
         this.accountId = accountId;
         this.login = login;
-        this.password = password;
+        this.passwordHash = passwordHash;
         this.email = email;
-        this.accountType = accountType;
+        this.accessLevel = accessLevel;
         this.rating = rating;
+        this.verified = verified;
+        this.blocked = blocked;
+        this.salt = salt;
+        this.avatar = avatar;
     }
 
     public long getAccountId() {
@@ -36,12 +64,12 @@ public class Account extends Entity {
         this.login = login;
     }
 
-    public String getPassword() {
-        return password;
+    public String getPasswordHash() {
+        return passwordHash;
     }
 
-    public void setPassword(String password) {
-        this.password = password;
+    public void setPasswordHash(String passwordHash) {
+        this.passwordHash = passwordHash;
     }
 
     public String getEmail() {
@@ -52,12 +80,12 @@ public class Account extends Entity {
         this.email = email;
     }
 
-    public AccessLevel getAccountType() {
-        return accountType;
+    public AccessLevel getAccessLevel() {
+        return accessLevel;
     }
 
-    public void setAccountType(AccessLevel accountType) {
-        this.accountType = accountType;
+    public void setAccessLevel(AccessLevel accessLevel) {
+        this.accessLevel = accessLevel;
     }
 
     public int getRating() {
@@ -66,6 +94,38 @@ public class Account extends Entity {
 
     public void setRating(int rating) {
         this.rating = rating;
+    }
+
+    public boolean isVerified() {
+        return verified;
+    }
+
+    public void setVerified(boolean verified) {
+        this.verified = verified;
+    }
+
+    public boolean isBlocked() {
+        return blocked;
+    }
+
+    public void setBlocked(boolean blocked) {
+        this.blocked = blocked;
+    }
+
+    public String getSalt() {
+        return salt;
+    }
+
+    public void setSalt(String salt) {
+        this.salt = salt;
+    }
+
+    public Blob getAvatar() {
+        return avatar;
+    }
+
+    public void setAvatar(Blob avatar) {
+        this.avatar = avatar;
     }
 
     @Override
@@ -77,20 +137,29 @@ public class Account extends Entity {
 
         if (accountId != account.accountId) return false;
         if (rating != account.rating) return false;
+        if (verified != account.verified) return false;
+        if (blocked != account.blocked) return false;
         if (login != null ? !login.equals(account.login) : account.login != null) return false;
-        if (password != null ? !password.equals(account.password) : account.password != null) return false;
+        if (passwordHash != null ? !passwordHash.equals(account.passwordHash) : account.passwordHash != null)
+            return false;
         if (email != null ? !email.equals(account.email) : account.email != null) return false;
-        return accountType == account.accountType;
+        if (accessLevel != account.accessLevel) return false;
+        if (salt != null ? !salt.equals(account.salt) : account.salt != null) return false;
+        return avatar != null ? avatar.equals(account.avatar) : account.avatar == null;
     }
 
     @Override
     public int hashCode() {
         int result = (int) (accountId ^ (accountId >>> 32));
         result = 31 * result + (login != null ? login.hashCode() : 0);
-        result = 31 * result + (password != null ? password.hashCode() : 0);
+        result = 31 * result + (passwordHash != null ? passwordHash.hashCode() : 0);
         result = 31 * result + (email != null ? email.hashCode() : 0);
-        result = 31 * result + (accountType != null ? accountType.hashCode() : 0);
+        result = 31 * result + (accessLevel != null ? accessLevel.hashCode() : 0);
         result = 31 * result + rating;
+        result = 31 * result + (verified ? 1 : 0);
+        result = 31 * result + (blocked ? 1 : 0);
+        result = 31 * result + (salt != null ? salt.hashCode() : 0);
+        result = 31 * result + (avatar != null ? avatar.hashCode() : 0);
         return result;
     }
 
@@ -99,10 +168,14 @@ public class Account extends Entity {
         final StringBuilder sb = new StringBuilder("Account{");
         sb.append("accountId=").append(accountId);
         sb.append(", login='").append(login).append('\'');
-        sb.append(", password='").append(password).append('\'');
+        sb.append(", passwordHash='").append(passwordHash).append('\'');
         sb.append(", email='").append(email).append('\'');
-        sb.append(", accountType=").append(accountType);
+        sb.append(", accessLevel=").append(accessLevel);
         sb.append(", rating=").append(rating);
+        sb.append(", verified=").append(verified);
+        sb.append(", blocked=").append(blocked);
+        sb.append(", salt='").append(salt).append('\'');
+        sb.append(", avatar=").append(avatar);
         sb.append('}');
         return sb.toString();
     }
