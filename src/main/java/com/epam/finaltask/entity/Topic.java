@@ -1,26 +1,40 @@
 package com.epam.finaltask.entity;
 
-import java.sql.Clob;
-import java.sql.Date;
+import java.time.LocalDateTime;
 
 public class Topic extends Entity {
     private long topicId;
+    private String title;
+    private String text;
+    private LocalDateTime date;
+    private Account account;
     private boolean closed;
-    private Clob title;
-    private Clob text;
-    private Date date;
-    private long accountId;
+    private boolean hidden;
 
     public Topic() {
     }
 
-    public Topic(long topicId, boolean closed, Clob title, Clob text, Date date, long accountid) {
+    public Topic(long topicId) {
         this.topicId = topicId;
-        this.closed = closed;
+    }
+
+    public Topic(String title, String text, LocalDateTime date, Account account, boolean closed, boolean hidden) {
         this.title = title;
         this.text = text;
         this.date = date;
-        this.accountId = accountid;
+        this.account = account;
+        this.closed = closed;
+        this.hidden = hidden;
+    }
+
+    public Topic(long topicId, String title, String text, LocalDateTime date, Account account, boolean closed, boolean hidden) {
+        this.topicId = topicId;
+        this.title = title;
+        this.text = text;
+        this.date = date;
+        this.account = account;
+        this.closed = closed;
+        this.hidden = hidden;
     }
 
     public long getTopicId() {
@@ -31,6 +45,38 @@ public class Topic extends Entity {
         this.topicId = topicId;
     }
 
+    public String getTitle() {
+        return title;
+    }
+
+    public void setTitle(String title) {
+        this.title = title;
+    }
+
+    public String getText() {
+        return text;
+    }
+
+    public void setText(String text) {
+        this.text = text;
+    }
+
+    public LocalDateTime getDate() {
+        return date;
+    }
+
+    public void setDate(LocalDateTime date) {
+        this.date = date;
+    }
+
+    public Account getAccount() {
+        return account;
+    }
+
+    public void setAccount(Account account) {
+        this.account = account;
+    }
+
     public boolean isClosed() {
         return closed;
     }
@@ -39,36 +85,12 @@ public class Topic extends Entity {
         this.closed = closed;
     }
 
-    public Clob getTitle() {
-        return title;
+    public boolean isHidden() {
+        return hidden;
     }
 
-    public void setTitle(Clob title) {
-        this.title = title;
-    }
-
-    public Clob getText() {
-        return text;
-    }
-
-    public void setText(Clob text) {
-        this.text = text;
-    }
-
-    public Date getDate() {
-        return date;
-    }
-
-    public void setDate(Date date) {
-        this.date = date;
-    }
-
-    public long getAccountId() {
-        return accountId;
-    }
-
-    public void setAccountId(long accountId) {
-        this.accountId = accountId;
+    public void setHidden(boolean hidden) {
+        this.hidden = hidden;
     }
 
     @Override
@@ -80,20 +102,22 @@ public class Topic extends Entity {
 
         if (topicId != topic.topicId) return false;
         if (closed != topic.closed) return false;
-        if (accountId != topic.accountId) return false;
+        if (hidden != topic.hidden) return false;
         if (title != null ? !title.equals(topic.title) : topic.title != null) return false;
         if (text != null ? !text.equals(topic.text) : topic.text != null) return false;
-        return date != null ? date.equals(topic.date) : topic.date == null;
+        if (date != null ? !date.equals(topic.date) : topic.date != null) return false;
+        return account != null ? account.equals(topic.account) : topic.account == null;
     }
 
     @Override
     public int hashCode() {
         int result = (int) (topicId ^ (topicId >>> 32));
-        result = 31 * result + (closed ? 1 : 0);
         result = 31 * result + (title != null ? title.hashCode() : 0);
         result = 31 * result + (text != null ? text.hashCode() : 0);
         result = 31 * result + (date != null ? date.hashCode() : 0);
-        result = 31 * result + (int) (accountId ^ (accountId >>> 32));
+        result = 31 * result + (account != null ? account.hashCode() : 0);
+        result = 31 * result + (closed ? 1 : 0);
+        result = 31 * result + (hidden ? 1 : 0);
         return result;
     }
 
@@ -101,11 +125,12 @@ public class Topic extends Entity {
     public String toString() {
         final StringBuilder sb = new StringBuilder("Topic{");
         sb.append("topicId=").append(topicId);
-        sb.append(", closed=").append(closed);
-        sb.append(", title=").append(title);
-        sb.append(", text=").append(text);
+        sb.append(", title='").append(title).append('\'');
+        sb.append(", text='").append(text).append('\'');
         sb.append(", date=").append(date);
-        sb.append(", accountId=").append(accountId);
+        sb.append(", account=").append(account);
+        sb.append(", closed=").append(closed);
+        sb.append(", hidden=").append(hidden);
         sb.append('}');
         return sb.toString();
     }
