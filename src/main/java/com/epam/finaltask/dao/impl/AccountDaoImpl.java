@@ -1,14 +1,17 @@
 package com.epam.finaltask.dao.impl;
 
+import com.epam.finaltask.dao.AccountDao;
 import com.epam.finaltask.entity.AccessLevel;
 import com.epam.finaltask.entity.Account;
-import org.apache.logging.log4j.Level;
 
-import java.sql.*;
+import java.sql.Blob;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
-public class AccountDao extends AbstractDao<Account> {
+public class AccountDaoImpl extends AbstractDao<Account> implements AccountDao {
 
     private static final String FIND_ALL_ACCOUNTS = "SELECT acc.account_id, acc.login, acc.password, acc.email, " +
             "acc_type.type, acc.rating, acc.verified, acc.blocked, acc.salt, acc.avatar " +
@@ -34,8 +37,57 @@ public class AccountDao extends AbstractDao<Account> {
             "rating = ?, verified = ?, blocked = ?, salt = ?, avatar = ? " +
             "WHERE account_id = ?";
 
-    public AccountDao(ConnectionManager connectionManager) {
+    public AccountDaoImpl(ConnectionManager connectionManager) {
         super(connectionManager);
+    }
+
+    public Account findAccountByLogin(String login) throws PersistenceException {
+        if (login == null) {
+            return null;
+        }
+        Account account = null;
+        try (PreparedStatement statement = getConnection().prepareStatement(FIND_ACCOUNT_BY_LOGIN)){
+            statement.setString(1, login);
+            ResultSet resultSet = statement.executeQuery();
+            if (resultSet.next()) {
+                account = createAccountFromResultSet(resultSet);
+            }
+        } catch (SQLException e) {
+            throw new PersistenceException("SQLException while finding by id", e);
+        }
+        return account;
+    }
+
+    public Account findAccountByEmail(String email) throws PersistenceException {
+        if (email == null) {
+            return null;
+        }
+        Account account = null;
+        try (PreparedStatement statement = getConnection().prepareStatement(FIND_ACCOUNT_BY_EMAIL)){
+            statement.setString(1, email);
+            ResultSet resultSet = statement.executeQuery();
+            if (resultSet.next()) {
+                account = createAccountFromResultSet(resultSet);
+            }
+        } catch (SQLException e) {
+            throw new PersistenceException("SQLException while finding by email", e);
+        }
+        return account;
+    }
+
+    private Account createAccountFromResultSet(ResultSet resultSet) throws SQLException {
+        long accountId = resultSet.getLong(1);
+        String login = resultSet.getString(2);
+        String passwordHash = resultSet.getString(3);
+        String email = resultSet.getString(4);
+        String accountType = resultSet.getString(5);
+        int rating = resultSet.getInt(6);
+        boolean verified = resultSet.getBoolean(7);
+        boolean blocked = resultSet.getBoolean(8);
+        String salt = resultSet.getString(9);
+        Blob avatar = resultSet.getBlob(10);
+        return new Account(accountId, login, passwordHash, email, AccessLevel.valueOf(accountType.toUpperCase()),
+                rating, verified, blocked, salt, avatar);
     }
 
     @Override
@@ -53,7 +105,7 @@ public class AccountDao extends AbstractDao<Account> {
     }
 
     @Override
-    public Account findEntityById(long id) {
+    public Account findEntityById(long id) throws PersistenceException {
         Account account = null;
         try (PreparedStatement statement = getConnection().prepareStatement(FIND_ACCOUNT_BY_ID)) {
             statement.setLong(1, id);
@@ -62,7 +114,7 @@ public class AccountDao extends AbstractDao<Account> {
                 account = createAccountFromResultSet(resultSet);
             }
         } catch (SQLException e) {
-            logger.log(Level.ERROR, "SQLException while finding by id", e);
+            throw new PersistenceException("SQLException while finding by id", e);
         }
         return account;
     }
@@ -114,54 +166,5 @@ public class AccountDao extends AbstractDao<Account> {
         } catch (SQLException e) {
             throw new PersistenceException("SQLException while updating", e);
         }
-    }
-
-    public Account findAccountByLogin(String login) throws PersistenceException {
-        if (login == null) {
-            return null;
-        }
-        Account account = null;
-        try (PreparedStatement statement = getConnection().prepareStatement(FIND_ACCOUNT_BY_LOGIN)){
-            statement.setString(1, login);
-            ResultSet resultSet = statement.executeQuery();
-            if (resultSet.next()) {
-                account = createAccountFromResultSet(resultSet);
-            }
-        } catch (SQLException e) {
-            throw new PersistenceException("SQLException while finding by id", e);
-        }
-        return account;
-    }
-
-    public Account findAccountByEmail(String email) throws PersistenceException {
-        if (email == null) {
-            return null;
-        }
-        Account account = null;
-        try (PreparedStatement statement = getConnection().prepareStatement(FIND_ACCOUNT_BY_EMAIL)){
-            statement.setString(1, email);
-            ResultSet resultSet = statement.executeQuery();
-            if (resultSet.next()) {
-                account = createAccountFromResultSet(resultSet);
-            }
-        } catch (SQLException e) {
-            throw new PersistenceException("SQLException while finding by email", e);
-        }
-        return account;
-    }
-
-    private Account createAccountFromResultSet(ResultSet resultSet) throws SQLException {
-        long accountId = resultSet.getLong(1);
-        String login = resultSet.getString(2);
-        String passwordHash = resultSet.getString(3);
-        String email = resultSet.getString(4);
-        String accountType = resultSet.getString(5);
-        int rating = resultSet.getInt(6);
-        boolean verified = resultSet.getBoolean(7);
-        boolean blocked = resultSet.getBoolean(8);
-        String salt = resultSet.getString(9);
-        Blob avatar = resultSet.getBlob(10);
-        return new Account(accountId, login, passwordHash, email, AccessLevel.valueOf(accountType.toUpperCase()),
-                rating, verified, blocked, salt, avatar);
     }
 }

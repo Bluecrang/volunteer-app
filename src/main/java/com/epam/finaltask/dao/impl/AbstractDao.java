@@ -29,8 +29,4 @@ public abstract class AbstractDao<T extends Entity> implements Dao<T> {
     protected Connection getConnection() {
         return connection;
     }
-
-    void setConnection(Connection connection) {
-        this.connection = connection;
-    }
 }

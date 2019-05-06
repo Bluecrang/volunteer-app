@@ -1,5 +1,6 @@
 package com.epam.finaltask.dao.impl;
 
+import com.epam.finaltask.dao.MessageDao;
 import com.epam.finaltask.entity.Account;
 import com.epam.finaltask.entity.Message;
 import com.epam.finaltask.entity.Topic;
@@ -12,7 +13,7 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
-public class MessageDao extends AbstractDao<Message>{
+public class MessageDaoImpl extends AbstractDao<Message> implements MessageDao {
 
     private static final String FIND_ALL_MESSAGES = "SELECT message_id, message, account_id, date_posted, topic_id FROM message";
     private static final String FIND_MESSAGE_BY_ID = "SELECT message, account_id, date_posted, topic_id FROM message WHERE message_id = ?";
@@ -24,7 +25,7 @@ public class MessageDao extends AbstractDao<Message>{
     private static final String FIND_MESSAGES_BY_TOPIC_ID = "SELECT message_id, message, account_id, " +
             "date_posted, topic_id FROM message WHERE topic_id = ?";
 
-    public MessageDao(ConnectionManager connectionManager) {
+    public MessageDaoImpl(ConnectionManager connectionManager) {
         super(connectionManager);
     }
 
