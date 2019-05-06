@@ -19,7 +19,7 @@ public class CreateMessageCommand implements Command {
     private static final String MESSAGE_CREATION_ILLEGAL_LENGTH_PROPERTY = "topic.message_creation_illegal_length";
 
     @Override
-    public CommandResult execute(RequestData data) throws CommandException {
+    public CommandResult execute(CommandData data) throws CommandException {
         Object object = data.getSessionAttribute(ApplicationConstants.ACCOUNT_ATTRIBUTE);
         CommandResult result = new CommandResult();
         result.assignTransitionTypeForward();

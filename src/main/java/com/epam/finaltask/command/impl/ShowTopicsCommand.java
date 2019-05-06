@@ -17,7 +17,7 @@ public class ShowTopicsCommand implements Command {
     private static final String TOPIC_LIST_ATTRIBUTE = "topic_list";
 
     @Override
-    public CommandResult execute(RequestData data) throws CommandException {
+    public CommandResult execute(CommandData data) throws CommandException {
         CommandResult commandResult = new CommandResult();
         commandResult.assignTransitionTypeForward();
         try {

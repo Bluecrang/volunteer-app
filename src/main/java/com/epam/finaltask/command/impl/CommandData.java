@@ -6,17 +6,17 @@ import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Map;
 
-public class RequestData { //TODO change name to something more suitable?
+public class CommandData { //TODO change name to something more suitable?
     private static final int FIRST_ELEMENT_INDEX = 0;
 
     private Map<String, String> requestParameters = new HashMap<>();
     private Map<String, Object> requestAttributes = new HashMap<>();
     private Map<String, Object> sessionAttributes = new HashMap<>();
 
-    public RequestData() {
+    public CommandData() {
     }
 
-    public RequestData(HttpServletRequest request) {
+    public CommandData(HttpServletRequest request) {
         request.getParameterMap().forEach((key, value) -> requestParameters.put(key, value[FIRST_ELEMENT_INDEX]));
 
         Enumeration<String> requestAttributesNamesEnumeration = request.getAttributeNames();

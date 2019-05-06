@@ -16,7 +16,7 @@ public class ShowProfileCommand implements Command {
     private static final String PROFILE_ATTRIBUTE = "profile";
 
     @Override
-    public CommandResult execute(RequestData data) throws CommandException {
+    public CommandResult execute(CommandData data) throws CommandException {
         CommandResult commandResult = new CommandResult();
         commandResult.assignTransitionTypeForward();
         commandResult.setPage(PageConstants.INDEX_PAGE);

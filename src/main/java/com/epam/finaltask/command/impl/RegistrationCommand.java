@@ -23,7 +23,7 @@ public class RegistrationCommand implements Command {
     private static final String ACCOUNT_SUCCESSFULLY_REGISTERED = "login.account_successfully_registered";
 
     @Override
-    public CommandResult execute(RequestData data) throws CommandException {
+    public CommandResult execute(CommandData data) throws CommandException {
         String login = data.getRequestParameter(ApplicationConstants.LOGIN_PARAMETER);
         String password = data.getRequestParameter(ApplicationConstants.PASSWORD_PARAMETER);
         String email = data.getRequestParameter(ApplicationConstants.EMAIL_PARAMETER);

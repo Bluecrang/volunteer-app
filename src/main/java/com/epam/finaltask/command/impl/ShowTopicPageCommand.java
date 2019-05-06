@@ -26,7 +26,7 @@ public class ShowTopicPageCommand implements Command {
     private static final String LAST_PAGE = "last";
 
     @Override
-    public CommandResult execute(RequestData data) throws CommandException {
+    public CommandResult execute(CommandData data) throws CommandException {
         CommandResult commandResult = new CommandResult();
         commandResult.assignTransitionTypeForward();
         try {

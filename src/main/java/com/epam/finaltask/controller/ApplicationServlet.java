@@ -4,7 +4,7 @@ import com.epam.finaltask.command.Command;
 import com.epam.finaltask.command.impl.CommandException;
 import com.epam.finaltask.command.impl.CommandFactory;
 import com.epam.finaltask.command.impl.CommandResult;
-import com.epam.finaltask.command.impl.RequestData;
+import com.epam.finaltask.command.impl.CommandData;
 import com.epam.finaltask.connectionpool.ConnectionPool;
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
@@ -45,22 +45,23 @@ public class ApplicationServlet extends HttpServlet {
         ConnectionPool.instance.closePool();
     }
 
-    private void processRequest(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
+    private void processRequest(HttpServletRequest request, HttpServletResponse response)
+            throws IOException, ServletException {
         CommandFactory commandFactory = new CommandFactory();
         Command command = commandFactory.defineCommand(request);
         logger.log(Level.INFO, "defined command=" + command);
-        RequestData requestData = new RequestData(request);
+        CommandData commandData = new CommandData(request);
         CommandResult commandResult;
         try {
-            commandResult = command.execute(requestData);
+            commandResult = command.execute(commandData);
         } catch (CommandException e) {
             throw new ServletException("could not execute command " + command, e);
         }
-        requestData.updateSessionAttributes(request.getSession());
+        commandData.updateSessionAttributes(request.getSession());
         logger.log(Level.DEBUG, "TransitionType: " + commandResult.getTransitionType());
         switch (commandResult.getTransitionType()) {
             case FORWARD: {
-                requestData.updateRequestAttributes(request);
+                commandData.updateRequestAttributes(request);
                 request.getRequestDispatcher(commandResult.getPage()).forward(request, response);
                 break;
             }

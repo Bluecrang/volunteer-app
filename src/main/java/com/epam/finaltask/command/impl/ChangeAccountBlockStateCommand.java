@@ -15,7 +15,7 @@ public class ChangeAccountBlockStateCommand implements Command {
     private static final String ACCOUNT_BLOCK_PARAMETER = "block";
 
     @Override
-    public CommandResult execute(RequestData data) throws CommandException {
+    public CommandResult execute(CommandData data) throws CommandException {
         Object sessionAccountObject = data.getSessionAttribute(ApplicationConstants.ACCOUNT_ATTRIBUTE);
         CommandResult commandResult = new CommandResult();
         commandResult.assignTransitionTypeForward();

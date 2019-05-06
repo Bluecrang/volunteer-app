@@ -19,7 +19,7 @@ public class ChangeTopicHiddenStateCommand implements Command {
     private static final String TOPIC_CHANGE_HIDDEN_STATE_PARAMETER = "hide";
 
     @Override
-    public CommandResult execute(RequestData data) throws CommandException {
+    public CommandResult execute(CommandData data) throws CommandException {
         Object sessionAccountObject = data.getSessionAttribute(ApplicationConstants.ACCOUNT_ATTRIBUTE);
         CommandResult commandResult = new CommandResult();
         commandResult.assignTransitionTypeForward();

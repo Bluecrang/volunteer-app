@@ -20,7 +20,7 @@ public class AuthenticationCommand implements Command {
     private static final String AUTHENTICATION_ERROR_PROPERTY = "login.authentication_error";
 
     @Override
-    public CommandResult execute(RequestData data) {
+    public CommandResult execute(CommandData data) {
         String login = data.getRequestParameter(ApplicationConstants.LOGIN_PARAMETER);
         String password = data.getRequestParameter(ApplicationConstants.PASSWORD_PARAMETER);
 

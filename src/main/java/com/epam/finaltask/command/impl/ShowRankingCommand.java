@@ -21,7 +21,7 @@ public class ShowRankingCommand implements Command {
     private static final String ACCOUNT_LIST_ATTRIBUTE = "account_list";
 
     @Override
-    public CommandResult execute(RequestData data) throws CommandException {
+    public CommandResult execute(CommandData data) throws CommandException {
         CommandResult commandResult = new CommandResult();
         commandResult.assignTransitionTypeForward();
         int currentPage = Integer.parseInt(data.getRequestParameter(ApplicationConstants.PAGE_PARAMETER)); //todo validate

@@ -18,7 +18,7 @@ public class DeleteMessageCommand implements Command {
     private static final String MESSAGE_DELETION_ERROR_PROPERTY = "topic.message_deletion_error";
 
     @Override
-    public CommandResult execute(RequestData data) throws CommandException {
+    public CommandResult execute(CommandData data) throws CommandException {
         Object sessionAccountObject = data.getSessionAttribute(ApplicationConstants.ACCOUNT_ATTRIBUTE);
         CommandResult commandResult = new CommandResult();
         commandResult.assignTransitionTypeForward();

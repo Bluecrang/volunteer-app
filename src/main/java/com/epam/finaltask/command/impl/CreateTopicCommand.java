@@ -24,7 +24,7 @@ public class CreateTopicCommand implements Command {
     private static final String TOPIC_CREATION_ILLEGAL_TITLE_OR_TEXT_PROPERTY = "topics.illegal_title_or_text_length";
 
     @Override
-    public CommandResult execute(RequestData data) throws CommandException {
+    public CommandResult execute(CommandData data) throws CommandException {
         Object object = data.getSessionAttribute(ApplicationConstants.ACCOUNT_ATTRIBUTE);
         CommandResult result = new CommandResult();
         result.assignTransitionTypeForward();

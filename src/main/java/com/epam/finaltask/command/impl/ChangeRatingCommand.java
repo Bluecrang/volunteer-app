@@ -15,7 +15,7 @@ public class ChangeRatingCommand implements Command {
     private static final Logger logger = LogManager.getLogger();
 
     @Override
-    public CommandResult execute(RequestData data) throws CommandException {
+    public CommandResult execute(CommandData data) throws CommandException {
         Object sessionAccountObject = data.getSessionAttribute(ApplicationConstants.ACCOUNT_ATTRIBUTE);
         CommandResult commandResult = new CommandResult();
         commandResult.assignTransitionTypeForward();
