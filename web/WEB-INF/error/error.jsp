@@ -4,6 +4,7 @@
     <title>Error</title>
 </head>
 <body>
-    Error
+    <h2>Error</h2><br/>
+    <a href="${pageContext.request.contextPath}/index.jsp">Return to the main page</a>
 </body>
 </html>
