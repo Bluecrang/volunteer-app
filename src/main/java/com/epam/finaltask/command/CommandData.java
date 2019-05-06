@@ -1,20 +1,20 @@
-package com.epam.finaltask.command.impl;
+package com.epam.finaltask.command;
 
+import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
-import java.util.Enumeration;
-import java.util.HashMap;
-import java.util.Map;
+import javax.servlet.http.Part;
+import java.io.IOException;
+import java.util.*;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
-public class CommandData { //TODO change name to something more suitable?
+public class CommandData {
     private static final int FIRST_ELEMENT_INDEX = 0;
 
     private Map<String, String> requestParameters = new HashMap<>();
     private Map<String, Object> requestAttributes = new HashMap<>();
     private Map<String, Object> sessionAttributes = new HashMap<>();
-
-    public CommandData() {
-    }
 
     public CommandData(HttpServletRequest request) {
         request.getParameterMap().forEach((key, value) -> requestParameters.put(key, value[FIRST_ELEMENT_INDEX]));
@@ -32,12 +32,12 @@ public class CommandData { //TODO change name to something more suitable?
         }
     }
 
-    public void updateRequestAttributes(HttpServletRequest request) {
-        requestAttributes.forEach(request::setAttribute);
-    }
-
     public void updateSessionAttributes(HttpSession session) {
         sessionAttributes.forEach(session::setAttribute);
+    }
+
+    public void updateRequestAttributes(HttpServletRequest request) {
+        requestAttributes.forEach(request::setAttribute);
     }
 
     public String getRequestParameter(String key) {

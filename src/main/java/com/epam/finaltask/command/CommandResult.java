@@ -1,4 +1,4 @@
-package com.epam.finaltask.command.impl;
+package com.epam.finaltask.command;
 
 import com.epam.finaltask.util.PageConstants;
 

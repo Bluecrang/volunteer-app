@@ -1,4 +1,4 @@
-package com.epam.finaltask.command.impl;
+package com.epam.finaltask.command;
 
 public enum TransitionType {
     FORWARD,

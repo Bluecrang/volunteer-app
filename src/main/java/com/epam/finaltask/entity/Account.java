@@ -1,7 +1,5 @@
 package com.epam.finaltask.entity;
 
-import java.util.Arrays;
-
 public class Account extends Entity {
     private long accountId;
     private String login;
@@ -12,7 +10,7 @@ public class Account extends Entity {
     private boolean verified;
     private boolean blocked;
     private String salt;
-    private byte[] avatar;
+    private String avatarBase64;
 
     public Account() {
     }
@@ -22,7 +20,7 @@ public class Account extends Entity {
     }
 
     public Account(String login, String passwordHash, String email, AccessLevel accessLevel,
-                   int rating, boolean verified, boolean blocked, String salt, byte[] avatar) {
+                   int rating, boolean verified, boolean blocked, String salt, String avatarBase64) {
         this.login = login;
         this.passwordHash = passwordHash;
         this.email = email;
@@ -31,11 +29,11 @@ public class Account extends Entity {
         this.verified = verified;
         this.blocked = blocked;
         this.salt = salt;
-        this.avatar = avatar;
+        this.avatarBase64 = avatarBase64;
     }
 
     public Account(long accountId, String login, String passwordHash, String email, AccessLevel accessLevel,
-                   int rating, boolean verified, boolean blocked, String salt, byte[] avatar) {
+                   int rating, boolean verified, boolean blocked, String salt, String avatarBase64) {
         this.accountId = accountId;
         this.login = login;
         this.passwordHash = passwordHash;
@@ -45,7 +43,7 @@ public class Account extends Entity {
         this.verified = verified;
         this.blocked = blocked;
         this.salt = salt;
-        this.avatar = avatar;
+        this.avatarBase64 = avatarBase64;
     }
 
     public long getAccountId() {
@@ -120,12 +118,12 @@ public class Account extends Entity {
         this.salt = salt;
     }
 
-    public byte[] getAvatar() {
-        return avatar;
+    public String getAvatarBase64() {
+        return avatarBase64;
     }
 
-    public void setAvatar(byte[] avatar) {
-        this.avatar = avatar;
+    public void setAvatarBase64(String avatarBase64) {
+        this.avatarBase64 = avatarBase64;
     }
 
     @Override
@@ -145,7 +143,7 @@ public class Account extends Entity {
         if (email != null ? !email.equals(account.email) : account.email != null) return false;
         if (accessLevel != account.accessLevel) return false;
         if (salt != null ? !salt.equals(account.salt) : account.salt != null) return false;
-        return Arrays.equals(avatar, account.avatar);
+        return avatarBase64 != null ? avatarBase64.equals(account.avatarBase64) : account.avatarBase64 == null;
     }
 
     @Override
@@ -159,7 +157,7 @@ public class Account extends Entity {
         result = 31 * result + (verified ? 1 : 0);
         result = 31 * result + (blocked ? 1 : 0);
         result = 31 * result + (salt != null ? salt.hashCode() : 0);
-        result = 31 * result + Arrays.hashCode(avatar);
+        result = 31 * result + (avatarBase64 != null ? avatarBase64.hashCode() : 0);
         return result;
     }
 
@@ -175,7 +173,7 @@ public class Account extends Entity {
         sb.append(", verified=").append(verified);
         sb.append(", blocked=").append(blocked);
         sb.append(", salt='").append(salt).append('\'');
-        sb.append(", avatar=").append(Arrays.toString(avatar));
+        sb.append(", avatarBase64='").append(avatarBase64).append('\'');
         sb.append('}');
         return sb.toString();
     }

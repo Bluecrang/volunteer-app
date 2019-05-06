@@ -19,6 +19,7 @@ public enum CommandType {
     CHANGE_LOCALE(new ChangeLocaleCommand()),
     SHOW_RANKING_PAGE(new ShowRankingCommand()),
     CHANGE_RATING(new ChangeRatingCommand());
+
     private Command command;
 
     CommandType(Command command) {

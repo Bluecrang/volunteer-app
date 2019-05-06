@@ -1,10 +1,10 @@
 package com.epam.finaltask.controller;
 
 import com.epam.finaltask.command.Command;
-import com.epam.finaltask.command.impl.CommandException;
+import com.epam.finaltask.command.CommandException;
 import com.epam.finaltask.command.impl.CommandFactory;
-import com.epam.finaltask.command.impl.CommandResult;
-import com.epam.finaltask.command.impl.CommandData;
+import com.epam.finaltask.command.CommandResult;
+import com.epam.finaltask.command.CommandData;
 import com.epam.finaltask.connectionpool.ConnectionPool;
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
@@ -12,13 +12,12 @@ import org.apache.logging.log4j.Logger;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
-import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
 @WebServlet(urlPatterns = {"/servlet", "/topics", "/topic", "/profile", "/ranking"})
-public class ApplicationServlet extends HttpServlet {
+public class ApplicationServlet extends AbstractServlet {
 
     private static final Logger logger = LogManager.getLogger();
     private static final int POOL_MAINTENANCE_PERIOD_MILLIS = 1000 * 60 * 60;
@@ -59,20 +58,6 @@ public class ApplicationServlet extends HttpServlet {
         }
         commandData.updateSessionAttributes(request.getSession());
         logger.log(Level.DEBUG, "TransitionType: " + commandResult.getTransitionType());
-        switch (commandResult.getTransitionType()) {
-            case FORWARD: {
-                commandData.updateRequestAttributes(request);
-                request.getRequestDispatcher(commandResult.getPage()).forward(request, response);
-                break;
-            }
-            case REDIRECT: {
-                response.sendRedirect(getServletContext().getContextPath() + commandResult.getPage());
-                break;
-            }
-            default: {
-                throw new EnumConstantNotPresentException(commandResult.getTransitionType().getClass(),
-                        "TransitionType constant is not present");
-            }
-        }
+        performTransition(request, response, commandResult, commandData);
     }
 }
