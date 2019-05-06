@@ -10,6 +10,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 
 public class AccountDaoImpl extends AbstractDao<Account> implements AccountDao {
@@ -37,9 +38,42 @@ public class AccountDaoImpl extends AbstractDao<Account> implements AccountDao {
             "SET login = ?, password = ?, email = ?, account_type_id = (SELECT account_type_id FROM account_type WHERE type = ?), " +
             "rating = ?, verified = ?, blocked = ?, salt = ?, avatar = ? " +
             "WHERE account_id = ?";
+    private static final String FIND_ACCOUNTS_IN_RANGE_SORT_BY_RATING = "SELECT acc.account_id, acc.login, acc.password, acc.email, " +
+            "acc_type.type, acc.rating, acc.verified, acc.blocked, acc.salt, acc.avatar " +
+            "FROM account acc INNER JOIN account_type acc_type on acc.account_type_id = acc_type.account_type_id " +
+            "ORDER BY acc.rating DESC " +
+            "LIMIT ? OFFSET ?";
+    private static final String FIND_ACCOUNT_COUNT = "SELECT COUNT(account_id) FROM account";
 
     public AccountDaoImpl(ConnectionManager connectionManager) {
         super(connectionManager);
+    }
+
+    public int findAccountCount() throws PersistenceException {
+        try (PreparedStatement statement = getConnection().prepareStatement(FIND_ACCOUNT_COUNT)){
+            ResultSet resultSet = statement.executeQuery();
+            if (resultSet.next()) {
+                return resultSet.getInt(1);
+            }
+        } catch (SQLException e) {
+            throw new PersistenceException("SQLException while finding page accounts sorted by rating", e);
+        }
+        return 0;
+    }
+
+    public List<Account> findPageAccountsSortByRating(int startPage, int numberOfAccountsPerPage) throws PersistenceException {
+        List<Account> accountList = new LinkedList<>();
+        try (PreparedStatement statement = getConnection().prepareStatement(FIND_ACCOUNTS_IN_RANGE_SORT_BY_RATING)){
+            statement.setInt(1, numberOfAccountsPerPage);
+            statement.setInt(2, (startPage - 1) * numberOfAccountsPerPage);
+            ResultSet resultSet = statement.executeQuery();
+            while (resultSet.next()) {
+                accountList.add(createAccountFromResultSet(resultSet));
+            }
+        } catch (SQLException e) {
+            throw new PersistenceException("SQLException while finding page accounts sorted by rating", e);
+        }
+        return accountList;
     }
 
     public Account findAccountByLogin(String login) throws PersistenceException {

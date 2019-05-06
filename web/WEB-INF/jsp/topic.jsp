@@ -8,7 +8,7 @@
     <title>${topic.title}</title>
 </head>
 <body>
-    <c:if test="${account.accessLevel == 'ADMIN'}">
+    <c:if test="${not empty account && account.accessLevel == 'ADMIN'}">
         <form method="post" id="close_topic" action="${pageContext.request.contextPath}/servlet">
             <input type="hidden" name="topic_id" value="${topic.topicId}"/>
             <input type="hidden" name="command" value="close_topic"/>
@@ -21,23 +21,19 @@
         <c:out value="${topic.text}"/>
     </div>
 
-    <c:forEach var="i" begin="${(topic_current_page - 1) * messages_per_page}" end="${(topic_current_page - 1) * messages_per_page + messages_per_page - 1}">
+    <c:forEach var="message" items="${message_list}">
     <div>
-        <c:set var="message" value="${message_list[i]}"/>
-        <c:if test="${not empty message}">
-            <a href="${pageContext.request.contextPath}/profile?account_id=${message.account.accountId}&command=show_profile"><c:out value="${message.account.login}"/></a><br/>
-            <c:out value="${message.message}"/><br/>
-            <c:out value="${message.date}"/><br/>
-            <c:if test="${account.accessLevel == 'ADMIN'}">
-                <form method="post" action="${pageContext.request.contextPath}/servlet">
-                    <input type="hidden" name="command" value="delete_message"/>
-                    <input type="hidden" name="message_id" value="${message.messageId}"/>
-                    <input type="submit" value="<fmt:message key="topic.delete_message"/>"/>
-                </form>
-            </c:if>
+        <a href="${pageContext.request.contextPath}/profile?account_id=${message.account.accountId}&command=show_profile"><c:out value="${message.account.login}"/></a><br/>
+        <c:out value="${message.message}"/><br/>
+        <c:out value="${message.date}"/><br/>
+        <c:if test="${not empty account && account.accessLevel == 'ADMIN'}">
+            <form method="post" action="${pageContext.request.contextPath}/servlet">
+                <input type="hidden" name="command" value="delete_message"/>
+                <input type="hidden" name="message_id" value="${message.messageId}"/>
+                <input type="submit" value="<fmt:message key="topic.delete_message"/>"/>
+            </form>
         </c:if>
     </div>
-
     </c:forEach>
 
     <c:if test="${topic_current_page > 1}">
@@ -45,7 +41,7 @@
             <fmt:message key="message.previous"/>
         </a>
     </c:if>
-    <c:forEach var="i" begin="1" end="${topic_number_of_pages}">
+    <c:forEach var="i" begin="${topic_current_page > messages_per_page ? topic_current_page - messages_per_page : 1}" end="${topic_number_of_pages - topic_current_page > messages_per_page ? topic_current_page + messages_per_page : topic_number_of_pages}">
         <c:choose>
             <c:when test="${topic_current_page == i}">
                 ${i}

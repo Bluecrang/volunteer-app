@@ -7,11 +7,19 @@
     <title><fmt:message key="profile.title"/></title>
 </head>
 <body>
+    <img alt="profile image" src="data:image/jpeg;base64,${profile.avatarBase64}"/><br/>
     <fmt:message key="profile.login"/> <c:out value="${profile.login}"/><br/>
     <fmt:message key="profile.rating"/> <c:out value="${profile.rating}"/><br/>
     <c:if test="${not empty account}">
         <c:if test="${account.accountId == profile.accountId or account.accessLevel == 'ADMIN'}">
             <fmt:message key="profile.email"/> <c:out value="${profile.email}"/><br/>
+        </c:if>
+        <c:if test="${account.accountId == profile.accountId}">
+            <form method="post" id="upload_image" action="${pageContext.request.contextPath}/upload" enctype="multipart/form-data">
+                <input type="file" id="profile_image" name="image"/>
+                <input type="hidden" name="command" value="upload_avatar"/>
+                <input type="submit" value="<fmt:message key="profile.image.submit"/>"/>
+            </form>
         </c:if>
         <c:if test="${account.accessLevel == 'ADMIN'}">
             <form method="post" id="block_account" action="${pageContext.request.contextPath}/servlet">

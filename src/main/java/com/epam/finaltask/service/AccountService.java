@@ -22,6 +22,15 @@ public class AccountService {
 
     private static final Logger logger = LogManager.getLogger();
 
+    public int countAccounts() throws ServiceException {
+        try (ConnectionManager connectionManager = new ConnectionManager()) {
+            AccountDao accountDao = new AccountDaoImpl(connectionManager);
+            return accountDao.findAccountCount();
+        } catch (PersistenceException e) {
+            throw new ServiceException(e);
+        }
+    }
+
     public boolean addValueToRating(Account actingAccount, long accountId, int value) throws ServiceException {
         if (actingAccount != null && actingAccount.getAccessLevel() != null &&
                 actingAccount.getAccessLevel().equals(AccessLevel.ADMIN)) {
@@ -49,10 +58,10 @@ public class AccountService {
         return false;
     }
 
-    public List<Account> findAllAccounts() throws ServiceException {
+    public List<Account> findRatingPageAccounts(int page, int numberOfAccountsPerPage) throws ServiceException {
         try (ConnectionManager connectionManager = new ConnectionManager()) {
             AccountDao accountDao = new AccountDaoImpl(connectionManager);
-            return accountDao.findAll();
+            return accountDao.findPageAccountsSortByRating(page, numberOfAccountsPerPage);
         } catch (PersistenceException e) {
             throw new ServiceException(e);
         }

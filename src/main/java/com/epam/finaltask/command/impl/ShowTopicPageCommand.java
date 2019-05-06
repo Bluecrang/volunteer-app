@@ -38,26 +38,22 @@ public class ShowTopicPageCommand implements Command {
             try {
                 Topic topic = topicService.findTopicById(topicId);
                 data.putRequestAttribute(TOPIC_ATTRIBUTE, topic);
-                boolean loadMessages = Boolean.valueOf(data.getRequestParameter(ApplicationConstants.TOPIC_LOAD_MESSAGES_PARAMETER));
+                String currentPageString = data.getRequestParameter(ApplicationConstants.PAGE_PARAMETER);
+                MessageService messageService = new MessageService();
+                int messageCount = messageService.countMessages(topicId);
+                int numberOfPages = Math.toIntExact(Math.round(Math.ceil((double)messageCount / NUMBER_OF_MESSAGES_PER_PAGE))); //todo handle ArithmeticalException
                 int currentPage;
-                if (loadMessages) {
-                    MessageService messageService = new MessageService();
-                    List<Message> messageList = messageService.findMessagesByTopicId(topicId); //TODO
-                    int numberOfPages = Math.toIntExact(Math.round(Math.ceil((double)messageList.size() / NUMBER_OF_MESSAGES_PER_PAGE))); //todo handle ArithmeticalException
-                    logger.log(Level.DEBUG, "messageList size=" + messageList.size());
-                    logger.log(Level.DEBUG, "number of pages: " + numberOfPages);
-                    data.putSessionAttribute(MESSAGE_LIST_ATTRIBUTE, messageList);
-                    data.putSessionAttribute(ApplicationConstants.TOPIC_PAGE_COUNT_ATTRIBUTE, numberOfPages);
-                    String currentPageString = data.getRequestParameter(ApplicationConstants.PAGE_PARAMETER);
-                    if (currentPageString.equals(LAST_PAGE)) {
-                        currentPage = (numberOfPages != 0) ? numberOfPages : 1;
-                    } else {
-                        currentPage = Integer.parseInt(data.getRequestParameter(ApplicationConstants.PAGE_PARAMETER));
-                    }
+                if (currentPageString.equals(LAST_PAGE)) {
+                    currentPage = (numberOfPages != 0) ? numberOfPages : 1;
                 } else {
-                     currentPage = Integer.parseInt(data.getRequestParameter(ApplicationConstants.PAGE_PARAMETER));
+                    currentPage = Integer.parseInt(data.getRequestParameter(ApplicationConstants.PAGE_PARAMETER));
                 }
                 data.putRequestAttribute(ApplicationConstants.TOPIC_CURRENT_PAGE_ATTRIBUTE, currentPage);
+                List<Message> messageList = messageService.findTopicPageMessages(topicId, currentPage, NUMBER_OF_MESSAGES_PER_PAGE);
+                logger.log(Level.DEBUG, "messageList size=" + messageList.size());
+                logger.log(Level.DEBUG, "number of pages: " + numberOfPages);
+                data.putRequestAttribute(MESSAGE_LIST_ATTRIBUTE, messageList);
+                data.putRequestAttribute(ApplicationConstants.TOPIC_PAGE_COUNT_ATTRIBUTE, numberOfPages);
                 data.putRequestAttribute(TOPIC_ID_ATTRIBUTE, topicId); //todo (remove?) (topic already passed to data)
                 data.putRequestAttribute(NUMBER_OF_MESSAGES_PER_PAGE_ATTRIBUTE, NUMBER_OF_MESSAGES_PER_PAGE);
                 commandResult.setPage(PageConstants.TOPIC_PAGE);

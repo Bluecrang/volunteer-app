@@ -11,7 +11,7 @@
     <c:forEach var="topic" items="${topic_list}">
         <c:if test="${(!topic.hidden && !topic.closed) || account.accessLevel == 'ADMIN'}">
             <div>
-                <a href="${pageContext.request.contextPath}/topic?topic_id=${topic.topicId}&page=last&command=show_topic_page&page=last&load_messages=true"><c:out value="${topic.title}"/></a><br/>
+                <a href="${pageContext.request.contextPath}/topic?topic_id=${topic.topicId}&page=last&command=show_topic_page&page=last"><c:out value="${topic.title}"/></a><br/>
                 <fmt:message key="topics.account_login"/> <a href="${pageContext.request.contextPath}/profile?account_id=${topic.account.accountId}&command=show_profile"><c:out value="${topic.account.login}"/></a><br/>
                 <fmt:message key="topics.topic_date"/> ${topic.date}<br/>
                 <fmt:message key="topics.topic_closed"/> ${topic.closed}<br/>

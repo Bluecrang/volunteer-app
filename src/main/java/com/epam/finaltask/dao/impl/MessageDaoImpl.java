@@ -11,6 +11,7 @@ import java.io.Reader;
 import java.sql.*;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 
 public class MessageDaoImpl extends AbstractDao<Message> implements MessageDao {
@@ -24,9 +25,53 @@ public class MessageDaoImpl extends AbstractDao<Message> implements MessageDao {
             "WHERE message_id = ?";
     private static final String FIND_MESSAGES_BY_TOPIC_ID = "SELECT message_id, message, account_id, " +
             "date_posted, topic_id FROM message WHERE topic_id = ?";
+    private static final String COUNT_MESSAGES_WITH_CHOSEN_TOPIC = "SELECT COUNT(message_id) FROM message WHERE topic_id = ?";
+    private static final String FIND_MESSAGES_IN_RANGE_SORT_BY_DATE = "SELECT message_id, message, account_id, date_posted, topic_id " +
+            "FROM message WHERE topic_id = ? ORDER BY date_posted LIMIT ? OFFSET ?";
 
     public MessageDaoImpl(ConnectionManager connectionManager) {
         super(connectionManager);
+    }
+
+    @Override
+    public List<Message> findPageAccountsSortByRating(long topicId, int startPage, int numberOfMessagesPerPage) throws PersistenceException {
+        List<Message> messageList = new LinkedList<>();
+        try (PreparedStatement statement = getConnection().prepareStatement(FIND_MESSAGES_IN_RANGE_SORT_BY_DATE)){
+            statement.setLong(1, topicId);
+            statement.setInt(2, numberOfMessagesPerPage);
+            statement.setInt(3, (startPage - 1) * numberOfMessagesPerPage);
+            ResultSet resultSet = statement.executeQuery();
+            while (resultSet.next()) {
+                long messageId = resultSet.getLong(1);
+                Clob textClob = resultSet.getClob(2);
+                long accountId = resultSet.getLong(3);
+                LocalDateTime date = resultSet.getObject(4, LocalDateTime.class);
+                long resultSetTopicId = resultSet.getLong(5);
+                String text;
+                try (Reader titleReader = textClob.getCharacterStream()) {
+                    text = IOUtils.toString(titleReader);
+                }
+                messageList.add(new Message(messageId, text, new Account(accountId), date, new Topic(resultSetTopicId)));
+            }
+        } catch (SQLException e) {
+            throw new PersistenceException("SQLException while finding page accounts sorted by rating", e);
+        } catch (IOException e) {
+            throw new PersistenceException("IOException while trying to read text clob");
+        }
+        return messageList;
+    }
+
+    public int countMessagesByTopic(long topicId) throws PersistenceException {
+        try (PreparedStatement preparedStatement = getConnection().prepareStatement(COUNT_MESSAGES_WITH_CHOSEN_TOPIC)) {
+            preparedStatement.setLong(1, topicId);
+            ResultSet resultSet = preparedStatement.executeQuery();
+            if (resultSet.next()) {
+                return resultSet.getInt(1);
+            }
+        } catch (SQLException e) {
+            throw new PersistenceException(e);
+        }
+        return 0;
     }
 
     public List<Message> findMessagesByTopicId(long topicId) throws PersistenceException {

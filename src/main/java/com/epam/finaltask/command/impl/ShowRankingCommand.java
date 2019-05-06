@@ -9,10 +9,10 @@ import com.epam.finaltask.service.AccountService;
 import com.epam.finaltask.service.ServiceException;
 import com.epam.finaltask.util.ApplicationConstants;
 import com.epam.finaltask.util.PageConstants;
+import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import java.util.Comparator;
 import java.util.List;
 
 public class ShowRankingCommand implements Command {
@@ -28,16 +28,14 @@ public class ShowRankingCommand implements Command {
         CommandResult commandResult = new CommandResult();
         commandResult.assignTransitionTypeForward();
         int currentPage = Integer.parseInt(data.getRequestParameter(ApplicationConstants.PAGE_PARAMETER)); //todo validate
-        boolean loadAccounts = Boolean.valueOf(data.getRequestParameter(ApplicationConstants.TOPIC_LOAD_ACCOUNTS_PARAMETER));
         try {
-            if (loadAccounts) {
-                AccountService accountService = new AccountService();
-                List<Account> accountList = accountService.findAllAccounts();
-                accountList.sort(Comparator.comparing(Account::getRating, Comparator.reverseOrder()));
-                int numberOfPages = Math.toIntExact(Math.round(Math.ceil((double)accountList.size() / NUMBER_OF_ACCOUNTS_PER_PAGE))); //todo handle ArithmeticalException
-                data.putSessionAttribute(ACCOUNT_LIST_ATTRIBUTE, accountList);
-                data.putSessionAttribute(ApplicationConstants.RANKING_PAGE_COUNT_ATTRIBUTE, numberOfPages);
-            }
+            AccountService accountService = new AccountService();
+            List<Account> accountList = accountService.findRatingPageAccounts(currentPage, NUMBER_OF_ACCOUNTS_PER_PAGE);
+            logger.log(Level.DEBUG, "account list: " + accountList);
+            data.putRequestAttribute(ACCOUNT_LIST_ATTRIBUTE, accountList);
+            int accountCount = accountService.countAccounts();
+            int numberOfPages = Math.toIntExact(Math.round(Math.ceil((double)accountCount / NUMBER_OF_ACCOUNTS_PER_PAGE))); //todo handle ArithmeticalException
+            data.putRequestAttribute(ApplicationConstants.RANKING_PAGE_COUNT_ATTRIBUTE, numberOfPages);
             data.putRequestAttribute(ApplicationConstants.RANKING_CURRENT_PAGE_ATTRIBUTE, currentPage);
             data.putRequestAttribute(NUMBER_OF_ACCOUNTS_PER_PAGE_ATTRIBUTE, NUMBER_OF_ACCOUNTS_PER_PAGE);
             commandResult.setPage(PageConstants.RANKING_PAGE);

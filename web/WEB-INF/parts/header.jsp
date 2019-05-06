@@ -20,7 +20,7 @@
     <div>
         <a href="${pageContext.request.contextPath}/jsp/main.jsp"><fmt:message key="header.main"/></a>
         <a href="${pageContext.request.contextPath}/topics?command=show_topics"><fmt:message key="header.topics"/></a>
-        <a href="${pageContext.request.contextPath}/ranking?command=show_ranking_page&page=1&load_accounts=true"><fmt:message key="header.ranking"/></a>
+        <a href="${pageContext.request.contextPath}/ranking?command=show_ranking_page&page=1"><fmt:message key="header.ranking"/></a>
 
         <div class="dropdown">
             <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton" data-display="static" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">

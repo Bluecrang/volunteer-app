@@ -21,6 +21,25 @@ public class MessageService {
 
     private static final Logger logger = LogManager.getLogger();
 
+    public List<Message> findTopicPageMessages(long topicId, int currentPage, int numberOfMessagesPerPage)
+            throws ServiceException {
+        try (ConnectionManager connectionManager = new ConnectionManager()) {
+            MessageDao messageDao = new MessageDaoImpl(connectionManager);
+            return messageDao.findPageAccountsSortByRating(topicId, currentPage, numberOfMessagesPerPage);
+        } catch (PersistenceException e) {
+            throw new ServiceException(e);
+        }
+    }
+
+    public int countMessages(long topicId) throws ServiceException {
+        try (ConnectionManager connectionManager = new ConnectionManager()) {
+            MessageDao messageDao = new MessageDaoImpl(connectionManager);
+            return messageDao.countMessagesByTopic(topicId);
+        } catch (PersistenceException e) {
+            throw new ServiceException(e);
+        }
+    }
+
     public Message findMessageById(long id) throws ServiceException {
         try (ConnectionManager connectionManager = new ConnectionManager()) {
             MessageDao messageDao = new MessageDaoImpl(connectionManager);
