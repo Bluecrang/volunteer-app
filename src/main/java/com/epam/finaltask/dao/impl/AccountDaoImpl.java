@@ -4,7 +4,7 @@ import com.epam.finaltask.dao.AccountDao;
 import com.epam.finaltask.entity.AccessLevel;
 import com.epam.finaltask.entity.Account;
 
-import java.sql.Blob;
+import javax.sql.rowset.serial.SerialBlob;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -85,7 +85,7 @@ public class AccountDaoImpl extends AbstractDao<Account> implements AccountDao {
         boolean verified = resultSet.getBoolean(7);
         boolean blocked = resultSet.getBoolean(8);
         String salt = resultSet.getString(9);
-        Blob avatar = resultSet.getBlob(10);
+        byte[] avatar = resultSet.getBytes(10);
         return new Account(accountId, login, passwordHash, email, AccessLevel.valueOf(accountType.toUpperCase()),
                 rating, verified, blocked, salt, avatar);
     }
@@ -138,7 +138,7 @@ public class AccountDaoImpl extends AbstractDao<Account> implements AccountDao {
             statement.setBoolean(6, entity.isVerified());
             statement.setBoolean(7, entity.isBlocked());
             statement.setString(8, entity.getSalt());
-            statement.setBlob(9, entity.getAvatar());
+            statement.setBlob(9, new SerialBlob(entity.getAvatar()));
             int result = statement.executeUpdate();
             return result == 1;
         } catch (SQLException e) {
@@ -160,7 +160,7 @@ public class AccountDaoImpl extends AbstractDao<Account> implements AccountDao {
             statement.setBoolean(6, entity.isVerified());
             statement.setBoolean(7, entity.isBlocked());
             statement.setString(8, entity.getSalt());
-            statement.setBlob(9, entity.getAvatar());
+            statement.setBlob(9, new SerialBlob(entity.getAvatar()));
             statement.setLong(10, entity.getAccountId());
             return statement.executeUpdate();
         } catch (SQLException e) {

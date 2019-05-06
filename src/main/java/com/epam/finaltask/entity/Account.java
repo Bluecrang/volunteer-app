@@ -1,6 +1,6 @@
 package com.epam.finaltask.entity;
 
-import java.sql.Blob;
+import java.util.Arrays;
 
 public class Account extends Entity {
     private long accountId;
@@ -12,7 +12,7 @@ public class Account extends Entity {
     private boolean verified;
     private boolean blocked;
     private String salt;
-    private Blob avatar;
+    private byte[] avatar;
 
     public Account() {
     }
@@ -22,7 +22,7 @@ public class Account extends Entity {
     }
 
     public Account(String login, String passwordHash, String email, AccessLevel accessLevel,
-                   int rating, boolean verified, boolean blocked, String salt, Blob avatar) {
+                   int rating, boolean verified, boolean blocked, String salt, byte[] avatar) {
         this.login = login;
         this.passwordHash = passwordHash;
         this.email = email;
@@ -35,7 +35,7 @@ public class Account extends Entity {
     }
 
     public Account(long accountId, String login, String passwordHash, String email, AccessLevel accessLevel,
-                   int rating, boolean verified, boolean blocked, String salt, Blob avatar) {
+                   int rating, boolean verified, boolean blocked, String salt, byte[] avatar) {
         this.accountId = accountId;
         this.login = login;
         this.passwordHash = passwordHash;
@@ -120,11 +120,11 @@ public class Account extends Entity {
         this.salt = salt;
     }
 
-    public Blob getAvatar() {
+    public byte[] getAvatar() {
         return avatar;
     }
 
-    public void setAvatar(Blob avatar) {
+    public void setAvatar(byte[] avatar) {
         this.avatar = avatar;
     }
 
@@ -145,7 +145,7 @@ public class Account extends Entity {
         if (email != null ? !email.equals(account.email) : account.email != null) return false;
         if (accessLevel != account.accessLevel) return false;
         if (salt != null ? !salt.equals(account.salt) : account.salt != null) return false;
-        return avatar != null ? avatar.equals(account.avatar) : account.avatar == null;
+        return Arrays.equals(avatar, account.avatar);
     }
 
     @Override
@@ -159,7 +159,7 @@ public class Account extends Entity {
         result = 31 * result + (verified ? 1 : 0);
         result = 31 * result + (blocked ? 1 : 0);
         result = 31 * result + (salt != null ? salt.hashCode() : 0);
-        result = 31 * result + (avatar != null ? avatar.hashCode() : 0);
+        result = 31 * result + Arrays.hashCode(avatar);
         return result;
     }
 
@@ -175,7 +175,7 @@ public class Account extends Entity {
         sb.append(", verified=").append(verified);
         sb.append(", blocked=").append(blocked);
         sb.append(", salt='").append(salt).append('\'');
-        sb.append(", avatar=").append(avatar);
+        sb.append(", avatar=").append(Arrays.toString(avatar));
         sb.append('}');
         return sb.toString();
     }
