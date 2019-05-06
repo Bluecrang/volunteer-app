@@ -1,7 +1,6 @@
 package com.epam.finaltask.entity;
 
 import java.time.LocalDateTime;
-import java.time.OffsetDateTime;
 
 public class Message extends Entity {
     private long messageId;
