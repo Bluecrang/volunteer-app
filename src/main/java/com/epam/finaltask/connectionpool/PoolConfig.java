@@ -10,15 +10,15 @@ public class PoolConfig {
 
     private static final Logger logger = LogManager.getLogger();
 
-    private static final String DATABASE_URL = "url";
-    private static final String USER = "user";
-    private static final String PASSWORD = "password";
-    private static final String POOL_SIZE = "size";
+    private static final String DATABASE_URL_PROPERTY = "url";
+    private static final String USERNAME_PROPERTY = "user";
+    private static final String PASSWORD_PROPERTY = "password";
+    private static final String POOL_SIZE_PROPERTY = "size";
 
     private String databaseUrl;
     private String user;
     private String password;
-    private int poolSize = 5;
+    private int poolSize;
 
     public PoolConfig() {
     }
@@ -31,10 +31,10 @@ public class PoolConfig {
     }
 
     public PoolConfig(Properties properties) {
-        databaseUrl = properties.getProperty(DATABASE_URL);
-        user = properties.getProperty(USER);
-        password = properties.getProperty(PASSWORD);
-        String poolSizeString = properties.getProperty(POOL_SIZE);
+        databaseUrl = properties.getProperty(DATABASE_URL_PROPERTY);
+        user = properties.getProperty(USERNAME_PROPERTY);
+        password = properties.getProperty(PASSWORD_PROPERTY);
+        String poolSizeString = properties.getProperty(POOL_SIZE_PROPERTY);
         if (poolSizeString != null) {
             try {
                 int poolSizeInteger = Integer.valueOf(poolSizeString);

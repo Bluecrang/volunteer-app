@@ -1,5 +1,6 @@
 package com.epam.finaltask.connectionpool;
 
+import com.epam.finaltask.validation.FileValidator;
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -9,38 +10,31 @@ import java.sql.Driver;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.util.Enumeration;
+import java.util.Properties;
 import java.util.Set;
 import java.util.Timer;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.locks.Lock;
-import java.util.concurrent.locks.ReadWriteLock;
 import java.util.concurrent.locks.ReentrantLock;
-import java.util.concurrent.locks.ReentrantReadWriteLock;
 
 public enum ConnectionPool {
-    instance();
+    instance;
 
     private final Logger logger;
 
-    private int MAX_POOL_SIZE; //todo use or remove
     private PoolConfig config;
     private BlockingQueue<ProxyConnection> idlingConnections = new LinkedBlockingQueue<>();
     private Set<ProxyConnection> allConnections = ConcurrentHashMap.newKeySet();
-    private Lock closingLock = new ReentrantLock();
-    private Lock operationLock;
-    private Lock cleaningLock;
+    private Lock lock = new ReentrantLock();
     private boolean closed;
 
     ConnectionPool() {
         logger = LogManager.getLogger();
-        ReadWriteLock readWriteLock = new ReentrantReadWriteLock();
-        operationLock = readWriteLock.readLock();
-        cleaningLock = readWriteLock.writeLock();
     }
 
-    public void init(PoolConfig poolConfig, int maintenancePeriod) {
+    public void init(String configFilename, int maintenancePeriod) {
         try {
             DriverManager.registerDriver(new com.mysql.jdbc.Driver());
         } catch (SQLException e) {
@@ -49,10 +43,17 @@ public enum ConnectionPool {
         }
         logger.log(Level.INFO, "database driver successfully registered");
 
-        config = poolConfig;
-        MAX_POOL_SIZE = config.getPoolSize();
+        FileValidator fileValidator = new FileValidator();
+        if (!fileValidator.validate(configFilename)) {
+            String message = "config file is not valid";
+            logger.log(Level.FATAL, message);
+            throw new RuntimeException(message);
+        }
+        PropertiesReader reader = new PropertiesReader();
+        Properties propertiesConfig = reader.readProperties(configFilename);
+        config = new PoolConfig(propertiesConfig);
 
-        for (int i = 0; i < MAX_POOL_SIZE; i++) {
+        for (int i = 0; i < config.getPoolSize(); i++) {
             addConnection();
         }
 
@@ -61,11 +62,10 @@ public enum ConnectionPool {
     }
 
     public Connection getConnection() throws ConnectionPoolException {
+        if (closed) {
+            throw new ConnectionPoolException("Could not get connection: pool is closed");
+        }
         try {
-            operationLock.lock();
-            if (closed) {
-                throw new ConnectionPoolException("Could not get connection: pool is closed");
-            }
             ProxyConnection connection = idlingConnections.take();
             while (connection.isClosed()) {
                 allConnections.remove(connection);
@@ -78,14 +78,12 @@ public enum ConnectionPool {
             throw new ConnectionPoolException("InterruptedException while getting connection", exception);
         } catch (SQLException exception) {
             throw new ConnectionPoolException("SQLException while getting connection", exception);
-        }finally {
-            operationLock.unlock();
         }
     }
 
     public void closePool() {
         try {
-            closingLock.lock();
+            lock.lock();
             closed = true;
             for (int i = 0; i < allConnections.size(); i++) {
                 try {
@@ -99,21 +97,20 @@ public enum ConnectionPool {
             }
             deregisterDrivers();
         } finally {
-            closingLock.unlock();
+            lock.unlock();
         }
     }
 
     void releaseConnection(ProxyConnection connection) {
         try {
-            operationLock.lock();
-            if (allConnections.contains(connection)) {
+            if (allConnections.contains(connection) && !connection.isClosed()) {
                 idlingConnections.put(connection);
                 logger.log(Level.DEBUG, "connection " + connection + " released");
             }
         } catch (InterruptedException exception) {
             logger.log(Level.ERROR, "InterruptedException thrown while releasing connection", exception);
-        } finally {
-            operationLock.unlock();
+        } catch (SQLException exception) {
+            logger.log(Level.ERROR, "unable to check if connection is closed", exception);
         }
     }
 
@@ -138,28 +135,23 @@ public enum ConnectionPool {
     void removeClosedConnections() {
         logger.log(Level.TRACE, "removeClosedConnections start");
         try {
-            closingLock.lock();
+            lock.lock();
             if (!closed) {
-                try {
-                    cleaningLock.lock();
-                    for (ProxyConnection connection : allConnections) {
-                        try {
-                            if (connection.isClosed()) {
-                                allConnections.remove(connection);
-                                idlingConnections.remove(connection);
-                                logger.log(Level.DEBUG, "connection " + connection + " removed from the pool");
-                                addConnection();
-                            }
-                        } catch (SQLException e) {
-                            logger.log(Level.ERROR, "SQLException while checking if connection is closed", e);
+                for (ProxyConnection connection : allConnections) {
+                    try {
+                        if (connection.isClosed()) {
+                            allConnections.remove(connection);
+                            idlingConnections.remove(connection);
+                            logger.log(Level.DEBUG, "connection " + connection + " removed from the pool");
+                            addConnection();
                         }
+                    } catch (SQLException e) {
+                        logger.log(Level.ERROR, "SQLException while checking if connection is closed", e);
                     }
-                } finally {
-                    cleaningLock.unlock();
                 }
             }
         } finally {
-            closingLock.unlock();
+            lock.unlock();
         }
         logger.log(Level.TRACE, "removeClosedConnections end");
     }
