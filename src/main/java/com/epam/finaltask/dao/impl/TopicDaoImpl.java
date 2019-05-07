@@ -46,7 +46,11 @@ public class TopicDaoImpl extends AbstractDao<Topic> implements TopicDao {
             textClob.setString(1, entity.getText());
             statement.setClob(3, textClob);
 
-            statement.setLong(4, entity.getAccount().getAccountId());
+            Account account = entity.getAccount();
+            if (account == null) {
+                throw new PersistenceException("Unable to create topic without specified account");
+            }
+            statement.setLong(4, account.getAccountId());
             statement.setBoolean(5, entity.isHidden());
             int result = statement.executeUpdate();
             return result == 1;
@@ -184,11 +188,12 @@ public class TopicDaoImpl extends AbstractDao<Topic> implements TopicDao {
             textClob.setString(1, entity.getText());
             statement.setClob(3, textClob);
             statement.setObject(4, entity.getDate());
-            statement.setBoolean(5, entity.isHidden());
             Account account = entity.getAccount();
             if (account == null) {
                 return false;
             }
+            statement.setLong(5, account.getAccountId());
+            statement.setBoolean(6, entity.isHidden());
             statement.setLong(5, account.getAccountId());
             int result = statement.executeUpdate();
             return result == 1;

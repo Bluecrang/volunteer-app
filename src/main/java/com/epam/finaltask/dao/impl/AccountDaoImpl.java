@@ -9,6 +9,7 @@ import javax.sql.rowset.serial.SerialBlob;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Types;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
@@ -124,9 +125,15 @@ public class AccountDaoImpl extends AbstractDao<Account> implements AccountDao {
         boolean verified = resultSet.getBoolean(7);
         boolean blocked = resultSet.getBoolean(8);
         String salt = resultSet.getString(9);
-        String avatar = Base64.encodeBase64String(resultSet.getBytes(10));
+        byte[] avatar = resultSet.getBytes(10);
+        String avatarBase64;
+        if (avatar != null) {
+            avatarBase64 = Base64.encodeBase64String(avatar);
+        } else {
+            avatarBase64 = null;
+        }
         return new Account(accountId, login, passwordHash, email, AccessLevel.valueOf(accountType.toUpperCase()),
-                rating, verified, blocked, salt, avatar);
+                rating, verified, blocked, salt, avatarBase64);
     }
 
     @Override
@@ -178,7 +185,12 @@ public class AccountDaoImpl extends AbstractDao<Account> implements AccountDao {
             statement.setBoolean(6, entity.isVerified());
             statement.setBoolean(7, entity.isBlocked());
             statement.setString(8, entity.getSalt());
-            statement.setBlob(9, new SerialBlob(Base64.decodeBase64(entity.getAvatarBase64())));
+            byte[] avatar = Base64.decodeBase64(entity.getAvatarBase64());
+            if (avatar != null) {
+                statement.setBlob(9, new SerialBlob(avatar));
+            } else {
+                statement.setNull(9, Types.BLOB);
+            }
             int result = statement.executeUpdate();
             return result == 1;
         } catch (SQLException e) {
@@ -200,7 +212,12 @@ public class AccountDaoImpl extends AbstractDao<Account> implements AccountDao {
             statement.setBoolean(6, entity.isVerified());
             statement.setBoolean(7, entity.isBlocked());
             statement.setString(8, entity.getSalt());
-            statement.setBlob(9, new SerialBlob(Base64.decodeBase64(entity.getAvatarBase64())));
+            byte[] avatar = Base64.decodeBase64(entity.getAvatarBase64());
+            if (avatar != null) {
+                statement.setBlob(9, new SerialBlob(avatar));
+            } else {
+                statement.setNull(9, Types.BLOB);
+            }
             statement.setLong(10, entity.getAccountId());
             return statement.executeUpdate();
         } catch (SQLException e) {
