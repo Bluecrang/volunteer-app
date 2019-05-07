@@ -51,9 +51,10 @@ public class AccountDaoImpl extends AbstractDao<Account> implements AccountDao {
 
     public int findAccountCount() throws PersistenceException {
         try (PreparedStatement statement = getConnection().prepareStatement(FIND_ACCOUNT_COUNT)){
-            ResultSet resultSet = statement.executeQuery();
-            if (resultSet.next()) {
-                return resultSet.getInt(1);
+            try (ResultSet resultSet = statement.executeQuery()) {
+                if (resultSet.next()) {
+                    return resultSet.getInt(1);
+                }
             }
         } catch (SQLException e) {
             throw new PersistenceException("SQLException while finding page accounts sorted by rating", e);
@@ -66,9 +67,10 @@ public class AccountDaoImpl extends AbstractDao<Account> implements AccountDao {
         try (PreparedStatement statement = getConnection().prepareStatement(FIND_ACCOUNTS_IN_RANGE_SORT_BY_RATING)){
             statement.setInt(1, numberOfAccountsPerPage);
             statement.setInt(2, (startPage - 1) * numberOfAccountsPerPage);
-            ResultSet resultSet = statement.executeQuery();
-            while (resultSet.next()) {
-                accountList.add(createAccountFromResultSet(resultSet));
+            try (ResultSet resultSet = statement.executeQuery()) {
+                while (resultSet.next()) {
+                    accountList.add(createAccountFromResultSet(resultSet));
+                }
             }
         } catch (SQLException e) {
             throw new PersistenceException("SQLException while finding page accounts sorted by rating", e);
@@ -83,9 +85,10 @@ public class AccountDaoImpl extends AbstractDao<Account> implements AccountDao {
         Account account = null;
         try (PreparedStatement statement = getConnection().prepareStatement(FIND_ACCOUNT_BY_LOGIN)){
             statement.setString(1, login);
-            ResultSet resultSet = statement.executeQuery();
-            if (resultSet.next()) {
-                account = createAccountFromResultSet(resultSet);
+            try (ResultSet resultSet = statement.executeQuery()) {
+                if (resultSet.next()) {
+                    account = createAccountFromResultSet(resultSet);
+                }
             }
         } catch (SQLException e) {
             throw new PersistenceException("SQLException while finding by id", e);
@@ -100,9 +103,10 @@ public class AccountDaoImpl extends AbstractDao<Account> implements AccountDao {
         Account account = null;
         try (PreparedStatement statement = getConnection().prepareStatement(FIND_ACCOUNT_BY_EMAIL)){
             statement.setString(1, email);
-            ResultSet resultSet = statement.executeQuery();
-            if (resultSet.next()) {
-                account = createAccountFromResultSet(resultSet);
+            try (ResultSet resultSet = statement.executeQuery()) {
+                if (resultSet.next()) {
+                    account = createAccountFromResultSet(resultSet);
+                }
             }
         } catch (SQLException e) {
             throw new PersistenceException("SQLException while finding by email", e);
@@ -128,8 +132,8 @@ public class AccountDaoImpl extends AbstractDao<Account> implements AccountDao {
     @Override
     public List<Account> findAll() throws PersistenceException {
         List<Account> list = new ArrayList<>();
-        try (PreparedStatement statement = getConnection().prepareStatement(FIND_ALL_ACCOUNTS)){
-            ResultSet resultSet = statement.executeQuery();
+        try (PreparedStatement statement = getConnection().prepareStatement(FIND_ALL_ACCOUNTS);
+             ResultSet resultSet = statement.executeQuery()){
             while (resultSet.next()) {
                 list.add(createAccountFromResultSet(resultSet));
             }
@@ -144,9 +148,10 @@ public class AccountDaoImpl extends AbstractDao<Account> implements AccountDao {
         Account account = null;
         try (PreparedStatement statement = getConnection().prepareStatement(FIND_ACCOUNT_BY_ID)) {
             statement.setLong(1, id);
-            ResultSet resultSet = statement.executeQuery();
-            if (resultSet.next()) {
-                account = createAccountFromResultSet(resultSet);
+            try (ResultSet resultSet = statement.executeQuery()) {
+                if (resultSet.next()) {
+                    account = createAccountFromResultSet(resultSet);
+                }
             }
         } catch (SQLException e) {
             throw new PersistenceException("SQLException while finding by id", e);

@@ -40,23 +40,24 @@ public class MessageDaoImpl extends AbstractDao<Message> implements MessageDao {
             statement.setLong(1, topicId);
             statement.setInt(2, numberOfMessagesPerPage);
             statement.setInt(3, (startPage - 1) * numberOfMessagesPerPage);
-            ResultSet resultSet = statement.executeQuery();
-            while (resultSet.next()) {
-                long messageId = resultSet.getLong(1);
-                Clob textClob = resultSet.getClob(2);
-                long accountId = resultSet.getLong(3);
-                LocalDateTime date = resultSet.getObject(4, LocalDateTime.class);
-                long resultSetTopicId = resultSet.getLong(5);
-                String text;
-                try (Reader titleReader = textClob.getCharacterStream()) {
-                    text = IOUtils.toString(titleReader);
+            try (ResultSet resultSet = statement.executeQuery()) {
+                while (resultSet.next()) {
+                    long messageId = resultSet.getLong(1);
+                    Clob textClob = resultSet.getClob(2);
+                    long accountId = resultSet.getLong(3);
+                    LocalDateTime date = resultSet.getObject(4, LocalDateTime.class);
+                    long resultSetTopicId = resultSet.getLong(5);
+                    String text;
+                    try (Reader titleReader = textClob.getCharacterStream()) {
+                        text = IOUtils.toString(titleReader);
+                    }
+                    messageList.add(new Message(messageId, text, new Account(accountId), date, new Topic(resultSetTopicId)));
                 }
-                messageList.add(new Message(messageId, text, new Account(accountId), date, new Topic(resultSetTopicId)));
+            } catch (IOException e) {
+                throw new PersistenceException("IOException while trying to read text clob");
             }
         } catch (SQLException e) {
             throw new PersistenceException("SQLException while finding page accounts sorted by rating", e);
-        } catch (IOException e) {
-            throw new PersistenceException("IOException while trying to read text clob");
         }
         return messageList;
     }
@@ -64,9 +65,10 @@ public class MessageDaoImpl extends AbstractDao<Message> implements MessageDao {
     public int countMessagesByTopic(long topicId) throws PersistenceException {
         try (PreparedStatement preparedStatement = getConnection().prepareStatement(COUNT_MESSAGES_WITH_CHOSEN_TOPIC)) {
             preparedStatement.setLong(1, topicId);
-            ResultSet resultSet = preparedStatement.executeQuery();
-            if (resultSet.next()) {
-                return resultSet.getInt(1);
+            try (ResultSet resultSet = preparedStatement.executeQuery()) {
+                if (resultSet.next()) {
+                    return resultSet.getInt(1);
+                }
             }
         } catch (SQLException e) {
             throw new PersistenceException(e);
@@ -78,23 +80,24 @@ public class MessageDaoImpl extends AbstractDao<Message> implements MessageDao {
         List<Message> list = new ArrayList<>();
         try (PreparedStatement statement = getConnection().prepareStatement(FIND_MESSAGES_BY_TOPIC_ID)) {
             statement.setLong(1, topicId);
-            ResultSet resultSet = statement.executeQuery();
-            while (resultSet.next()) {
-                long messageId = resultSet.getLong(1);
-                Clob textClob = resultSet.getClob(2);
-                long accountId = resultSet.getLong(3);
-                LocalDateTime date = resultSet.getObject(4, LocalDateTime.class);
-                long resultSetTopicId = resultSet.getLong(5);
-                String text;
-                try (Reader titleReader = textClob.getCharacterStream()) {
-                    text = IOUtils.toString(titleReader);
+            try (ResultSet resultSet = statement.executeQuery()) {
+                while (resultSet.next()) {
+                    long messageId = resultSet.getLong(1);
+                    Clob textClob = resultSet.getClob(2);
+                    long accountId = resultSet.getLong(3);
+                    LocalDateTime date = resultSet.getObject(4, LocalDateTime.class);
+                    long resultSetTopicId = resultSet.getLong(5);
+                    String text;
+                    try (Reader titleReader = textClob.getCharacterStream()) {
+                        text = IOUtils.toString(titleReader);
+                    }
+                    list.add(new Message(messageId, text, new Account(accountId), date, new Topic(resultSetTopicId)));
                 }
-                list.add(new Message(messageId, text, new Account(accountId), date, new Topic(resultSetTopicId)));
+            } catch (IOException e) {
+                throw new PersistenceException("IOException while working with clob reader", e);
             }
         } catch (SQLException e) {
             throw new PersistenceException("SQLException while executing findFromPositionByTopicId", e);
-        } catch (IOException e) {
-            throw new PersistenceException("IOException while working with clob reader", e);
         }
         return list;
     }
@@ -128,8 +131,8 @@ public class MessageDaoImpl extends AbstractDao<Message> implements MessageDao {
     @Override
     public List<Message> findAll() throws PersistenceException {
         List<Message> list = new ArrayList<>();
-        try (PreparedStatement statement = getConnection().prepareStatement(FIND_ALL_MESSAGES)){
-            ResultSet resultSet = statement.executeQuery();
+        try (PreparedStatement statement = getConnection().prepareStatement(FIND_ALL_MESSAGES);
+             ResultSet resultSet = statement.executeQuery()){
             while (resultSet.next()) {
                 long messageId = resultSet.getLong(1);
                 Clob textClob = resultSet.getClob(2);
@@ -157,24 +160,25 @@ public class MessageDaoImpl extends AbstractDao<Message> implements MessageDao {
         Message message = null;
         try (PreparedStatement statement = getConnection().prepareStatement(FIND_MESSAGE_BY_ID)){
             statement.setLong(1, id);
-            ResultSet resultSet = statement.executeQuery();
-            if (resultSet.next()) {
-                Clob textClob = resultSet.getClob(1);
-                long accountId = resultSet.getLong(2);
-                LocalDateTime date = resultSet.getObject(3, LocalDateTime.class);
-                long topicId = resultSet.getLong(4);
+            try (ResultSet resultSet = statement.executeQuery()) {
+                if (resultSet.next()) {
+                    Clob textClob = resultSet.getClob(1);
+                    long accountId = resultSet.getLong(2);
+                    LocalDateTime date = resultSet.getObject(3, LocalDateTime.class);
+                    long topicId = resultSet.getLong(4);
 
-                String text;
-                try (Reader titleReader = textClob.getCharacterStream()) {
-                    text = IOUtils.toString(titleReader);
+                    String text;
+                    try (Reader titleReader = textClob.getCharacterStream()) {
+                        text = IOUtils.toString(titleReader);
+                    }
+
+                    message = new Message(id, text, new Account(accountId), date, new Topic(topicId));
                 }
-
-                message = new Message(id, text, new Account(accountId), date, new Topic(topicId));
+            } catch (IOException e) {
+                throw new PersistenceException("IOException while working with clob reader", e);
             }
         } catch (SQLException e) {
             throw new PersistenceException("SQLException while finding by id", e);
-        } catch (IOException e) {
-            throw new PersistenceException("IOException while working with clob reader", e);
         }
         return message;
     }
