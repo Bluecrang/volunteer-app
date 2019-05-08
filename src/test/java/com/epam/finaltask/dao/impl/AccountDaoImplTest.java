@@ -3,10 +3,7 @@ package com.epam.finaltask.dao.impl;
 import com.epam.finaltask.entity.AccessLevel;
 import com.epam.finaltask.entity.Account;
 import org.testng.Assert;
-import org.testng.annotations.AfterClass;
-import org.testng.annotations.BeforeClass;
-import org.testng.annotations.BeforeMethod;
-import org.testng.annotations.Test;
+import org.testng.annotations.*;
 
 import java.io.IOException;
 import java.sql.Connection;
@@ -19,6 +16,8 @@ import static org.testng.Assert.fail;
 
 public class AccountDaoImplTest {
 
+    private static final String BEFORE_METHOD_ACCOUNT_LOGIN = "LOGIN";
+    private static final String BEFORE_METHOD_ACCOUNT_MAIL = "mail@mail.com";
     ConnectionManager connectionManager;
     AccountDaoImpl accountDao;
     Connection connection;
@@ -38,17 +37,30 @@ public class AccountDaoImplTest {
 
     @BeforeMethod
     public void initBeforeMethod() {
-        account = new Account("LOGIN", "PASS", "mail@mail.com", AccessLevel.USER,
+        account = new Account(BEFORE_METHOD_ACCOUNT_LOGIN, "PASS", BEFORE_METHOD_ACCOUNT_MAIL, AccessLevel.USER,
         0, true, false, "salt", null);
+    }
+
+    @AfterMethod
+    public void cleanUpDatabaseAccounts() {
+        try {
+            List<Account> actual = accountDao.findAll();
+            for (Account databaseAccount : actual) {
+                if (databaseAccount.getAccountId() != 1) {
+                    accountDao.delete(databaseAccount.getAccountId());
+                }
+            }
+        } catch (PersistenceException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     @Test
     public void findAccountByLoginTest() {
         try {
             accountDao.create(account);
-            Account actual = accountDao.findAccountByLogin("LOGIN");
-            Assert.assertEquals(actual.getLogin(), "LOGIN");
-            accountDao.delete(actual.getAccountId());
+            Account actual = accountDao.findAccountByLogin(BEFORE_METHOD_ACCOUNT_LOGIN);
+            Assert.assertEquals(actual.getLogin(), BEFORE_METHOD_ACCOUNT_LOGIN);
         } catch (PersistenceException e) {
             fail("Unexpected PersistenceException", e);
         }
@@ -59,12 +71,18 @@ public class AccountDaoImplTest {
         try {
             accountDao.create(account);
             List<Account> actual = accountDao.findAll();
-            for (Account databaseAccount : actual) {
-                if (databaseAccount.getAccountId() != 1) {
-                    accountDao.delete(databaseAccount.getAccountId());
-                }
-            }
             Assert.assertEquals(actual.size(), 2);
+        } catch (PersistenceException e) {
+            fail("Unexpected PersistenceException", e);
+        }
+    }
+
+    @Test
+    public void findAccountCountTest() {
+        try {
+            accountDao.create(account);
+            int actual = accountDao.findAccountCount();
+            Assert.assertEquals(actual, 2);
         } catch (PersistenceException e) {
             fail("Unexpected PersistenceException", e);
         }
@@ -74,10 +92,9 @@ public class AccountDaoImplTest {
     public void findEntityByIdTest() {
         try {
             accountDao.create(account);
-            Account accountByLogin = accountDao.findAccountByLogin("LOGIN");
+            Account accountByLogin = accountDao.findAccountByLogin(BEFORE_METHOD_ACCOUNT_LOGIN);
 
             Account actual = accountDao.findEntityById(accountByLogin.getAccountId());
-            accountDao.delete(accountByLogin.getAccountId());
 
             Assert.assertEquals(actual.getLogin(), accountByLogin.getLogin());
         } catch (PersistenceException e) {
@@ -92,8 +109,6 @@ public class AccountDaoImplTest {
 
             Assert.assertTrue(result);
 
-            Account accountByLogin = accountDao.findAccountByLogin("LOGIN");
-            accountDao.delete(accountByLogin.getAccountId());
         } catch (PersistenceException e) {
             fail("Unexpected PersistenceException", e);
         }
@@ -103,15 +118,12 @@ public class AccountDaoImplTest {
     public void updateTest() {
         try {
             accountDao.create(account);
-            Account accountToUpdate = accountDao.findAccountByLogin("LOGIN");
+            Account accountToUpdate = accountDao.findAccountByLogin(BEFORE_METHOD_ACCOUNT_LOGIN);
             accountToUpdate.setPasswordHash("changed");
 
-            accountDao.update(accountToUpdate);
+            int actual = accountDao.update(accountToUpdate);
 
-            Account actual = accountDao.findEntityById(accountToUpdate.getAccountId());
-            accountDao.delete(actual.getAccountId());
-
-            Assert.assertEquals(actual.getPasswordHash(), "changed");
+            Assert.assertEquals(actual, 1);
         } catch (PersistenceException e) {
             fail("Unexpected PersistenceException", e);
         }
@@ -121,9 +133,9 @@ public class AccountDaoImplTest {
     public void findAccountByEmailTest() {
         try {
             accountDao.create(account);
-            Account actual = accountDao.findAccountByEmail("mail@mail.com");
 
-            accountDao.delete(actual.getAccountId());
+            Account actual = accountDao.findAccountByEmail(BEFORE_METHOD_ACCOUNT_MAIL);
+
             Assert.assertEquals(actual.getLogin(), account.getLogin());
         } catch (PersistenceException e) {
             fail("Unexpected PersistenceException", e);
@@ -135,12 +147,9 @@ public class AccountDaoImplTest {
         try {
             account.setRating(3);
             accountDao.create(account);
+
             List<Account> actual = accountDao.findPageAccountsSortByRating(1, 2);
-            for (Account databaseAccount : actual) {
-                if (databaseAccount.getAccountId() != 1) {
-                    accountDao.delete(databaseAccount.getAccountId());
-                }
-            }
+
             Assert.assertEquals(actual.get(1).getRating(), 3);
         } catch (PersistenceException e) {
             fail("Unexpected PersistenceException", e);

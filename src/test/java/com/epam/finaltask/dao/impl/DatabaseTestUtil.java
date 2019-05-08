@@ -13,7 +13,7 @@ public class DatabaseTestUtil {
 
     private static Connection connection;
 
-    public static synchronized Connection initiateDatabaseAndGetConnection() throws SQLException, IOException {
+    public static Connection initiateDatabaseAndGetConnection() throws SQLException, IOException {
         DriverManager.registerDriver(new com.mysql.jdbc.Driver());
         String[] script = String.join("",
                 Files.readAllLines(Paths.get("src/test/resources/test_db_script.sql"), StandardCharsets.UTF_8)).split(";");

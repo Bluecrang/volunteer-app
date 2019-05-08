@@ -3,10 +3,7 @@ package com.epam.finaltask.dao.impl;
 import com.epam.finaltask.entity.Account;
 import com.epam.finaltask.entity.Topic;
 import org.testng.Assert;
-import org.testng.annotations.AfterClass;
-import org.testng.annotations.BeforeClass;
-import org.testng.annotations.BeforeMethod;
-import org.testng.annotations.Test;
+import org.testng.annotations.*;
 
 import java.io.IOException;
 import java.sql.Connection;
@@ -20,6 +17,8 @@ import static org.testng.Assert.fail;
 
 public class TopicDaoImplTest {
 
+    private static final String BEFORE_METHOD_TOPIC_TITLE = "bftitle";
+    private static final String BEFORE_METHOD_TOPIC_TEXT = "bftext";
     ConnectionManager connectionManager;
     TopicDaoImpl topicDao;
     Connection connection;
@@ -39,21 +38,37 @@ public class TopicDaoImplTest {
 
     @BeforeMethod
     public void initBeforeMethod() {
-        topic = new Topic("title",
-            "text",
+        topic = new Topic(BEFORE_METHOD_TOPIC_TITLE,
+                BEFORE_METHOD_TOPIC_TEXT,
                 LocalDateTime.of(2000, 2, 15, 21, 54),
-            new Account(1),
-            false,
-            false);
+                new Account(1),
+                false,
+                false);
+    }
+
+    @AfterMethod
+    public void cleanUpDatabaseTopics() {
+        try {
+            List<Topic> topics = topicDao.findAll();
+            if (topics != null) {
+                for (Topic databaseTopic : topics) {
+                    if (databaseTopic.getTopicId() != 1) {
+                        topicDao.delete(databaseTopic.getTopicId());
+                    }
+                }
+            }
+        } catch (PersistenceException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     @Test
     public void createWithGeneratedDateTest() {
         try {
             topicDao.createWithGeneratedDate(topic);
-            Topic actual = topicDao.findTopicByTitle("title");
-            topicDao.delete(actual.getTopicId());
-            Assert.assertEquals(actual.getText(), topic.getText());
+            topic.setDate(null);
+            Topic actual = topicDao.findTopicByTitle(BEFORE_METHOD_TOPIC_TITLE);
+            Assert.assertNotNull(actual.getDate());
         } catch (PersistenceException e) {
             fail("Unexpected PersistenceException", e);
         }
@@ -70,10 +85,8 @@ public class TopicDaoImplTest {
                     false,
                     false));
             List<Topic> actual = topicDao.findAll();
-            for (Topic databaseTopic : actual) {
-                topicDao.delete(databaseTopic.getTopicId());
-            }
-            Assert.assertEquals(actual.size(), 2);
+
+            Assert.assertEquals(actual.size(), 3);
         } catch (PersistenceException e) {
             fail("Unexpected PersistenceException", e);
         }
@@ -83,10 +96,9 @@ public class TopicDaoImplTest {
     public void findEntityByIdTest() {
         try {
             topicDao.create(topic);
-            Topic topicByTitle = topicDao.findTopicByTitle("title");
+            Topic topicByTitle = topicDao.findTopicByTitle(BEFORE_METHOD_TOPIC_TITLE);
 
             Topic actual = topicDao.findEntityById(topicByTitle.getTopicId());
-            topicDao.delete(topicByTitle.getTopicId());
 
             Assert.assertEquals(actual.getTopicId(), topicByTitle.getTopicId());
         } catch (PersistenceException e) {
@@ -101,8 +113,6 @@ public class TopicDaoImplTest {
 
             Assert.assertTrue(result);
 
-            Topic topicByTitle = topicDao.findTopicByTitle("title");
-            topicDao.delete(topicByTitle.getTopicId());
         } catch (PersistenceException e) {
             fail("Unexpected PersistenceException", e);
         }
@@ -112,15 +122,11 @@ public class TopicDaoImplTest {
     public void updateTest() {
         try {
             topicDao.create(topic);
-            Topic topicToUpdate = topicDao.findTopicByTitle("title");
+            Topic topicToUpdate = topicDao.findTopicByTitle(BEFORE_METHOD_TOPIC_TITLE);
             topicToUpdate.setText("text2");
 
-            topicDao.update(topicToUpdate);
-
-            Topic actual = topicDao.findEntityById(topicToUpdate.getTopicId());
-            topicDao.delete(actual.getTopicId());
-
-            Assert.assertEquals(actual.getText(), "text2");
+            int actual = topicDao.update(topicToUpdate);
+            Assert.assertEquals(actual, 1);
         } catch (PersistenceException e) {
             fail("Unexpected PersistenceException", e);
         }

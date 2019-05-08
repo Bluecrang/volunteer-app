@@ -25,7 +25,7 @@ public class MessageService {
             throws ServiceException {
         try (ConnectionManager connectionManager = new ConnectionManager()) {
             MessageDao messageDao = new MessageDaoImpl(connectionManager);
-            return messageDao.findPageAccountsSortByRating(topicId, currentPage, numberOfMessagesPerPage);
+            return messageDao.findPageMessages(topicId, currentPage, numberOfMessagesPerPage);
         } catch (PersistenceException e) {
             throw new ServiceException(e);
         }
@@ -34,7 +34,7 @@ public class MessageService {
     public int countMessages(long topicId) throws ServiceException {
         try (ConnectionManager connectionManager = new ConnectionManager()) {
             MessageDao messageDao = new MessageDaoImpl(connectionManager);
-            return messageDao.countMessagesByTopic(topicId);
+            return messageDao.countMessagesByTopicId(topicId);
         } catch (PersistenceException e) {
             throw new ServiceException(e);
         }

@@ -5,6 +5,7 @@ import com.epam.finaltask.entity.Account;
 import com.epam.finaltask.entity.Message;
 import com.epam.finaltask.entity.Topic;
 import org.apache.commons.io.IOUtils;
+import org.apache.logging.log4j.Level;
 
 import java.io.IOException;
 import java.io.Reader;
@@ -34,7 +35,7 @@ public class MessageDaoImpl extends AbstractDao<Message> implements MessageDao {
     }
 
     @Override
-    public List<Message> findPageAccountsSortByRating(long topicId, int startPage, int numberOfMessagesPerPage) throws PersistenceException {
+    public List<Message> findPageMessages(long topicId, int startPage, int numberOfMessagesPerPage) throws PersistenceException {
         List<Message> messageList = new LinkedList<>();
         try (PreparedStatement statement = getConnection().prepareStatement(FIND_MESSAGES_IN_RANGE_SORT_BY_DATE)){
             statement.setLong(1, topicId);
@@ -57,12 +58,12 @@ public class MessageDaoImpl extends AbstractDao<Message> implements MessageDao {
                 throw new PersistenceException("IOException while trying to read text clob");
             }
         } catch (SQLException e) {
-            throw new PersistenceException("SQLException while finding page accounts sorted by rating", e);
+            throw new PersistenceException("SQLException while finding page messages", e);
         }
         return messageList;
     }
 
-    public int countMessagesByTopic(long topicId) throws PersistenceException {
+    public int countMessagesByTopicId(long topicId) throws PersistenceException {
         try (PreparedStatement preparedStatement = getConnection().prepareStatement(COUNT_MESSAGES_WITH_CHOSEN_TOPIC)) {
             preparedStatement.setLong(1, topicId);
             try (ResultSet resultSet = preparedStatement.executeQuery()) {
@@ -219,6 +220,7 @@ public class MessageDaoImpl extends AbstractDao<Message> implements MessageDao {
     @Override
     public int update(Message entity) throws PersistenceException {
         if (entity == null) {
+            logger.log(Level.INFO, "cannot update message: entity is null");
             return 0;
         }
         Connection connection = getConnection();
@@ -228,16 +230,18 @@ public class MessageDaoImpl extends AbstractDao<Message> implements MessageDao {
             statement.setClob(1, textClob);
             Account account = entity.getAccount();
             if (account == null) {
+                logger.log(Level.INFO, "cannot update message: account is null");
                 return 0;
             }
             statement.setLong(2, account.getAccountId());
             statement.setObject(3, entity.getDate());
-            statement.setLong(4, entity.getMessageId());
             Topic topic = entity.getTopic();
             if (topic == null) {
+                logger.log(Level.INFO, "cannot update message: topic is null");
                 return 0;
             }
-            statement.setLong(5, topic.getTopicId());
+            statement.setLong(4, topic.getTopicId());
+            statement.setLong(5, entity.getMessageId());
             return statement.executeUpdate();
         } catch (SQLException e) {
             throw new PersistenceException("SQLException while updating", e);

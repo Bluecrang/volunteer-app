@@ -9,7 +9,7 @@ public interface MessageDao extends Dao<Message> {
 
     List<Message> findMessagesByTopicId(long topicId) throws PersistenceException;
     boolean createWithGeneratedDate(Message entity) throws PersistenceException;
-    int countMessagesByTopic(long topicId) throws PersistenceException;
-    List<Message> findPageAccountsSortByRating(long topicId, int startPage, int numberOfMessagesPerPage)
+    int countMessagesByTopicId(long topicId) throws PersistenceException;
+    List<Message> findPageMessages(long topicId, int startPage, int numberOfMessagesPerPage)
             throws PersistenceException;
 }

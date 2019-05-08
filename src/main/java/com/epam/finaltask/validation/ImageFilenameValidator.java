@@ -18,7 +18,7 @@ public class ImageFilenameValidator {
                 String extension = fileName.substring(lastDotIndex + 1);
                 for (String validExtension : extensions) {
                     if (extension.equals(validExtension)) {
-                        logger.log(Level.INFO, "filename " + fileName + "successfully validated");
+                        logger.log(Level.INFO, "filename " + fileName + " successfully validated");
                         return true;
                     }
                 }

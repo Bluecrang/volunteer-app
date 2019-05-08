@@ -113,9 +113,11 @@ public class TopicDaoImpl extends AbstractDao<Topic> implements TopicDao {
                         title = IOUtils.toString(titleReader);
                     }
 
-                    String text;
-                    try (Reader textReader = textClob.getCharacterStream()) {
-                        text = IOUtils.toString(textReader);
+                    String text = null;
+                    if (textClob != null) {
+                        try (Reader textReader = textClob.getCharacterStream()) {
+                            text = IOUtils.toString(textReader);
+                        }
                     }
 
                     list.add(new Topic(topicId, title, text, date, account, closed, hidden));
