@@ -7,11 +7,11 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 
-public abstract class AbstractDao<T extends Entity> implements Dao<T> {
+abstract class AbstractDao<T extends Entity> implements Dao<T> {
 
     private Connection connection;
 
-    public AbstractDao(ConnectionManager connectionManager) {
+    AbstractDao(AbstractConnectionManager connectionManager) {
         this.connection = connectionManager.getConnection();
     }
 

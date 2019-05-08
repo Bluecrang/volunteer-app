@@ -14,7 +14,7 @@ import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
-public class AccountDaoImpl extends AbstractDao<Account> implements AccountDao {
+class AccountDaoImpl extends AbstractDao<Account> implements AccountDao {
 
     private static final String FIND_ALL_ACCOUNTS = "SELECT acc.account_id, acc.login, acc.password, acc.email, " +
             "acc_type.type, acc.rating, acc.verified, acc.blocked, acc.salt, acc.avatar " +
@@ -46,7 +46,7 @@ public class AccountDaoImpl extends AbstractDao<Account> implements AccountDao {
             "LIMIT ? OFFSET ?";
     private static final String FIND_ACCOUNT_COUNT = "SELECT COUNT(account_id) FROM account";
 
-    public AccountDaoImpl(ConnectionManager connectionManager) {
+    public AccountDaoImpl(AbstractConnectionManager connectionManager) {
         super(connectionManager);
     }
 

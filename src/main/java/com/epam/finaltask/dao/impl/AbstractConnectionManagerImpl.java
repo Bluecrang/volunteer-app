@@ -6,10 +6,10 @@ import com.epam.finaltask.connectionpool.ConnectionPoolException;
 import java.sql.Connection;
 import java.sql.SQLException;
 
-public class ConnectionManager implements AutoCloseable {
+class AbstractConnectionManagerImpl extends AbstractConnectionManager {
     private Connection connection;
 
-    public ConnectionManager() throws PersistenceException {
+    public AbstractConnectionManagerImpl() throws PersistenceException {
         try {
             connection = ConnectionPool.instance.getConnection();
         } catch (ConnectionPoolException e) {
@@ -17,6 +17,7 @@ public class ConnectionManager implements AutoCloseable {
         }
     }
 
+    @Override
     public void disableAutoCommit() throws PersistenceException {
         try {
             if (connection.getAutoCommit()) {
@@ -27,6 +28,7 @@ public class ConnectionManager implements AutoCloseable {
         }
     }
 
+    @Override
     public void enableAutoCommit() throws PersistenceException {
         try {
             if (!connection.getAutoCommit()) {
@@ -37,6 +39,7 @@ public class ConnectionManager implements AutoCloseable {
         }
     }
 
+    @Override
     public void commit() throws PersistenceException {
         try {
             connection.commit();
@@ -45,6 +48,7 @@ public class ConnectionManager implements AutoCloseable {
         }
     }
 
+    @Override
     public void rollback() throws PersistenceException {
         try {
             connection.rollback();
@@ -62,6 +66,7 @@ public class ConnectionManager implements AutoCloseable {
         }
     }
 
+    @Override
     Connection getConnection() {
         return connection;
     }

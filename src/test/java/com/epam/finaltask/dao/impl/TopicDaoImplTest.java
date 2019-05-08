@@ -19,14 +19,14 @@ public class TopicDaoImplTest {
 
     private static final String BEFORE_METHOD_TOPIC_TITLE = "bftitle";
     private static final String BEFORE_METHOD_TOPIC_TEXT = "bftext";
-    ConnectionManager connectionManager;
+    AbstractConnectionManagerImpl connectionManager;
     TopicDaoImpl topicDao;
     Connection connection;
     Topic topic;
 
     @BeforeClass
     public void init() {
-        connectionManager = mock(ConnectionManager.class);
+        connectionManager = mock(AbstractConnectionManagerImpl.class);
         try {
             connection = DatabaseTestUtil.initiateDatabaseAndGetConnection();
             when(connectionManager.getConnection()).thenReturn(connection);

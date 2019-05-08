@@ -12,7 +12,7 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
-public class TopicDaoImpl extends AbstractDao<Topic> implements TopicDao {
+class TopicDaoImpl extends AbstractDao<Topic> implements TopicDao {
 
     private static final String FIND_ALL_TOPICS = "SELECT topic_id, closed, title, text, date_posted, account_id, hidden " +
             "FROM topic";
@@ -29,7 +29,7 @@ public class TopicDaoImpl extends AbstractDao<Topic> implements TopicDao {
             "SET closed = ?, title = ?, text = ?, date_posted = ?, account_id = ?, hidden = ? " +
             "WHERE topic_id = ?";
 
-    public TopicDaoImpl(ConnectionManager connectionManager) {
+    public TopicDaoImpl(AbstractConnectionManager connectionManager) {
         super(connectionManager);
     }
 

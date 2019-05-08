@@ -1,13 +1,10 @@
 package com.epam.finaltask.command;
 
-import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
-import javax.servlet.http.Part;
-import java.io.IOException;
-import java.util.*;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
+import java.util.Enumeration;
+import java.util.HashMap;
+import java.util.Map;
 
 public class CommandData {
     private static final int FIRST_ELEMENT_INDEX = 0;

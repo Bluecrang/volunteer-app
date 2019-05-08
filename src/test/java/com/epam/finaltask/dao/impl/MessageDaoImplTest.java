@@ -19,14 +19,14 @@ import static org.testng.Assert.fail;
 public class MessageDaoImplTest {
 
     private static final String BEFORE_METHOD_MESSAGE_TEXT = "text";
-    ConnectionManager connectionManager;
+    AbstractConnectionManagerImpl connectionManager;
     MessageDaoImpl messageDao;
     Connection connection;
     Message message;
 
     @BeforeClass
     public void init() {
-        connectionManager = mock(ConnectionManager.class);
+        connectionManager = mock(AbstractConnectionManagerImpl.class);
         try {
             connection = DatabaseTestUtil.initiateDatabaseAndGetConnection();
             when(connectionManager.getConnection()).thenReturn(connection);

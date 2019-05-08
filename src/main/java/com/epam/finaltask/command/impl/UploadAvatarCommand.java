@@ -1,6 +1,9 @@
 package com.epam.finaltask.command.impl;
 
-import com.epam.finaltask.command.*;
+import com.epam.finaltask.command.CommandData;
+import com.epam.finaltask.command.CommandException;
+import com.epam.finaltask.command.CommandResult;
+import com.epam.finaltask.command.UploadCommand;
 import com.epam.finaltask.entity.Account;
 import com.epam.finaltask.service.AccountService;
 import com.epam.finaltask.service.ServiceException;

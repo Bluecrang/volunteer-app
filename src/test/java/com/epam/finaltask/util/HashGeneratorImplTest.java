@@ -3,9 +3,9 @@ package com.epam.finaltask.util;
 import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
 
-public class HashGeneratorTest {
+public class HashGeneratorImplTest {
 
-    HashGenerator hashGenerator = new HashGenerator();
+    HashGeneratorImpl hashGeneratorImpl = new HashGeneratorImpl();
 
     @DataProvider(name = "ValidParametersProvider")
     public Object[][] provideValidParameters() {
@@ -19,7 +19,7 @@ public class HashGeneratorTest {
 
     @Test(dataProvider = "ValidParametersProvider")
     public void hashTestValidParameters(String data, String salt, String algorithm) {
-        hashGenerator.hash(data, salt, algorithm);
+        hashGeneratorImpl.hash(data, salt, algorithm);
     }
 
     @Test(expectedExceptions = RuntimeException.class)
@@ -27,7 +27,7 @@ public class HashGeneratorTest {
         String data = "data";
         String salt = "salt";
         String algorithm = "Nonexistent algorithm";
-        hashGenerator.hash(data, salt, algorithm);
+        hashGeneratorImpl.hash(data, salt, algorithm);
     }
 
     @Test(expectedExceptions = RuntimeException.class)
@@ -35,6 +35,6 @@ public class HashGeneratorTest {
         String data = "data";
         String salt = "salt";
         String algorithm = null;
-        hashGenerator.hash(data, salt, algorithm);
+        hashGeneratorImpl.hash(data, salt, algorithm);
     }
 }

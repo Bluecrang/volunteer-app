@@ -1,11 +1,11 @@
 package com.epam.finaltask.service;
 
 import com.epam.finaltask.dao.AccountDao;
+import com.epam.finaltask.dao.ConnectionManagerFactory;
+import com.epam.finaltask.dao.DaoFactory;
 import com.epam.finaltask.dao.TopicDao;
-import com.epam.finaltask.dao.impl.AccountDaoImpl;
-import com.epam.finaltask.dao.impl.ConnectionManager;
+import com.epam.finaltask.dao.impl.AbstractConnectionManager;
 import com.epam.finaltask.dao.impl.PersistenceException;
-import com.epam.finaltask.dao.impl.TopicDaoImpl;
 import com.epam.finaltask.entity.AccessLevel;
 import com.epam.finaltask.entity.Account;
 import com.epam.finaltask.entity.Topic;
@@ -16,9 +16,17 @@ import org.apache.logging.log4j.Logger;
 
 import java.util.List;
 
-public class TopicService {
+public class TopicService extends AbstractService {
 
     private static final Logger logger = LogManager.getLogger();
+
+    public TopicService(DaoFactory daoFactory, ConnectionManagerFactory connectionManagerFactory) {
+        super(daoFactory, connectionManagerFactory);
+    }
+
+    public TopicService() {
+        super();
+    }
 
     public boolean closeTopic(Account closingAccount, long topicId) throws ServiceException {
         if (closingAccount == null) {
@@ -29,10 +37,10 @@ public class TopicService {
             logger.log(Level.WARN, "unable to close topic: account id=" + closingAccount.getAccountId() + " does not have rights to close topic");
             return false;
         }
-        try (ConnectionManager connectionManager = new ConnectionManager()) {
+        try (AbstractConnectionManager connectionManager = connectionManagerFactory.createConnectionManager()) {
             connectionManager.disableAutoCommit();
             try {
-                TopicDao topicDao = new TopicDaoImpl(connectionManager);
+                TopicDao topicDao = daoFactory.createTopicDao(connectionManager);
                 Topic topic = topicDao.findEntityById(topicId);
                 if (topic == null) {
                     logger.log(Level.WARN, "could not find topic to close");
@@ -57,10 +65,10 @@ public class TopicService {
             return false;
         }
         if (account.getAccessLevel().equals(AccessLevel.ADMIN)) {
-            try (ConnectionManager connectionManager = new ConnectionManager()) {
+            try (AbstractConnectionManager connectionManager = connectionManagerFactory.createConnectionManager()) {
                 connectionManager.disableAutoCommit();
                 try {
-                    TopicDao topicDao = new TopicDaoImpl(connectionManager);
+                    TopicDao topicDao = daoFactory.createTopicDao(connectionManager);
                     Topic topic = topicDao.findEntityById(topicId);
                     if (topic == null) {
                         logger.log(Level.WARN, "could not find topic to hide, topicId=" + topicId);
@@ -85,10 +93,10 @@ public class TopicService {
         if (title == null) {
             return null;
         }
-        try (ConnectionManager connectionManager = new ConnectionManager()) {
+        try (AbstractConnectionManager connectionManager = connectionManagerFactory.createConnectionManager()) {
             connectionManager.disableAutoCommit();
             try {
-                TopicDao topicDao = new TopicDaoImpl(connectionManager);
+                TopicDao topicDao = daoFactory.createTopicDao(connectionManager);
                 Topic topic = topicDao.findTopicByTitle(title);
                 if (topic == null) {
                     return null;
@@ -123,24 +131,23 @@ public class TopicService {
             logger.log(Level.WARN, "text is null or blank, cannot create topic");
             return false;
         }
-        try (ConnectionManager connectionManager = new ConnectionManager()) {
+        try (AbstractConnectionManager connectionManager = connectionManagerFactory.createConnectionManager()) {
             Topic topic = new Topic();
             topic.setTitle(title);
             topic.setText(text);
             topic.setAccount(account);
-            TopicDao topicDao = new TopicDaoImpl(connectionManager);
-            topicDao.createWithGeneratedDate(topic);
-            return true;
+            TopicDao topicDao = daoFactory.createTopicDao(connectionManager);
+            return topicDao.createWithGeneratedDate(topic);
         } catch (PersistenceException e) {
             throw new ServiceException(e);
         }
     }
 
     public Topic findTopicById(long topicId) throws ServiceException {
-        try (ConnectionManager connectionManager = new ConnectionManager()) {
+        try (AbstractConnectionManager connectionManager = connectionManagerFactory.createConnectionManager()) {
             connectionManager.disableAutoCommit();
             try {
-                TopicDao topicDao = new TopicDaoImpl(connectionManager);
+                TopicDao topicDao = daoFactory.createTopicDao(connectionManager);
                 Topic topic = topicDao.findEntityById(topicId);
                 AccountService accountService = new AccountService();
                 Account account = accountService.findAccountById(topic.getAccount().getAccountId(), connectionManager);
@@ -158,11 +165,11 @@ public class TopicService {
     }
 
     public List<Topic> findAllTopics() throws ServiceException {
-        try (ConnectionManager connectionManager = new ConnectionManager()) {
+        try (AbstractConnectionManager connectionManager = connectionManagerFactory.createConnectionManager()) {
             connectionManager.disableAutoCommit();
             try {
-                TopicDao topicDao = new TopicDaoImpl(connectionManager);
-                AccountDao accountDao = new AccountDaoImpl(connectionManager);
+                TopicDao topicDao = daoFactory.createTopicDao(connectionManager);
+                AccountDao accountDao = daoFactory.createAccountDao(connectionManager);
                 List<Topic> topics = topicDao.findAll();
                 for (Topic topic : topics) {
                     Account account = accountDao.findEntityById(topic.getAccount().getAccountId());

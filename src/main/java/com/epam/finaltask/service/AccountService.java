@@ -1,8 +1,9 @@
 package com.epam.finaltask.service;
 
 import com.epam.finaltask.dao.AccountDao;
-import com.epam.finaltask.dao.impl.AccountDaoImpl;
-import com.epam.finaltask.dao.impl.ConnectionManager;
+import com.epam.finaltask.dao.ConnectionManagerFactory;
+import com.epam.finaltask.dao.DaoFactory;
+import com.epam.finaltask.dao.impl.AbstractConnectionManager;
 import com.epam.finaltask.dao.impl.PersistenceException;
 import com.epam.finaltask.entity.AccessLevel;
 import com.epam.finaltask.entity.Account;
@@ -18,14 +19,31 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.List;
 
-public class AccountService {
+public class AccountService extends AbstractService {
+
+    public AccountService(DaoFactory daoFactory, ConnectionManagerFactory connectionManagerFactory) {
+        super(daoFactory, connectionManagerFactory);
+    }
+
+    public AccountService() {
+        super();
+    }
 
     private static final Logger logger = LogManager.getLogger();
 
     public int countAccounts() throws ServiceException {
-        try (ConnectionManager connectionManager = new ConnectionManager()) {
-            AccountDao accountDao = new AccountDaoImpl(connectionManager);
+        try (AbstractConnectionManager connectionManager = connectionManagerFactory.createConnectionManager()) {
+            AccountDao accountDao = daoFactory.createAccountDao(connectionManager);
             return accountDao.findAccountCount();
+        } catch (PersistenceException e) {
+            throw new ServiceException(e);
+        }
+    }
+
+    public List<Account> findRatingPageAccounts(int page, int numberOfAccountsPerPage) throws ServiceException {
+        try (AbstractConnectionManager connectionManager = connectionManagerFactory.createConnectionManager()) {
+            AccountDao accountDao = daoFactory.createAccountDao(connectionManager);
+            return accountDao.findPageAccountsSortByRating(page, numberOfAccountsPerPage);
         } catch (PersistenceException e) {
             throw new ServiceException(e);
         }
@@ -34,13 +52,13 @@ public class AccountService {
     public boolean addValueToRating(Account actingAccount, long accountId, int value) throws ServiceException {
         if (actingAccount != null && actingAccount.getAccessLevel() != null &&
                 actingAccount.getAccessLevel().equals(AccessLevel.ADMIN)) {
-            try (ConnectionManager connectionManager = new ConnectionManager()) {
+            try (AbstractConnectionManager connectionManager = connectionManagerFactory.createConnectionManager()) {
                 connectionManager.disableAutoCommit();
                 try {
                     Account account = findAccountById(accountId, connectionManager);
                     if (account != null) {
                         account.setRating(account.getRating() + value);
-                        AccountDao accountDao = new AccountDaoImpl(connectionManager);
+                        AccountDao accountDao = daoFactory.createAccountDao(connectionManager);
                         if (accountDao.update(account) == 1) {
                             connectionManager.commit();
                             return true;
@@ -58,25 +76,16 @@ public class AccountService {
         return false;
     }
 
-    public List<Account> findRatingPageAccounts(int page, int numberOfAccountsPerPage) throws ServiceException {
-        try (ConnectionManager connectionManager = new ConnectionManager()) {
-            AccountDao accountDao = new AccountDaoImpl(connectionManager);
-            return accountDao.findPageAccountsSortByRating(page, numberOfAccountsPerPage);
-        } catch (PersistenceException e) {
-            throw new ServiceException(e);
-        }
-    }
-
-    public boolean changeAccountBlockState(Account blockingAccount, long accountId, boolean blocked) throws ServiceException {
+    public boolean changeAccountBlockState(Account blockingAccount, long accountId, boolean block) throws ServiceException {
         if (blockingAccount != null && blockingAccount.getAccessLevel() != null &&
                 blockingAccount.getAccessLevel().equals(AccessLevel.ADMIN)) {
-            try (ConnectionManager connectionManager = new ConnectionManager()) {
+            try (AbstractConnectionManager connectionManager = connectionManagerFactory.createConnectionManager()) {
                 connectionManager.disableAutoCommit();
                 try {
                     Account account = findAccountById(accountId, connectionManager);
                     if (account != null) {
-                        account.setBlocked(blocked);
-                        AccountDao accountDao = new AccountDaoImpl(connectionManager);
+                        account.setBlocked(block);
+                        AccountDao accountDao = daoFactory.createAccountDao(connectionManager);
                         if (accountDao.update(account) == 1) {
                             connectionManager.commit();
                             return true;
@@ -92,14 +101,6 @@ public class AccountService {
             }
         }
         return false;
-    }
-
-    public Account findAccountById(long accountId) throws ServiceException {
-        try (ConnectionManager connectionManager = new ConnectionManager()) {
-            return findAccountById(accountId, connectionManager);
-        } catch (PersistenceException e) {
-            throw new ServiceException(e);
-        }
     }
 
     public boolean updateAvatar(Account account, Part part) throws ServiceException {
@@ -116,8 +117,8 @@ public class AccountService {
             logger.log(Level.WARN, "cannot update avatar: file has wrong extension");
             return false;
         }
-        try (ConnectionManager connectionManager = new ConnectionManager()) {
-            AccountDao accountDao = new AccountDaoImpl(connectionManager);
+        try (AbstractConnectionManager connectionManager = connectionManagerFactory.createConnectionManager()) {
+            AccountDao accountDao = daoFactory.createAccountDao(connectionManager);
             Account accountFromDatabase = accountDao.findEntityById(account.getAccountId());
             try (InputStream inputStream = part.getInputStream()){
                 accountFromDatabase.setAvatarBase64(Base64.encodeBase64String(IOUtils.toByteArray(inputStream)));
@@ -130,8 +131,16 @@ public class AccountService {
         }
     }
 
-    Account findAccountById(long accountId, ConnectionManager connectionManager) throws ServiceException {
-        AccountDaoImpl accountDao = new AccountDaoImpl(connectionManager);
+    public Account findAccountById(long accountId) throws ServiceException {
+        try (AbstractConnectionManager connectionManager = connectionManagerFactory.createConnectionManager()) {
+            return findAccountById(accountId, connectionManager);
+        } catch (PersistenceException e) {
+            throw new ServiceException(e);
+        }
+    }
+
+    Account findAccountById(long accountId, AbstractConnectionManager connectionManager) throws ServiceException {
+        AccountDao accountDao = daoFactory.createAccountDao(connectionManager);
         try {
             return accountDao.findEntityById(accountId);
         } catch (PersistenceException e) {

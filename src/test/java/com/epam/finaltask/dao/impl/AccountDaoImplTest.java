@@ -18,14 +18,14 @@ public class AccountDaoImplTest {
 
     private static final String BEFORE_METHOD_ACCOUNT_LOGIN = "LOGIN";
     private static final String BEFORE_METHOD_ACCOUNT_MAIL = "mail@mail.com";
-    ConnectionManager connectionManager;
+    AbstractConnectionManagerImpl connectionManager;
     AccountDaoImpl accountDao;
     Connection connection;
     Account account;
 
     @BeforeClass
     public void init() {
-        connectionManager = mock(ConnectionManager.class);
+        connectionManager = mock(AbstractConnectionManagerImpl.class);
         try {
             connection = DatabaseTestUtil.initiateDatabaseAndGetConnection();
             when(connectionManager.getConnection()).thenReturn(connection);

@@ -15,7 +15,7 @@ import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
-public class MessageDaoImpl extends AbstractDao<Message> implements MessageDao {
+class MessageDaoImpl extends AbstractDao<Message> implements MessageDao {
 
     private static final String FIND_ALL_MESSAGES = "SELECT message_id, message, account_id, date_posted, topic_id FROM message";
     private static final String FIND_MESSAGE_BY_ID = "SELECT message, account_id, date_posted, topic_id FROM message WHERE message_id = ?";
@@ -30,7 +30,7 @@ public class MessageDaoImpl extends AbstractDao<Message> implements MessageDao {
     private static final String FIND_MESSAGES_IN_RANGE_SORT_BY_DATE = "SELECT message_id, message, account_id, date_posted, topic_id " +
             "FROM message WHERE topic_id = ? ORDER BY date_posted LIMIT ? OFFSET ?";
 
-    public MessageDaoImpl(ConnectionManager connectionManager) {
+    public MessageDaoImpl(AbstractConnectionManager connectionManager) {
         super(connectionManager);
     }
 
