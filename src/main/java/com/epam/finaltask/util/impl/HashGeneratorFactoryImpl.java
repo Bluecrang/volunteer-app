@@ -1,4 +1,7 @@
-package com.epam.finaltask.util;
+package com.epam.finaltask.util.impl;
+
+import com.epam.finaltask.util.HashGenerator;
+import com.epam.finaltask.util.HashGeneratorFactory;
 
 public class HashGeneratorFactoryImpl implements HashGeneratorFactory {
 

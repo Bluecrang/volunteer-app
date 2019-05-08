@@ -4,6 +4,7 @@ import com.epam.finaltask.dao.AccountDao;
 import com.epam.finaltask.dao.ConnectionManagerFactory;
 import com.epam.finaltask.dao.DaoFactory;
 import com.epam.finaltask.dao.impl.AbstractConnectionManager;
+import com.epam.finaltask.dao.impl.ConnectionManagerFactoryImpl;
 import com.epam.finaltask.dao.impl.PersistenceException;
 import com.epam.finaltask.entity.AccessLevel;
 import com.epam.finaltask.entity.Account;
@@ -23,6 +24,11 @@ public class AccountService extends AbstractService {
 
     public AccountService(DaoFactory daoFactory, ConnectionManagerFactory connectionManagerFactory) {
         super(daoFactory, connectionManagerFactory);
+    }
+
+    public AccountService(DaoFactory daoFactory) {
+        super(daoFactory);
+        this.connectionManagerFactory = new ConnectionManagerFactoryImpl();
     }
 
     public AccountService() {

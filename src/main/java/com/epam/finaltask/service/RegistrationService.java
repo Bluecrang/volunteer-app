@@ -8,6 +8,8 @@ import com.epam.finaltask.dao.impl.PersistenceException;
 import com.epam.finaltask.entity.AccessLevel;
 import com.epam.finaltask.entity.Account;
 import com.epam.finaltask.util.*;
+import com.epam.finaltask.util.impl.HashGeneratorFactoryImpl;
+import com.epam.finaltask.util.impl.SaltGenerator;
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;

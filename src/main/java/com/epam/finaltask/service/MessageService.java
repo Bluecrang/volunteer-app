@@ -115,7 +115,7 @@ public class MessageService extends AbstractService {
         }
     }
 
-    public List<Message> findMessagesByTopicId(long topicId) throws ServiceException {
+    public List<Message> findMessagesByTopicId(long topicId) throws ServiceException {  //TODO remove?
         try (AbstractConnectionManager connectionManager = connectionManagerFactory.createConnectionManager()) {
             connectionManager.disableAutoCommit();
             try {

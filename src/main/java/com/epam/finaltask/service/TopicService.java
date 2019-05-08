@@ -90,7 +90,8 @@ public class TopicService extends AbstractService {
     }
 
     public Topic findTopicByTitle(String title) throws ServiceException {
-        if (title == null) {
+        if (title == null || StringUtils.isBlank(title)) {
+            logger.log(Level.WARN, "cannot find topic by title: title is null or blank");
             return null;
         }
         try (AbstractConnectionManager connectionManager = connectionManagerFactory.createConnectionManager()) {
@@ -99,9 +100,10 @@ public class TopicService extends AbstractService {
                 TopicDao topicDao = daoFactory.createTopicDao(connectionManager);
                 Topic topic = topicDao.findTopicByTitle(title);
                 if (topic == null) {
+                    logger.log(Level.WARN, "cannot find topic by title");
                     return null;
                 }
-                AccountService accountService = new AccountService();
+                AccountService accountService = new AccountService(daoFactory);
                 Account account = accountService.findAccountById(topic.getAccount().getAccountId(), connectionManager);
                 connectionManager.commit();
                 if (account == null) {

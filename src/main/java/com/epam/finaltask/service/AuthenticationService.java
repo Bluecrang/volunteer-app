@@ -9,7 +9,7 @@ import com.epam.finaltask.entity.Account;
 import com.epam.finaltask.util.ApplicationConstants;
 import com.epam.finaltask.util.HashGenerator;
 import com.epam.finaltask.util.HashGeneratorFactory;
-import com.epam.finaltask.util.HashGeneratorFactoryImpl;
+import com.epam.finaltask.util.impl.HashGeneratorFactoryImpl;
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;

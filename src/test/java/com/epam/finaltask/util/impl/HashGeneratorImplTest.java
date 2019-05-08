@@ -1,4 +1,4 @@
-package com.epam.finaltask.util;
+package com.epam.finaltask.util.impl;
 
 import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;

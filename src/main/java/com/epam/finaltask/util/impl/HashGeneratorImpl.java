@@ -1,5 +1,6 @@
-package com.epam.finaltask.util;
+package com.epam.finaltask.util.impl;
 
+import com.epam.finaltask.util.HashGenerator;
 import org.apache.commons.codec.binary.Hex;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.Level;

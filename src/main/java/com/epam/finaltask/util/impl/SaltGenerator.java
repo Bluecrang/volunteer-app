@@ -1,4 +1,4 @@
-package com.epam.finaltask.util;
+package com.epam.finaltask.util.impl;
 
 import java.math.BigInteger;
 import java.security.SecureRandom;
