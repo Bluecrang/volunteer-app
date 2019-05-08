@@ -1,5 +1,6 @@
 package com.epam.finaltask.service;
 
+import com.epam.finaltask.dao.AccountDao;
 import com.epam.finaltask.dao.ConnectionManagerFactory;
 import com.epam.finaltask.dao.DaoFactory;
 import com.epam.finaltask.dao.TopicDao;
@@ -292,6 +293,63 @@ public class TopicServiceTest {
             fail("Unexpected ServiceException", e);
         } catch (PersistenceException e) {
             fail("Unexpected PersistenceException", e);
+        }
+    }
+
+    @Test
+    public void findTopicByTitleTestValidTitle() {
+        String title = "title";
+        try {
+            Account account = new Account(1);
+            Topic expected = new Topic(1, "title", "text",
+                    LocalDateTime.of(2013, 3, 5, 1, 12),
+                    account,
+                    false,
+                    false);
+            when(topicDao.findTopicByTitle(title)).thenReturn(expected);
+            AccountDao accountDao = mock(AccountDao.class);
+            when(daoFactory.createAccountDao(anyObject())).thenReturn(accountDao);
+            when(accountDao.findEntityById(account.getAccountId())).thenReturn(new Account(1));
+
+            Topic actual = topicService.findTopicByTitle(title);
+
+            Assert.assertEquals(actual, expected);
+        } catch (PersistenceException e) {
+            fail("Unexpected PersistenceException", e);
+        } catch (ServiceException e) {
+            fail("Unexpected ServiceException", e);
+        }
+    }
+
+    @Test
+    public void findTopicByTitleTestTitleNull() {
+        String title = null;
+        try {
+            when(topicDao.findTopicByTitle(title)).thenReturn(null);
+
+            Topic actual = topicService.findTopicByTitle(title);
+
+            Assert.assertNull(actual);
+        } catch (PersistenceException e) {
+            fail("Unexpected PersistenceException", e);
+        } catch (ServiceException e) {
+            fail("Unexpected ServiceException", e);
+        }
+    }
+
+    @Test
+    public void findTopicByTitleTestTitleBlank() {
+        String title = "";
+        try {
+            when(topicDao.findTopicByTitle(title)).thenReturn(null);
+
+            Topic actual = topicService.findTopicByTitle(title);
+
+            Assert.assertNull(actual);
+        } catch (PersistenceException e) {
+            fail("Unexpected PersistenceException", e);
+        } catch (ServiceException e) {
+            fail("Unexpected ServiceException", e);
         }
     }
 }
