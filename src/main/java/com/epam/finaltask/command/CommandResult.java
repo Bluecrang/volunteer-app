@@ -5,6 +5,7 @@ import com.epam.finaltask.util.PageConstants;
 public class CommandResult {
     private String page = PageConstants.INDEX_PAGE;
     private TransitionType transitionType = TransitionType.REDIRECT;
+    boolean sessionInvalidationFlag;
 
     public TransitionType getTransitionType() {
         return transitionType;
@@ -12,6 +13,10 @@ public class CommandResult {
 
     public void assignTransitionTypeForward() {
         transitionType = TransitionType.FORWARD;
+    }
+
+    public void raiseSessionInvalidationFlag() {
+        sessionInvalidationFlag = true;
     }
 
     public String getPage() {
@@ -22,5 +27,9 @@ public class CommandResult {
         if (page != null) {
             this.page = page;
         }
+    }
+
+    public boolean isSessionInvalidationFlag() {
+        return sessionInvalidationFlag;
     }
 }

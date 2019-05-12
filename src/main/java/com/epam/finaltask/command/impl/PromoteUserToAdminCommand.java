@@ -12,10 +12,9 @@ import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-public class ChangeAccountBlockStateCommand implements Command {
+public class PromoteUserToAdminCommand implements Command {
 
     private static final Logger logger = LogManager.getLogger();
-    private static final String ACCOUNT_BLOCK_PARAMETER = "block";
 
     @Override
     public CommandResult execute(CommandData data) throws CommandException {
@@ -26,21 +25,20 @@ public class ChangeAccountBlockStateCommand implements Command {
             long accountId = Long.parseLong(data.getRequestParameter(ApplicationConstants.ACCOUNT_ID_PARAMETER));
             commandResult.setPage(ApplicationConstants.SHOW_PROFILE + accountId); //todo
             if (sessionAccountObject instanceof Account) {
-                boolean block = Boolean.parseBoolean(data.getRequestParameter(ACCOUNT_BLOCK_PARAMETER));
                 try {
                     AccountService accountService = new AccountService();
                     Account sessionAccount = (Account) sessionAccountObject;
-                    if (accountService.changeAccountBlockState(sessionAccount, accountId, block)) {
-                        logger.log(Level.INFO, "account id=" + accountId + " block state changed to " + block);
+                    if (accountService.promoteUserToAdmin(sessionAccount, accountId)) {
+                        logger.log(Level.INFO, "account id=" + accountId + " promoted to admin");
                     } else {
-                        logger.log(Level.WARN, "could not change account id="+ accountId +" block state to " + block);
+                        logger.log(Level.WARN, "could not promote account id="+ accountId + " to admin");
                     }
                 } catch (ServiceException e) {
-                    throw new CommandException("unable to change account block state to " + block, e);
+                    throw new CommandException("unable to promote account to admin", e);
                 }
             }
         } catch (NumberFormatException e) {
-            throw new CommandException("could not parse account id to long value", e);
+            throw new CommandException("could not parse topic id to long value", e);
         }
         return commandResult;
     }

@@ -7,7 +7,7 @@ import java.util.List;
 
 public interface AccountDao extends Dao<Account> {
 
-    Account findAccountByLogin(String login) throws PersistenceException;
+    Account findAccountByUsername(String login) throws PersistenceException;
     Account findAccountByEmail(String email) throws PersistenceException;
     List<Account> findPageAccountsSortByRating(int startPage, int numberOfAccountsPerPage) throws PersistenceException;
     int findAccountCount() throws PersistenceException;

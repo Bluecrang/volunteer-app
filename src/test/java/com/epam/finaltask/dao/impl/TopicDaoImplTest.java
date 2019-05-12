@@ -2,6 +2,7 @@ package com.epam.finaltask.dao.impl;
 
 import com.epam.finaltask.entity.Account;
 import com.epam.finaltask.entity.Topic;
+import org.mockito.MockitoAnnotations;
 import org.testng.Assert;
 import org.testng.annotations.*;
 
@@ -38,6 +39,7 @@ public class TopicDaoImplTest {
 
     @BeforeMethod
     public void initBeforeMethod() {
+        MockitoAnnotations.initMocks(this);
         topic = new Topic(BEFORE_METHOD_TOPIC_TITLE,
                 BEFORE_METHOD_TOPIC_TEXT,
                 LocalDateTime.of(2000, 2, 15, 21, 54),
@@ -132,7 +134,7 @@ public class TopicDaoImplTest {
         }
     }
 
-    @AfterClass
+    @AfterClass(alwaysRun = true)
     public void cleanUp() {
         try {
             DatabaseTestUtil.deregisterDrivers();

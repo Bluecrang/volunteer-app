@@ -14,7 +14,11 @@ import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.regex.Pattern;
+import java.util.regex.PatternSyntaxException;
+import java.util.stream.Collectors;
 
 public class TopicService extends AbstractService {
 
@@ -185,6 +189,31 @@ public class TopicService extends AbstractService {
             }
         } catch (PersistenceException e) {
             throw new ServiceException(e);
+        }
+    }
+
+    public List<Topic> findTopicsByTitleRegex(String searchString) throws ServiceException {
+        if (searchString == null) {
+            logger.log(Level.WARN, "unable to find topics by title searchString: searchString is null");
+            return new ArrayList<>();
+        }
+        try {
+            String regex = ".*" + Pattern.quote(searchString) + ".*";
+            Pattern pattern = Pattern.compile(regex, Pattern.CASE_INSENSITIVE);
+            return findAllTopics().stream()
+                    .filter((topic -> {
+                        String title = topic.getTitle();
+                        if (title != null) {
+                            logger.log(Level.DEBUG, "title = " + title);
+                            logger.log(Level.DEBUG, "matching result = " + pattern.matcher(title).matches());
+                            return pattern.matcher(title).matches();
+                        }
+                        return false;
+                    }))
+                    .collect(Collectors.toList());
+        } catch (PatternSyntaxException e) {
+            logger.log(Level.WARN, "illegal searchString used", e);
+            return new ArrayList<>();
         }
     }
 }

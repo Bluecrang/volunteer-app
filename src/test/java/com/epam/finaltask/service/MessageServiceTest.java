@@ -9,6 +9,7 @@ import com.epam.finaltask.entity.AccessLevel;
 import com.epam.finaltask.entity.Account;
 import com.epam.finaltask.entity.Message;
 import com.epam.finaltask.entity.Topic;
+import org.mockito.MockitoAnnotations;
 import org.testng.Assert;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.DataProvider;
@@ -30,7 +31,7 @@ public class MessageServiceTest {
 
     @BeforeMethod
     public void setUp() {
-
+        MockitoAnnotations.initMocks(this);
         ConnectionManagerFactory connectionManagerFactory = mock(ConnectionManagerFactory.class);
 
         connectionManager = mock(AbstractConnectionManager.class);

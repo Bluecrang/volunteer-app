@@ -30,22 +30,22 @@ public class AuthenticationService extends AbstractService {
         this.hashGeneratorFactory = new HashGeneratorFactoryImpl();
     }
 
-    public Account authenticate(String login, String password) throws ServiceException {
+    public Account authenticate(String email, String password) throws ServiceException {
         try (AbstractConnectionManager connectionManager = connectionManagerFactory.createConnectionManager()) {
             AccountDao accountDao = daoFactory.createAccountDao(connectionManager);
-            Account account = accountDao.findAccountByLogin(login);
+            Account account = accountDao.findAccountByEmail(email);
 
             if (account != null) {
                 HashGenerator hashGenerator = hashGeneratorFactory.createHashGenerator();
                 String passwordHash = hashGenerator.hash(password, account.getSalt(), ApplicationConstants.HASHING_ALGORITHM);
                 if (account.getPasswordHash().equals(passwordHash)) {
-                    logger.log(Level.INFO, "User with login=" + login + " is authenticated successfully");
+                    logger.log(Level.INFO, "User with email=" + email + " is authenticated successfully");
                 } else {
-                    logger.log(Level.INFO, "Cannot authenticate user with login=" + login + ", password hashes do not match");
+                    logger.log(Level.INFO, "Cannot authenticate user with email=" + email + ", password hashes do not match");
                     return null;
                 }
             } else {
-                logger.log(Level.INFO, "User with login +" + login + ", does not exist in the database, cannot authenticate");
+                logger.log(Level.INFO, "User with email +" + email + ", does not exist in the database, cannot authenticate");
             }
             return account;
         } catch (PersistenceException e) {

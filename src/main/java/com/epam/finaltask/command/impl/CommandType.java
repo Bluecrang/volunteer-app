@@ -18,7 +18,9 @@ public enum CommandType {
     CHANGE_ACCOUNT_BLOCK_STATE(new ChangeAccountBlockStateCommand()),
     CHANGE_LOCALE(new ChangeLocaleCommand()),
     SHOW_RANKING_PAGE(new ShowRankingCommand()),
-    CHANGE_RATING(new ChangeRatingCommand());
+    CHANGE_RATING(new ChangeRatingCommand()),
+    PROMOTE_USER_TO_ADMIN(new PromoteUserToAdminCommand()),
+    SEARCH_FOR_TOPICS(new SearchForTopicsCommand());
 
     private Command command;
 

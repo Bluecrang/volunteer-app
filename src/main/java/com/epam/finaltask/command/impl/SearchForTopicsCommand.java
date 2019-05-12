@@ -15,24 +15,26 @@ import org.apache.logging.log4j.Logger;
 
 import java.util.List;
 
-public class ShowTopicsCommand implements Command {
+public class SearchForTopicsCommand implements Command {
 
     private static final Logger logger = LogManager.getLogger();
     private static final String TOPIC_LIST_ATTRIBUTE = "topic_list";
-    private static final String NO_TOPICS = "topics.no_topics";
+    private static final String SEARCH_STRING_PARAMETER = "text";
+    private static final String NO_TOPICS_FOUND = "topics.no_topics_found";
 
     @Override
     public CommandResult execute(CommandData data) throws CommandException {
         CommandResult commandResult = new CommandResult();
         commandResult.assignTransitionTypeForward();
         try {
+            String regex = data.getRequestParameter(SEARCH_STRING_PARAMETER);
             TopicService service = new TopicService();
-            List<Topic> topicList = service.findAllTopics();
+            List<Topic> topicList = service.findTopicsByTitleRegex(regex);
             logger.log(Level.DEBUG, "number of found topics: " + topicList.size());
             if (!topicList.isEmpty()) {
                 data.putRequestAttribute(TOPIC_LIST_ATTRIBUTE, topicList);
             } else {
-                data.putRequestAttribute(ApplicationConstants.TOPICS_MESSAGE_ATTRIBUTE, NO_TOPICS);
+                data.putRequestAttribute(ApplicationConstants.TOPICS_MESSAGE_ATTRIBUTE, NO_TOPICS_FOUND);
             }
             commandResult.setPage(PageConstants.TOPICS_PAGE);
         } catch (ServiceException e) {

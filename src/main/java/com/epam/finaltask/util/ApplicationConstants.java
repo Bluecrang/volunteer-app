@@ -4,15 +4,13 @@ public final class ApplicationConstants {
 
     public static final String HASHING_ALGORITHM = "SHA-256";
 
-    public static final String LOGIN_PARAMETER = "login";
+    public static final String USERNAME_PARAMETER = "username";
     public static final String PASSWORD_PARAMETER = "password";
     public static final String EMAIL_PARAMETER = "email";
     public static final String PAGE_PARAMETER = "page";
     public static final String ACCOUNT_ID_PARAMETER = "account_id";
     public static final String TOPIC_ID_PARAMETER = "topic_id";
     public static final String MESSAGE_ID_PARAMETER = "message_id";
-    public static final String TOPIC_LOAD_MESSAGES_PARAMETER = "load_messages";
-    public static final String TOPIC_LOAD_ACCOUNTS_PARAMETER = "load_accounts";
     public static final String LOCALE_PARAMETER = "locale";
     public static final String CHANGE_RATING_PARAMETER = "add_rating";
 
@@ -23,6 +21,7 @@ public final class ApplicationConstants {
     public static final String AUTHORIZATION_MESSAGE_ATTRIBUTE = "authorization_message";
     public static final String REGISTRATION_MESSAGE_ATTRIBUTE = "registration_message";
     public static final String LOCALE_ATTRIBUTE = "locale";
+    public static final String TOPICS_MESSAGE_ATTRIBUTE = "topics_message";
 
     public static final String SHOW_TOPICS = "/topics?command=show_topics"; //todo filter
     public static final String SHOW_PROFILE = "/profile?command=show_profile&account_id=";

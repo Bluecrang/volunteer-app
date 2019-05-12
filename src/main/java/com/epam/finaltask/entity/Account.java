@@ -2,7 +2,7 @@ package com.epam.finaltask.entity;
 
 public class Account extends Entity {
     private long accountId;
-    private String login;
+    private String username;
     private String passwordHash;
     private String email;
     private AccessLevel accessLevel;
@@ -19,9 +19,9 @@ public class Account extends Entity {
         this.accountId = accountId;
     }
 
-    public Account(String login, String passwordHash, String email, AccessLevel accessLevel,
+    public Account(String username, String passwordHash, String email, AccessLevel accessLevel,
                    int rating, boolean verified, boolean blocked, String salt, String avatarBase64) {
-        this.login = login;
+        this.username = username;
         this.passwordHash = passwordHash;
         this.email = email;
         this.accessLevel = accessLevel;
@@ -32,10 +32,10 @@ public class Account extends Entity {
         this.avatarBase64 = avatarBase64;
     }
 
-    public Account(long accountId, String login, String passwordHash, String email, AccessLevel accessLevel,
+    public Account(long accountId, String username, String passwordHash, String email, AccessLevel accessLevel,
                    int rating, boolean verified, boolean blocked, String salt, String avatarBase64) {
         this.accountId = accountId;
-        this.login = login;
+        this.username = username;
         this.passwordHash = passwordHash;
         this.email = email;
         this.accessLevel = accessLevel;
@@ -54,12 +54,12 @@ public class Account extends Entity {
         this.accountId = accountId;
     }
 
-    public String getLogin() {
-        return login;
+    public String getUsername() {
+        return username;
     }
 
-    public void setLogin(String login) {
-        this.login = login;
+    public void setUsername(String username) {
+        this.username = username;
     }
 
     public String getPasswordHash() {
@@ -137,7 +137,7 @@ public class Account extends Entity {
         if (rating != account.rating) return false;
         if (verified != account.verified) return false;
         if (blocked != account.blocked) return false;
-        if (login != null ? !login.equals(account.login) : account.login != null) return false;
+        if (username != null ? !username.equals(account.username) : account.username != null) return false;
         if (passwordHash != null ? !passwordHash.equals(account.passwordHash) : account.passwordHash != null)
             return false;
         if (email != null ? !email.equals(account.email) : account.email != null) return false;
@@ -149,7 +149,7 @@ public class Account extends Entity {
     @Override
     public int hashCode() {
         int result = (int) (accountId ^ (accountId >>> 32));
-        result = 31 * result + (login != null ? login.hashCode() : 0);
+        result = 31 * result + (username != null ? username.hashCode() : 0);
         result = 31 * result + (passwordHash != null ? passwordHash.hashCode() : 0);
         result = 31 * result + (email != null ? email.hashCode() : 0);
         result = 31 * result + (accessLevel != null ? accessLevel.hashCode() : 0);
@@ -165,7 +165,7 @@ public class Account extends Entity {
     public String toString() {
         final StringBuilder sb = new StringBuilder("Account{");
         sb.append("accountId=").append(accountId);
-        sb.append(", login='").append(login).append('\'');
+        sb.append(", username='").append(username).append('\'');
         sb.append(", passwordHash='").append(passwordHash).append('\'');
         sb.append(", email='").append(email).append('\'');
         sb.append(", accessLevel=").append(accessLevel);

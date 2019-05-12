@@ -8,6 +8,7 @@ import com.epam.finaltask.dao.impl.PersistenceException;
 import com.epam.finaltask.entity.AccessLevel;
 import com.epam.finaltask.entity.Account;
 import org.apache.commons.io.input.ReaderInputStream;
+import org.mockito.MockitoAnnotations;
 import org.testng.Assert;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
@@ -31,7 +32,7 @@ public class AccountServiceTest {
 
     @BeforeMethod
     public void setUp() {
-
+        MockitoAnnotations.initMocks(this);
         ConnectionManagerFactory connectionManagerFactory = mock(ConnectionManagerFactory.class);
 
         connectionManager = mock(AbstractConnectionManager.class);
