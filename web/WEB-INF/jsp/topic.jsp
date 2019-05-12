@@ -46,7 +46,7 @@
                                   defaultSrc="${pageContext.request.contextPath}/images/profile_default.png"
                                   alt="User avatar"/>
                         </div>
-                        <div class="clearfix media-body"\>
+                        <div class="clearfix media-body">
                             <div>
                                 <strong><a href="${pageContext.request.contextPath}/profile?account_id=${message.account.accountId}&command=show_profile"><c:out value="${message.account.username}"/></a></strong>
                                 <p class="float-right text-muted"><c:out value="${message.date}"/></p>

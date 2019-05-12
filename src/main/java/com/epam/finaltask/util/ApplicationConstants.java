@@ -12,7 +12,7 @@ public final class ApplicationConstants {
     public static final String TOPIC_ID_PARAMETER = "topic_id";
     public static final String MESSAGE_ID_PARAMETER = "message_id";
     public static final String LOCALE_PARAMETER = "locale";
-    public static final String CHANGE_RATING_PARAMETER = "add_rating";
+    public static final String CHANGE_RATING_PARAMETER = "rating";
 
     public static final String TOPIC_CURRENT_PAGE_ATTRIBUTE = "topic_current_page";
     public static final String TOPIC_PAGE_COUNT_ATTRIBUTE = "topic_number_of_pages";

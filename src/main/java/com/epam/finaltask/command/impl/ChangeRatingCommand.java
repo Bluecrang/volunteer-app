@@ -19,13 +19,13 @@ public class ChangeRatingCommand implements Command {
 
     @Override
     public CommandResult execute(CommandData data) throws CommandException {
-        Object sessionAccountObject = data.getSessionAttribute(ApplicationConstants.ACCOUNT_ATTRIBUTE);
         CommandResult commandResult = new CommandResult();
         commandResult.assignTransitionTypeForward();
         try {
             long accountId = Long.parseLong(data.getRequestParameter(ApplicationConstants.ACCOUNT_ID_PARAMETER));
             commandResult.setPage(ApplicationConstants.SHOW_PROFILE + accountId);
             int value = Integer.parseInt(data.getRequestParameter(ApplicationConstants.CHANGE_RATING_PARAMETER));
+            Object sessionAccountObject = data.getSessionAttribute(ApplicationConstants.ACCOUNT_ATTRIBUTE);
             if (sessionAccountObject instanceof Account) {
                 Account sessionAccount = (Account) sessionAccountObject;
                 try {

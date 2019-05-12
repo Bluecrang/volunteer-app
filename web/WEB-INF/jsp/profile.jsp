@@ -3,6 +3,7 @@
 <%@taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt"%>
 <%@taglib prefix="cm" uri="customtags" %>
 <%@include file="/WEB-INF/parts/header.jsp"%>
+<script src="${pageContext.request.contextPath}/js/validation.js"></script>
 <html>
 <head>
     <title><fmt:message key="profile.title"/></title>
@@ -27,7 +28,7 @@
                     <fmt:message key="profile.rating"/> <c:out value="${profile.rating}"/>
                 </div>
                 <div class="row">
-                    <c:if test="${profile.accessLevel == 'ADMIN'}"><fmt:message key="profile.accessLevel_admin"/></c:if>
+                    <c:if test="${profile.accessLevel == 'ADMIN'}"><fmt:message key="profile.access_level_admin"/></c:if>
                 </div>
                 <div class="row">
                     <c:if test="${not empty account}">
@@ -74,6 +75,20 @@
                     <input class="btn btn-primary mt-2" type="submit" value="<fmt:message key="profile.image.submit"/>"/>
                 </form>
             </div>
+        </c:if>
+        <c:if test="${account.accessLevel == 'ADMIN'}">
+            <h6><fmt:message key="profile.rating_form.header"/></h6>
+            <div class="row">
+                <form class="form-inline"  id="rating_addition_form" method="post" onsubmit="return validateRatingAdditionForm();" name="rating_form" action="${pageContext.request.contextPath}/servlet">
+                    <div class="form-group">
+                        <input class="form-control" id="rating_addition_text" name="rating" type="text"/>
+                    </div>
+                    <input type="hidden" name="command" value="change_rating"/>
+                    <input type="hidden" name="account_id" value="${profile.accountId}"/>
+                    <input class="btn btn-primary mt-2 ml-2" type="submit" value="<fmt:message key="profile.rating_form.submit"/>"/>
+                </form>
+            </div>
+            <div id="rating_change_message"></div>
         </c:if>
     </div>
 </body>

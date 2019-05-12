@@ -15,6 +15,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 import java.util.regex.Pattern;
 import java.util.regex.PatternSyntaxException;
@@ -182,6 +183,7 @@ public class TopicService extends AbstractService {
                     topic.setAccount(account);
                 }
                 connectionManager.commit();
+                topics.sort(Comparator.comparing(Topic::getDate, Comparator.reverseOrder()));
                 return topics;
             }  catch (PersistenceException e) {
                 connectionManager.rollback();

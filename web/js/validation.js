@@ -46,3 +46,15 @@ function validateTopicForm() {
     }
     return true;
 }
+
+function validateRatingAdditionForm() {
+    let textFieldValue = document.forms["rating_form"]["rating"].value;
+    if (textFieldValue !== null) {
+        let integerRegex = /^[+-]?[0-9]+$/;
+        if (integerRegex.test(textFieldValue)) {
+            return true;
+        }
+    }
+    document.getElementById("rating_change_message").innerHTML = "Could not change rating: chosen value is illegal";
+    return false;
+}

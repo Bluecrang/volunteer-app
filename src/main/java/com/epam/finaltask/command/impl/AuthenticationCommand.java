@@ -18,7 +18,7 @@ public class AuthenticationCommand implements Command {
 
     private static final String ACCOUNT_BLOCKED_PROPERTY = "login.account_blocked";
     private static final String ACCOUNT_UNVERIFIED_PROPERTY = "login.account_unverified"; //todo
-    private static final String ACCOUNT_DOES_NOT_EXIST_OR_PASSWORD_DOES_NOT_MATCH_PROPERTY = "login.incorrect_username_or_password";
+    private static final String ACCOUNT_DOES_NOT_EXIST_OR_PASSWORD_DOES_NOT_MATCH_PROPERTY = "login.incorrect_email_or_password";
     private static final String AUTHENTICATION_ERROR_PROPERTY = "login.authentication_error";
 
     @Override

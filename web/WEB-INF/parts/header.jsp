@@ -45,7 +45,7 @@
                 <c:choose>
                     <c:when test="${empty account}">
                         <li class="nav-item">
-                            <a class="nav-link" href="${pageContext.request.contextPath}/jsp/login.jsp"><fmt:message key="header.username"/></a>
+                            <a class="nav-link" href="${pageContext.request.contextPath}/jsp/login.jsp"><fmt:message key="header.login"/></a>
                         </li>
                     </c:when>
                     <c:otherwise>
