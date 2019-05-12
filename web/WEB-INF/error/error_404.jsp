@@ -1,4 +1,5 @@
 <%@ page contentType="text/html;charset=UTF-8" isErrorPage="true"%>
+<%@include file="/WEB-INF/parts/header.jsp"%>
 <html>
 <head>
     <title>404</title>
