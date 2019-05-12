@@ -9,7 +9,7 @@ import com.epam.finaltask.service.ServiceException;
 import com.epam.finaltask.util.ApplicationConstants;
 import com.epam.finaltask.util.PageConstants;
 import com.epam.finaltask.validation.EmailValidator;
-import com.epam.finaltask.validation.LoginValidator;
+import com.epam.finaltask.validation.UsernameValidator;
 import com.epam.finaltask.validation.PasswordValidator;
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
@@ -20,14 +20,14 @@ public class RegistrationCommand implements Command {
     private static final Logger logger = LogManager.getLogger();
 
     private static final String ILLEGAL_EMAIL = "registration.illegal_email";
-    private static final String ILLEGAL_LOGIN = "registration.illegal_login";
+    private static final String ILLEGAL_USERNAME = "registration.illegal_username";
     private static final String ILLEGAL_PASSWORD = "registration.illegal_password";
     private static final String ACCOUNT_EXISTS = "registration.account_exists";
     private static final String ACCOUNT_SUCCESSFULLY_REGISTERED = "login.account_successfully_registered";
 
     @Override
     public CommandResult execute(CommandData data) throws CommandException {
-        String login = data.getRequestParameter(ApplicationConstants.LOGIN_PARAMETER);
+        String username = data.getRequestParameter(ApplicationConstants.USERNAME_PARAMETER);
         String password = data.getRequestParameter(ApplicationConstants.PASSWORD_PARAMETER);
         String email = data.getRequestParameter(ApplicationConstants.EMAIL_PARAMETER);
 
@@ -40,9 +40,9 @@ public class RegistrationCommand implements Command {
             data.putRequestAttribute(ApplicationConstants.REGISTRATION_MESSAGE_ATTRIBUTE, ILLEGAL_EMAIL);
             return commandResult;
         }
-        LoginValidator loginValidator = new LoginValidator();
-        if (!loginValidator.validate(login)) {
-            data.putRequestAttribute(ApplicationConstants.REGISTRATION_MESSAGE_ATTRIBUTE, ILLEGAL_LOGIN);
+        UsernameValidator usernameValidator = new UsernameValidator();
+        if (!usernameValidator.validate(username)) {
+            data.putRequestAttribute(ApplicationConstants.REGISTRATION_MESSAGE_ATTRIBUTE, ILLEGAL_USERNAME);
             return commandResult;
         }
         PasswordValidator passwordValidator = new PasswordValidator();
@@ -53,12 +53,12 @@ public class RegistrationCommand implements Command {
 
         RegistrationService registrationService = new RegistrationService();
         try {
-            if (registrationService.registerUser(login, password, email)) {
-                logger.log(Level.INFO, "user with login=" + login + " successfully registered");
+            if (registrationService.registerUser(username, password, email)) {
+                logger.log(Level.INFO, "user with username=" + username + " successfully registered");
                 data.putRequestAttribute(ApplicationConstants.AUTHORIZATION_MESSAGE_ATTRIBUTE, ACCOUNT_SUCCESSFULLY_REGISTERED);
                 commandResult.setPage(PageConstants.LOGIN_PAGE);
             } else {
-                logger.log(Level.INFO, "could not register user with login=" + login);
+                logger.log(Level.INFO, "could not register user with username=" + username);
                 data.putRequestAttribute(ApplicationConstants.REGISTRATION_MESSAGE_ATTRIBUTE, ACCOUNT_EXISTS);
             }
         } catch (ServiceException e) {

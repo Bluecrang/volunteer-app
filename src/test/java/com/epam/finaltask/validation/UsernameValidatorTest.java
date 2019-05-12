@@ -4,12 +4,12 @@ import org.testng.Assert;
 import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
 
-public class LoginValidatorTest {
+public class UsernameValidatorTest {
 
-    LoginValidator loginValidator = new LoginValidator();
+    private UsernameValidator usernameValidator = new UsernameValidator();
 
-    @DataProvider(name = "InvalidLoginProvider")
-    public Object[][] provideInvalidLogins() {
+    @DataProvider(name = "InvalidUsernameProvider")
+    public Object[][] provideInvalidUserNames() {
         return new Object[][] {
                 {"ab"},
                 {"this_string_is_to"},
@@ -25,17 +25,17 @@ public class LoginValidatorTest {
     }
 
     @Test
-    public void validateTestValidLogin() {
-        String login = "fog";
+    public void validateTestValidUsername() {
+        String username = "fog";
 
-        boolean actual = loginValidator.validate(login);
+        boolean actual = usernameValidator.validate(username);
 
         Assert.assertTrue(actual);
     }
 
-    @Test(dataProvider = "InvalidLoginProvider")
-    public void validateTestInvalidLogin(String login) {
-        boolean actual = loginValidator.validate(login);
+    @Test(dataProvider = "InvalidUsernameProvider")
+    public void validateTestInvalidUsername(String username) {
+        boolean actual = usernameValidator.validate(username);
 
         Assert.assertFalse(actual);
     }

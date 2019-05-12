@@ -9,6 +9,7 @@ import com.epam.finaltask.entity.AccessLevel;
 import com.epam.finaltask.entity.Account;
 import com.epam.finaltask.util.HashGenerator;
 import com.epam.finaltask.util.HashGeneratorFactory;
+import org.mockito.MockitoAnnotations;
 import org.testng.Assert;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.DataProvider;
@@ -27,7 +28,7 @@ public class RegistrationServiceTest {
 
     @BeforeMethod
     public void setUp() {
-
+        MockitoAnnotations.initMocks(this);
         HashGeneratorFactory hashGeneratorFactory = mock(HashGeneratorFactory.class);
 
         hashGenerator = mock(HashGenerator.class);

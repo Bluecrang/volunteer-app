@@ -58,6 +58,9 @@ public class ApplicationServlet extends AbstractServlet {
         }
         commandData.updateSessionAttributes(request.getSession());
         logger.log(Level.DEBUG, "TransitionType: " + commandResult.getTransitionType());
+        if (commandResult.isSessionInvalidationFlag()) {
+            request.getSession().invalidate();
+        }
         performTransition(request, response, commandResult, commandData);
     }
 }

@@ -2,6 +2,7 @@ package com.epam.finaltask.dao.impl;
 
 import com.epam.finaltask.entity.AccessLevel;
 import com.epam.finaltask.entity.Account;
+import org.mockito.MockitoAnnotations;
 import org.testng.Assert;
 import org.testng.annotations.*;
 
@@ -16,7 +17,7 @@ import static org.testng.Assert.fail;
 
 public class AccountDaoImplTest {
 
-    private static final String BEFORE_METHOD_ACCOUNT_LOGIN = "LOGIN";
+    private static final String BEFORE_METHOD_ACCOUNT_USERNAME = "USERNAME";
     private static final String BEFORE_METHOD_ACCOUNT_MAIL = "mail@mail.com";
     AbstractConnectionManagerImpl connectionManager;
     AccountDaoImpl accountDao;
@@ -37,7 +38,8 @@ public class AccountDaoImplTest {
 
     @BeforeMethod
     public void initBeforeMethod() {
-        account = new Account(BEFORE_METHOD_ACCOUNT_LOGIN, "PASS", BEFORE_METHOD_ACCOUNT_MAIL, AccessLevel.USER,
+        MockitoAnnotations.initMocks(this);
+        account = new Account(BEFORE_METHOD_ACCOUNT_USERNAME, "PASS", BEFORE_METHOD_ACCOUNT_MAIL, AccessLevel.USER,
         0, true, false, "salt", null);
     }
 
@@ -56,11 +58,11 @@ public class AccountDaoImplTest {
     }
 
     @Test
-    public void findAccountByLoginTest() {
+    public void findAccountByUsernameTest() {
         try {
             accountDao.create(account);
-            Account actual = accountDao.findAccountByLogin(BEFORE_METHOD_ACCOUNT_LOGIN);
-            Assert.assertEquals(actual.getLogin(), BEFORE_METHOD_ACCOUNT_LOGIN);
+            Account actual = accountDao.findAccountByUsername(BEFORE_METHOD_ACCOUNT_USERNAME);
+            Assert.assertEquals(actual.getUsername(), BEFORE_METHOD_ACCOUNT_USERNAME);
         } catch (PersistenceException e) {
             fail("Unexpected PersistenceException", e);
         }
@@ -92,11 +94,11 @@ public class AccountDaoImplTest {
     public void findEntityByIdTest() {
         try {
             accountDao.create(account);
-            Account accountByLogin = accountDao.findAccountByLogin(BEFORE_METHOD_ACCOUNT_LOGIN);
+            Account accountByLogin = accountDao.findAccountByUsername(BEFORE_METHOD_ACCOUNT_USERNAME);
 
             Account actual = accountDao.findEntityById(accountByLogin.getAccountId());
 
-            Assert.assertEquals(actual.getLogin(), accountByLogin.getLogin());
+            Assert.assertEquals(actual.getUsername(), accountByLogin.getUsername());
         } catch (PersistenceException e) {
             fail("Unexpected PersistenceException", e);
         }
@@ -118,7 +120,7 @@ public class AccountDaoImplTest {
     public void updateTest() {
         try {
             accountDao.create(account);
-            Account accountToUpdate = accountDao.findAccountByLogin(BEFORE_METHOD_ACCOUNT_LOGIN);
+            Account accountToUpdate = accountDao.findAccountByUsername(BEFORE_METHOD_ACCOUNT_USERNAME);
             accountToUpdate.setPasswordHash("changed");
 
             int actual = accountDao.update(accountToUpdate);
@@ -136,7 +138,7 @@ public class AccountDaoImplTest {
 
             Account actual = accountDao.findAccountByEmail(BEFORE_METHOD_ACCOUNT_MAIL);
 
-            Assert.assertEquals(actual.getLogin(), account.getLogin());
+            Assert.assertEquals(actual.getUsername(), account.getUsername());
         } catch (PersistenceException e) {
             fail("Unexpected PersistenceException", e);
         }
@@ -156,7 +158,7 @@ public class AccountDaoImplTest {
         }
     }
 
-    @AfterClass
+    @AfterClass(alwaysRun = true)
     public void cleanUp() {
         try {
             DatabaseTestUtil.deregisterDrivers();

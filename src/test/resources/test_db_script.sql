@@ -12,7 +12,7 @@ CREATE TABLE IF NOT EXISTS `volunteerdbtest`.`account_type` (
 ENGINE = InnoDB;
 CREATE TABLE IF NOT EXISTS `volunteerdbtest`.`account` (
   `account_id` BIGINT NOT NULL AUTO_INCREMENT,
-  `login` VARCHAR(16) CHARACTER SET utf8 COLLATE utf8_bin NOT NULL,
+  `username` VARCHAR(16) CHARACTER SET utf8 COLLATE utf8_bin NOT NULL,
   `password` VARCHAR(64) NOT NULL,
   `account_type_id` BIGINT NOT NULL,
   `email` VARCHAR(50) CHARACTER SET utf8 COLLATE utf8_bin NOT NULL,
@@ -22,7 +22,7 @@ CREATE TABLE IF NOT EXISTS `volunteerdbtest`.`account` (
   `salt` VARCHAR(32) NOT NULL,
   `avatar` BLOB NULL,
   PRIMARY KEY (`account_id`),
-  UNIQUE INDEX `login_UNIQUE` (`login` ASC),
+  UNIQUE INDEX `login_UNIQUE` (`username` ASC),
   INDEX `fk_account_account_type_idx` (`account_type_id` ASC),
   UNIQUE INDEX `email_UNIQUE` (`email` ASC),
   CONSTRAINT `fk_account_account_type`
@@ -71,5 +71,5 @@ SET SQL_MODE=@OLD_SQL_MODE;
 SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS;
 SET UNIQUE_CHECKS=@OLD_UNIQUE_CHECKS;
 INSERT INTO `volunteerdbtest`.`account_type` (`type`) VALUES("USER");
-INSERT INTO `volunteerdbtest`.`account`(`login`, `password`, `account_type_id`, `email`, `rating`, `verified`, `blocked`, `salt`) VALUES("login", "password", 1, "user@mail.com", 10, 1, 0, "salt");
+INSERT INTO `volunteerdbtest`.`account`(`username`, `password`, `account_type_id`, `email`, `rating`, `verified`, `blocked`, `salt`) VALUES("username", "password", 1, "user@mail.com", 10, 1, 0, "salt");
 INSERT INTO `volunteerdbtest`.`topic`(`title`, `closed`, `account_id`, `hidden`) VALUES("title", 0, 1, 0);

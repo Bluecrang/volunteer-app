@@ -10,9 +10,9 @@ public class LogoutCommand implements Command { //TODO invalidate session
 
     @Override
     public CommandResult execute(CommandData data) {
-        data.putSessionAttribute(ApplicationConstants.ACCOUNT_ATTRIBUTE, null);
         CommandResult result = new CommandResult();
         result.setPage(PageConstants.MAIN_PAGE);
+        result.raiseSessionInvalidationFlag();
         return result;
     }
 }

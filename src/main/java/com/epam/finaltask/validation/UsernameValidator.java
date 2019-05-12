@@ -3,7 +3,7 @@ package com.epam.finaltask.validation;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-public class LoginValidator {
+public class UsernameValidator {
 
     private static final String LOGIN_REGEX = "^\\w{3,16}$";
     private static final Pattern LOGIN_PATTERN = Pattern.compile(LOGIN_REGEX);

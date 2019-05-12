@@ -39,7 +39,7 @@ class TopicDaoImpl extends AbstractDao<Topic> implements TopicDao {
             statement.setBoolean(1, entity.isClosed());
 
             Clob titleClob = connection.createClob();
-            titleClob.setString(1, entity.getTitle()); //todo
+            titleClob.setString(1, entity.getTitle());
             statement.setClob(2, titleClob);
 
             Clob textClob = connection.createClob();

@@ -16,30 +16,30 @@ import java.util.List;
 
 class AccountDaoImpl extends AbstractDao<Account> implements AccountDao {
 
-    private static final String FIND_ALL_ACCOUNTS = "SELECT acc.account_id, acc.login, acc.password, acc.email, " +
+    private static final String FIND_ALL_ACCOUNTS = "SELECT acc.account_id, acc.username, acc.password, acc.email, " +
             "acc_type.type, acc.rating, acc.verified, acc.blocked, acc.salt, acc.avatar " +
             "FROM account acc INNER JOIN account_type acc_type on acc.account_type_id = acc_type.account_type_id";
-    private static final String FIND_ACCOUNT_BY_ID = "SELECT acc.account_id, acc.login, acc.password, acc.email, " +
+    private static final String FIND_ACCOUNT_BY_ID = "SELECT acc.account_id, acc.username, acc.password, acc.email, " +
             "acc_type.type, acc.rating, acc.verified, acc.blocked, acc.salt, acc.avatar " +
             "FROM account acc INNER JOIN account_type acc_type on acc.account_type_id = acc_type.account_type_id " +
             "WHERE acc.account_id = ?";
-    private static final String FIND_ACCOUNT_BY_LOGIN = "SELECT acc.account_id, acc.login, acc.password, acc.email, " +
+    private static final String FIND_ACCOUNT_BY_USERNAME = "SELECT acc.account_id, acc.username, acc.password, acc.email, " +
             "acc_type.type, acc.rating, acc.verified, acc.blocked, acc.salt, acc.avatar " +
             "FROM account acc INNER JOIN account_type acc_type on acc.account_type_id = acc_type.account_type_id " +
-            "WHERE acc.login = ?";
-    private static final String FIND_ACCOUNT_BY_EMAIL = "SELECT acc.account_id, acc.login, acc.password, acc.email, " +
+            "WHERE acc.username = ?";
+    private static final String FIND_ACCOUNT_BY_EMAIL = "SELECT acc.account_id, acc.username, acc.password, acc.email, " +
             "acc_type.type, acc.rating, acc.verified, acc.blocked, acc.salt, acc.avatar " +
             "FROM account acc INNER JOIN account_type acc_type on acc.account_type_id = acc_type.account_type_id " +
             "WHERE acc.email = ?";
-    private static final String INSERT_ACCOUNT = "INSERT INTO account(login, password, email, account_type_id, rating, " +
+    private static final String INSERT_ACCOUNT = "INSERT INTO account(username, password, email, account_type_id, rating, " +
             "verified, blocked, salt, avatar) " +
             "VALUES(?,?,?,(SELECT account_type_id FROM account_type WHERE type = ?),?,?,?,?,?)";
     private static final String DELETE_ACCOUNT_BY_ID = "DELETE FROM account where account_id = ?";
     private static final String UPDATE_ACCOUNT_BY_ID = "UPDATE account " +
-            "SET login = ?, password = ?, email = ?, account_type_id = (SELECT account_type_id FROM account_type WHERE type = ?), " +
+            "SET username = ?, password = ?, email = ?, account_type_id = (SELECT account_type_id FROM account_type WHERE type = ?), " +
             "rating = ?, verified = ?, blocked = ?, salt = ?, avatar = ? " +
             "WHERE account_id = ?";
-    private static final String FIND_ACCOUNTS_IN_RANGE_SORT_BY_RATING = "SELECT acc.account_id, acc.login, acc.password, acc.email, " +
+    private static final String FIND_ACCOUNTS_IN_RANGE_SORT_BY_RATING = "SELECT acc.account_id, acc.username, acc.password, acc.email, " +
             "acc_type.type, acc.rating, acc.verified, acc.blocked, acc.salt, acc.avatar " +
             "FROM account acc INNER JOIN account_type acc_type on acc.account_type_id = acc_type.account_type_id " +
             "ORDER BY acc.rating DESC " +
@@ -79,13 +79,13 @@ class AccountDaoImpl extends AbstractDao<Account> implements AccountDao {
         return accountList;
     }
 
-    public Account findAccountByLogin(String login) throws PersistenceException {
-        if (login == null) {
+    public Account findAccountByUsername(String username) throws PersistenceException {
+        if (username == null) {
             return null;
         }
         Account account = null;
-        try (PreparedStatement statement = getConnection().prepareStatement(FIND_ACCOUNT_BY_LOGIN)){
-            statement.setString(1, login);
+        try (PreparedStatement statement = getConnection().prepareStatement(FIND_ACCOUNT_BY_USERNAME)){
+            statement.setString(1, username);
             try (ResultSet resultSet = statement.executeQuery()) {
                 if (resultSet.next()) {
                     account = createAccountFromResultSet(resultSet);
@@ -117,7 +117,7 @@ class AccountDaoImpl extends AbstractDao<Account> implements AccountDao {
 
     private Account createAccountFromResultSet(ResultSet resultSet) throws SQLException {
         long accountId = resultSet.getLong(1);
-        String login = resultSet.getString(2);
+        String username = resultSet.getString(2);
         String passwordHash = resultSet.getString(3);
         String email = resultSet.getString(4);
         String accountType = resultSet.getString(5);
@@ -132,7 +132,7 @@ class AccountDaoImpl extends AbstractDao<Account> implements AccountDao {
         } else {
             avatarBase64 = null;
         }
-        return new Account(accountId, login, passwordHash, email, AccessLevel.valueOf(accountType.toUpperCase()),
+        return new Account(accountId, username, passwordHash, email, AccessLevel.valueOf(accountType.toUpperCase()),
                 rating, verified, blocked, salt, avatarBase64);
     }
 
@@ -177,7 +177,7 @@ class AccountDaoImpl extends AbstractDao<Account> implements AccountDao {
             return false;
         }
         try (PreparedStatement statement = getConnection().prepareStatement(INSERT_ACCOUNT)) {
-            statement.setString(1, entity.getLogin());
+            statement.setString(1, entity.getUsername());
             statement.setString(2, entity.getPasswordHash());
             statement.setString(3, entity.getEmail());
             statement.setString(4, entity.getAccessLevel().name());
@@ -204,7 +204,7 @@ class AccountDaoImpl extends AbstractDao<Account> implements AccountDao {
             return 0;
         }
         try (PreparedStatement statement = getConnection().prepareStatement(UPDATE_ACCOUNT_BY_ID)){
-            statement.setString(1, entity.getLogin());
+            statement.setString(1, entity.getUsername());
             statement.setString(2, entity.getPasswordHash());
             statement.setString(3, entity.getEmail());
             statement.setString(4, entity.getAccessLevel().name());

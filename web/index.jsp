@@ -5,6 +5,6 @@
     <title>Index</title>
   </head>
   <body>
-  <c:redirect url="/jsp/login.jsp"/>
+  <c:redirect url="/jsp/main.jsp"/>
   </body>
 </html>

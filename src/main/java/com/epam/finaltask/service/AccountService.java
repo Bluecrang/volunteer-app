@@ -153,4 +153,31 @@ public class AccountService extends AbstractService {
             throw new ServiceException(e);
         }
     }
+
+    public boolean promoteUserToAdmin(Account sessionAccount, long accountId) throws ServiceException {
+        if (sessionAccount == null) {
+            logger.log(Level.WARN, "cannot promote account: sessionAccount is null");
+            return false;
+        }
+        if (!AccessLevel.ADMIN.equals(sessionAccount.getAccessLevel())) {
+            logger.log(Level.WARN, "cannot promote account: sessionAccount access level is not admin");
+            return false;
+        }
+        try (AbstractConnectionManager connectionManager = connectionManagerFactory.createConnectionManager()) {
+            connectionManager.disableAutoCommit();
+            Account account = findAccountById(accountId, connectionManager);
+            if (account != null) {
+                account.setAccessLevel(AccessLevel.ADMIN);
+                AccountDao accountDao = daoFactory.createAccountDao(connectionManager);
+                int result = accountDao.update(account);
+                connectionManager.commit();
+                return (result == 1);
+            }
+            connectionManager.rollback();
+            logger.log(Level.WARN, "could not promote account: account not found in the database");
+        } catch (PersistenceException e) {
+            throw new ServiceException(e);
+        }
+        return false;
+    }
 }

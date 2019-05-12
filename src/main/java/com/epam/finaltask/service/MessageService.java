@@ -32,8 +32,21 @@ public class MessageService extends AbstractService {
     public List<Message> findTopicPageMessages(long topicId, int currentPage, int numberOfMessagesPerPage)
             throws ServiceException {
         try (AbstractConnectionManager connectionManager = connectionManagerFactory.createConnectionManager()) {
-            MessageDao messageDao = daoFactory.createMessageDao(connectionManager);
-            return messageDao.findPageMessages(topicId, currentPage, numberOfMessagesPerPage);
+            connectionManager.disableAutoCommit();
+            try {
+                MessageDao messageDao = daoFactory.createMessageDao(connectionManager);
+                List<Message> messageList = messageDao.findPageMessages(topicId, currentPage, numberOfMessagesPerPage);
+                for (Message message : messageList) {
+                    AccountDao accountDao = daoFactory.createAccountDao(connectionManager);
+                    Account account = accountDao.findEntityById(message.getAccount().getAccountId());
+                    message.setAccount(account);
+                }
+                connectionManager.commit();
+                return messageList;
+            } catch (PersistenceException e) {
+                connectionManager.rollback();
+                throw new ServiceException(e);
+            }
         } catch (PersistenceException e) {
             throw new ServiceException(e);
         }
