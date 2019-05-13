@@ -5,7 +5,7 @@ import org.testng.annotations.Test;
 
 public class HashGeneratorImplTest {
 
-    HashGeneratorImpl hashGeneratorImpl = new HashGeneratorImpl();
+    private HashGeneratorImpl hashGeneratorImpl = new HashGeneratorImpl();
 
     @DataProvider(name = "ValidParametersProvider")
     public Object[][] provideValidParameters() {

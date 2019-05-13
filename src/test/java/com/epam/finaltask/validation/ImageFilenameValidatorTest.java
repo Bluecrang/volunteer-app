@@ -6,7 +6,7 @@ import org.testng.annotations.Test;
 
 public class ImageFilenameValidatorTest {
 
-    ImageFilenameValidator imageFilenameValidator = new ImageFilenameValidator();
+    private ImageFilenameValidator imageFilenameValidator = new ImageFilenameValidator();
 
     @DataProvider(name = "InvalidExtensionFilenameProvider")
     public Object[][] provideFilenamesWithInvalidExtensions() {

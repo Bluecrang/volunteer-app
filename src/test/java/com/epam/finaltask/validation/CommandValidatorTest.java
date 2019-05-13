@@ -5,7 +5,7 @@ import org.testng.annotations.Test;
 
 public class CommandValidatorTest {
 
-    CommandValidator commandValidator = new CommandValidator();
+    private CommandValidator commandValidator = new CommandValidator();
 
     @Test
     public void validateTestValidCommand() {

@@ -1,7 +1,9 @@
 package com.epam.finaltask.dao.impl;
 
+import com.epam.finaltask.dao.AccountDao;
 import com.epam.finaltask.entity.AccessLevel;
 import com.epam.finaltask.entity.Account;
+import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.testng.Assert;
 import org.testng.annotations.*;
@@ -19,16 +21,16 @@ public class AccountDaoImplTest {
 
     private static final String BEFORE_METHOD_ACCOUNT_USERNAME = "USERNAME";
     private static final String BEFORE_METHOD_ACCOUNT_MAIL = "mail@mail.com";
-    AbstractConnectionManagerImpl connectionManager;
-    AccountDaoImpl accountDao;
-    Connection connection;
-    Account account;
+    private AccountDao accountDao;
+    private Account account;
+    @Mock
+    private AbstractConnectionManager connectionManager;
 
     @BeforeClass
     public void init() {
-        connectionManager = mock(AbstractConnectionManagerImpl.class);
         try {
-            connection = DatabaseTestUtil.initiateDatabaseAndGetConnection();
+            Connection connection = DatabaseTestUtil.initiateDatabaseAndGetConnection();
+            MockitoAnnotations.initMocks(this);
             when(connectionManager.getConnection()).thenReturn(connection);
             accountDao = new AccountDaoImpl(connectionManager);
         } catch (SQLException | IOException e) {
@@ -38,7 +40,6 @@ public class AccountDaoImplTest {
 
     @BeforeMethod
     public void initBeforeMethod() {
-        MockitoAnnotations.initMocks(this);
         account = new Account(BEFORE_METHOD_ACCOUNT_USERNAME, "PASS", BEFORE_METHOD_ACCOUNT_MAIL, AccessLevel.USER,
         0, true, false, "salt", null);
     }

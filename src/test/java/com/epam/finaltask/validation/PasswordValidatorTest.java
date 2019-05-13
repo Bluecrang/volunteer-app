@@ -5,7 +5,7 @@ import org.testng.annotations.Test;
 
 public class PasswordValidatorTest {
 
-    PasswordValidator passwordValidator = new PasswordValidator();
+    private PasswordValidator passwordValidator = new PasswordValidator();
 
     @Test
     public void validateTestValidPassword() {

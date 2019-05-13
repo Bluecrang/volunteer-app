@@ -156,7 +156,7 @@ public class TopicService extends AbstractService {
             try {
                 TopicDao topicDao = daoFactory.createTopicDao(connectionManager);
                 Topic topic = topicDao.findEntityById(topicId);
-                AccountService accountService = new AccountService();
+                AccountService accountService = new AccountService(daoFactory, connectionManagerFactory);
                 Account account = accountService.findAccountById(topic.getAccount().getAccountId(), connectionManager);
                 connectionManager.commit();
                 topic.setAccount(account);

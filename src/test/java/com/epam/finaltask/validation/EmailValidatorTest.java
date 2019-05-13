@@ -6,7 +6,7 @@ import org.testng.annotations.Test;
 
 public class EmailValidatorTest {
 
-    EmailValidator emailValidator = new EmailValidator();
+    private EmailValidator emailValidator = new EmailValidator();
 
     @DataProvider(name = "ValidEmailProvider")
     public static Object[][] provideValidEmails() {

@@ -9,6 +9,7 @@ import com.epam.finaltask.entity.AccessLevel;
 import com.epam.finaltask.entity.Account;
 import com.epam.finaltask.util.HashGenerator;
 import com.epam.finaltask.util.HashGeneratorFactory;
+import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.testng.Assert;
 import org.testng.annotations.BeforeMethod;
@@ -23,31 +24,30 @@ import static org.testng.Assert.fail;
 public class RegistrationServiceTest {
 
     private static final String DEFAULT_HASH = "hash";
-    RegistrationService registrationService;
-    AccountDao accountDao;
-    HashGenerator hashGenerator;
-    AbstractConnectionManager connectionManager;
+    private RegistrationService registrationService;
+    @Mock
+    private AccountDao accountDao;
+    @Mock
+    private HashGenerator hashGenerator;
+    @Mock
+    private AbstractConnectionManager connectionManager;
+    @Mock
+    private HashGeneratorFactory hashGeneratorFactory;
+    @Mock
+    private ConnectionManagerFactory connectionManagerFactory;
+    @Mock
+    private DaoFactory daoFactory;
 
     @BeforeMethod
     public void setUp() {
         MockitoAnnotations.initMocks(this);
-        HashGeneratorFactory hashGeneratorFactory = mock(HashGeneratorFactory.class);
-
-        hashGenerator = mock(HashGenerator.class);
         when(hashGeneratorFactory.createHashGenerator()).thenReturn(hashGenerator);
-
-        ConnectionManagerFactory connectionManagerFactory = mock(ConnectionManagerFactory.class);
-
-        connectionManager = mock(AbstractConnectionManager.class);
         try {
             when(connectionManagerFactory.createConnectionManager()).thenReturn(connectionManager);
         } catch (PersistenceException e) {
             throw new RuntimeException("Unexpected exception while performing setUp", e);
         }
 
-        DaoFactory daoFactory = mock(DaoFactory.class);
-
-        accountDao = mock(AccountDao.class);
         when(daoFactory.createAccountDao(connectionManager)).thenReturn(accountDao);
 
         registrationService = new RegistrationService(daoFactory, connectionManagerFactory, hashGeneratorFactory);

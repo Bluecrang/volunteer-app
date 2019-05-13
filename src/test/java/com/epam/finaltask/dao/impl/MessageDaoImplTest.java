@@ -3,6 +3,7 @@ package com.epam.finaltask.dao.impl;
 import com.epam.finaltask.entity.Account;
 import com.epam.finaltask.entity.Message;
 import com.epam.finaltask.entity.Topic;
+import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.testng.Assert;
 import org.testng.annotations.*;
@@ -20,16 +21,16 @@ import static org.testng.Assert.fail;
 public class MessageDaoImplTest {
 
     private static final String BEFORE_METHOD_MESSAGE_TEXT = "text";
-    AbstractConnectionManagerImpl connectionManager;
-    MessageDaoImpl messageDao;
-    Connection connection;
-    Message message;
+    private MessageDaoImpl messageDao;
+    private Message message;
+    @Mock
+    private AbstractConnectionManager connectionManager;
 
     @BeforeClass
     public void init() {
-        connectionManager = mock(AbstractConnectionManagerImpl.class);
         try {
-            connection = DatabaseTestUtil.initiateDatabaseAndGetConnection();
+            Connection connection = DatabaseTestUtil.initiateDatabaseAndGetConnection();
+            MockitoAnnotations.initMocks(this);
             when(connectionManager.getConnection()).thenReturn(connection);
             messageDao = new MessageDaoImpl(connectionManager);
         } catch (SQLException | IOException e) {
@@ -39,7 +40,6 @@ public class MessageDaoImplTest {
 
     @BeforeMethod
     public void initBeforeMethod() {
-        MockitoAnnotations.initMocks(this);
         message = new Message(BEFORE_METHOD_MESSAGE_TEXT,
                 new Account(1),
                 LocalDateTime.of(2000, 2, 15, 21, 54),

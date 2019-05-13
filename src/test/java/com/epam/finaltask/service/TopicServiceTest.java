@@ -9,6 +9,7 @@ import com.epam.finaltask.dao.impl.PersistenceException;
 import com.epam.finaltask.entity.AccessLevel;
 import com.epam.finaltask.entity.Account;
 import com.epam.finaltask.entity.Topic;
+import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.testng.Assert;
 import org.testng.annotations.BeforeMethod;
@@ -18,34 +19,30 @@ import org.testng.annotations.Test;
 import java.time.LocalDateTime;
 
 import static org.mockito.Matchers.anyObject;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 import static org.testng.Assert.fail;
 
 public class TopicServiceTest {
 
-    TopicService topicService;
-    TopicDao topicDao;
-    AbstractConnectionManager connectionManager;
-    DaoFactory daoFactory;
+    private TopicService topicService;
+    @Mock
+    private TopicDao topicDao;
+    @Mock
+    private AbstractConnectionManager connectionManager;
+    @Mock
+    private DaoFactory daoFactory;
+    @Mock
+    private ConnectionManagerFactory connectionManagerFactory;
 
     @BeforeMethod
     public void setUp() {
         MockitoAnnotations.initMocks(this);
-        ConnectionManagerFactory connectionManagerFactory = mock(ConnectionManagerFactory.class);
-
-        connectionManager = mock(AbstractConnectionManager.class);
         try {
             when(connectionManagerFactory.createConnectionManager()).thenReturn(connectionManager);
         } catch (PersistenceException e) {
             throw new RuntimeException("Unexpected exception while performing setUp", e);
         }
-
-        daoFactory = mock(DaoFactory.class);
-
-        topicDao = mock(TopicDao.class);
         when(daoFactory.createTopicDao(connectionManager)).thenReturn(topicDao);
-
         topicService = new TopicService(daoFactory, connectionManagerFactory);
     }
 
@@ -351,6 +348,52 @@ public class TopicServiceTest {
             fail("Unexpected PersistenceException", e);
         } catch (ServiceException e) {
             fail("Unexpected ServiceException", e);
+        }
+    }
+
+    @Test
+    public void findTopicByIdTestTopicExists() {
+        long topicId = 1;
+        long accountId = 1;
+        try {
+            Topic expected = new Topic(topicId, "title", "text",
+                    LocalDateTime.of(2013, 3, 5, 1, 12),
+                    new Account(accountId),
+                    false,
+                    false);
+            AccountDao accountDao = mock(AccountDao.class);
+            when(daoFactory.createAccountDao(connectionManager)).thenReturn(accountDao);
+            when(accountDao.findEntityById(accountId)).thenReturn(new Account(accountId));
+            when(topicDao.findEntityById(topicId)).thenReturn(expected);
+            Topic result = topicService.findTopicById(topicId);
+
+            Assert.assertEquals(result, expected);
+        } catch (ServiceException e) {
+            fail("Unexpected ServiceException", e);
+        } catch (PersistenceException e) {
+            fail("Unexpected PersistenceException", e);
+        }
+    }
+
+    @Test(expectedExceptions = ServiceException.class)
+    public void findTopicByIdTestPersistenceExceptionWhileFindingTopic() throws ServiceException {
+        long topicId = 1;
+        try {
+            when(topicDao.findEntityById(topicId)).thenThrow(new PersistenceException());
+            topicService.findTopicById(topicId);
+        } catch (PersistenceException e) {
+            fail("Unexpected PersistenceException", e);
+        }
+    }
+
+    @Test(expectedExceptions = ServiceException.class)
+    public void findTopicByIdTestPersistenceExceptionWhileCreatingConnectionManager() throws ServiceException {
+        long topicId = 1;
+        try {
+            doThrow(new PersistenceException()).when(connectionManagerFactory).createConnectionManager();
+            topicService.findTopicById(topicId);
+        } catch (PersistenceException e) {
+            fail("Unexpected PersistenceException", e);
         }
     }
 }

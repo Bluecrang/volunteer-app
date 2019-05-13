@@ -9,6 +9,7 @@ import com.epam.finaltask.entity.AccessLevel;
 import com.epam.finaltask.entity.Account;
 import com.epam.finaltask.util.HashGenerator;
 import com.epam.finaltask.util.HashGeneratorFactory;
+import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.testng.Assert;
 import org.testng.annotations.BeforeMethod;
@@ -24,32 +25,30 @@ public class AuthenticationServiceTest {
 
     private static final String DEFAULT_HASH = "hash";
     private static final String DEFAULT_SALT = "salt";
-    AuthenticationService authenticationService;
-    AccountDao accountDao;
-    HashGenerator hashGenerator;
+    private AuthenticationService authenticationService;
+    @Mock
+    private AccountDao accountDao;
+    @Mock
+    private HashGenerator hashGenerator;
+    @Mock
+    private HashGeneratorFactory hashGeneratorFactory;
+    @Mock
+    ConnectionManagerFactory connectionManagerFactory;
+    @Mock
+    AbstractConnectionManager connectionManager;
+    @Mock
+    DaoFactory daoFactory;
 
     @BeforeMethod
     public void setUp() {
         MockitoAnnotations.initMocks(this);
-        HashGeneratorFactory hashGeneratorFactory = mock(HashGeneratorFactory.class);
-
-        hashGenerator = mock(HashGenerator.class);
         when(hashGeneratorFactory.createHashGenerator()).thenReturn(hashGenerator);
-
-        ConnectionManagerFactory connectionManagerFactory = mock(ConnectionManagerFactory.class);
-
-        AbstractConnectionManager connectionManager = mock(AbstractConnectionManager.class);
         try {
             when(connectionManagerFactory.createConnectionManager()).thenReturn(connectionManager);
         } catch (PersistenceException e) {
             throw new RuntimeException("Unexpected exception while performing setUp", e);
         }
-
-        DaoFactory daoFactory = mock(DaoFactory.class);
-
-        accountDao = mock(AccountDao.class);
         when(daoFactory.createAccountDao(connectionManager)).thenReturn(accountDao);
-
         authenticationService = new AuthenticationService(daoFactory, connectionManagerFactory, hashGeneratorFactory);
     }
 

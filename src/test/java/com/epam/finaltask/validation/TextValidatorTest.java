@@ -5,7 +5,7 @@ import org.testng.annotations.Test;
 
 public class TextValidatorTest {
 
-    TextValidator textValidator = new TextValidator();
+    private TextValidator textValidator = new TextValidator();
 
     @Test
     public void validateTestTextLengthLessThanMaxLength() {

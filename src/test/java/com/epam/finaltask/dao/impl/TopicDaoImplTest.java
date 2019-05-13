@@ -2,6 +2,7 @@ package com.epam.finaltask.dao.impl;
 
 import com.epam.finaltask.entity.Account;
 import com.epam.finaltask.entity.Topic;
+import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.testng.Assert;
 import org.testng.annotations.*;
@@ -20,16 +21,16 @@ public class TopicDaoImplTest {
 
     private static final String BEFORE_METHOD_TOPIC_TITLE = "bftitle";
     private static final String BEFORE_METHOD_TOPIC_TEXT = "bftext";
-    AbstractConnectionManagerImpl connectionManager;
-    TopicDaoImpl topicDao;
-    Connection connection;
-    Topic topic;
+    private TopicDaoImpl topicDao;
+    private Topic topic;
+    @Mock
+    AbstractConnectionManager connectionManager;
 
     @BeforeClass
     public void init() {
-        connectionManager = mock(AbstractConnectionManagerImpl.class);
         try {
-            connection = DatabaseTestUtil.initiateDatabaseAndGetConnection();
+            Connection connection = DatabaseTestUtil.initiateDatabaseAndGetConnection();
+            MockitoAnnotations.initMocks(this);
             when(connectionManager.getConnection()).thenReturn(connection);
             topicDao = new TopicDaoImpl(connectionManager);
         } catch (SQLException | IOException e) {
@@ -39,7 +40,6 @@ public class TopicDaoImplTest {
 
     @BeforeMethod
     public void initBeforeMethod() {
-        MockitoAnnotations.initMocks(this);
         topic = new Topic(BEFORE_METHOD_TOPIC_TITLE,
                 BEFORE_METHOD_TOPIC_TEXT,
                 LocalDateTime.of(2000, 2, 15, 21, 54),

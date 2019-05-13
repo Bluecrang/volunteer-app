@@ -1,6 +1,5 @@
 package com.epam.finaltask.util.impl;
 
-import com.epam.finaltask.util.impl.PropertiesReader;
 import org.testng.Assert;
 import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
@@ -15,7 +14,7 @@ import static org.testng.Assert.fail;
 
 public class PropertiesReaderTest {
 
-    PropertiesReader propertiesReader = new PropertiesReader();
+    private PropertiesReader propertiesReader = new PropertiesReader();
 
     @DataProvider(name = "ValidPropertiesProvider")
     public Object[][] provideProperties() {

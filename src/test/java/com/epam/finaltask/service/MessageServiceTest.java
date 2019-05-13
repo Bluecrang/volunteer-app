@@ -10,6 +10,7 @@ import com.epam.finaltask.entity.AccessLevel;
 import com.epam.finaltask.entity.Account;
 import com.epam.finaltask.entity.Message;
 import com.epam.finaltask.entity.Topic;
+import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.testng.Assert;
 import org.testng.annotations.BeforeMethod;
@@ -27,27 +28,24 @@ import static org.testng.Assert.fail;
 
 public class MessageServiceTest {
 
-    MessageService messageService;
-    MessageDao messageDao;
-    AbstractConnectionManager connectionManager;
-    DaoFactory daoFactory;
-    ConnectionManagerFactory connectionManagerFactory;
+    private MessageService messageService;
+    @Mock
+    private MessageDao messageDao;
+    @Mock
+    private AbstractConnectionManager connectionManager;
+    @Mock
+    private DaoFactory daoFactory;
+    @Mock
+    private ConnectionManagerFactory connectionManagerFactory;
 
     @BeforeMethod
     public void setUp() {
         MockitoAnnotations.initMocks(this);
-        connectionManagerFactory = mock(ConnectionManagerFactory.class);
-
-        connectionManager = mock(AbstractConnectionManager.class);
         try {
             when(connectionManagerFactory.createConnectionManager()).thenReturn(connectionManager);
         } catch (PersistenceException e) {
             throw new RuntimeException("Unexpected exception while performing setUp", e);
         }
-
-        daoFactory = mock(DaoFactory.class);
-
-        messageDao = mock(MessageDao.class);
         when(daoFactory.createMessageDao(connectionManager)).thenReturn(messageDao);
 
         messageService = new MessageService(daoFactory, connectionManagerFactory);

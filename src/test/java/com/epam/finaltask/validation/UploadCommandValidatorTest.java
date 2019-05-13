@@ -5,7 +5,7 @@ import org.testng.annotations.Test;
 
 public class UploadCommandValidatorTest {
 
-    UploadCommandValidator uploadCommandValidator = new UploadCommandValidator();
+    private UploadCommandValidator uploadCommandValidator = new UploadCommandValidator();
 
     @Test
     public void validateTestValidUploadCommand() {
