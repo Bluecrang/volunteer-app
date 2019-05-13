@@ -18,12 +18,6 @@
                 <tr>
                     <td><a href="${pageContext.request.contextPath}/profile?account_id=${account_from_list.accountId}&command=show_profile"><c:out value="${account_from_list.username}"/></a></td>
                     <td><c:out value="${account_from_list.rating}"/></td>
-                    <td>
-                        <c:choose>
-                            <c:when test="${account_from_list.accessLevel == 'ADMIN'}"><fmt:message key="ranking.account_type_admin"/></c:when>
-                            <c:otherwise><fmt:message key="ranking.account_type_user"/></c:otherwise>
-                        </c:choose>
-                    </td>
                 </tr>
             </c:forEach>
         </table>
