@@ -21,7 +21,6 @@ public class ShowTopicPageCommand implements Command {
 
     private static final Logger logger = LogManager.getLogger();
 
-    private static final String TOPIC_ID_ATTRIBUTE = "topic_id";
     private static final String MESSAGE_LIST_ATTRIBUTE = "message_list";
     private static final String TOPIC_ATTRIBUTE = "topic";
     private static final int NUMBER_OF_MESSAGES_PER_PAGE = 5;
@@ -41,7 +40,7 @@ public class ShowTopicPageCommand implements Command {
                 String currentPageString = data.getRequestParameter(ApplicationConstants.PAGE_PARAMETER);
                 MessageService messageService = new MessageService();
                 int messageCount = messageService.countMessages(topicId);
-                int numberOfPages = Math.toIntExact(Math.round(Math.ceil((double)messageCount / NUMBER_OF_MESSAGES_PER_PAGE))); //todo handle ArithmeticalException
+                int numberOfPages = Math.toIntExact(Math.round(Math.ceil((double)messageCount / NUMBER_OF_MESSAGES_PER_PAGE)));
                 int currentPage;
                 if (currentPageString.equals(LAST_PAGE)) {
                     currentPage = (numberOfPages != 0) ? numberOfPages : 1;
@@ -54,7 +53,6 @@ public class ShowTopicPageCommand implements Command {
                 logger.log(Level.DEBUG, "number of pages: " + numberOfPages);
                 data.putRequestAttribute(MESSAGE_LIST_ATTRIBUTE, messageList);
                 data.putRequestAttribute(ApplicationConstants.TOPIC_PAGE_COUNT_ATTRIBUTE, numberOfPages);
-                data.putRequestAttribute(TOPIC_ID_ATTRIBUTE, topicId); //todo (remove?) (topic already passed to data)
                 data.putRequestAttribute(NUMBER_OF_MESSAGES_PER_PAGE_ATTRIBUTE, NUMBER_OF_MESSAGES_PER_PAGE);
                 commandResult.setPage(PageConstants.TOPIC_PAGE);
             } catch (ServiceException e) {
@@ -63,7 +61,6 @@ public class ShowTopicPageCommand implements Command {
         } catch (NumberFormatException e) {
             throw new CommandException("Unable to show topic page: could not parse parameter", e);
         }
-
         return commandResult;
     }
 }

@@ -24,7 +24,7 @@ public class ChangeAccountBlockStateCommand implements Command {
         commandResult.assignTransitionTypeForward();
         try {
             long accountId = Long.parseLong(data.getRequestParameter(ApplicationConstants.ACCOUNT_ID_PARAMETER));
-            commandResult.setPage(ApplicationConstants.SHOW_PROFILE + accountId); //todo
+            commandResult.setPage(ApplicationConstants.SHOW_PROFILE + accountId);
             if (sessionAccountObject instanceof Account) {
                 boolean block = Boolean.parseBoolean(data.getRequestParameter(ACCOUNT_BLOCK_PARAMETER));
                 try {

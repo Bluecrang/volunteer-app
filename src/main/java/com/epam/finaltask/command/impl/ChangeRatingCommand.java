@@ -41,7 +41,7 @@ public class ChangeRatingCommand implements Command {
                     throw new CommandException("unable to change account id=" + accountId + " rating", e);
                 }
             }
-        } catch (NumberFormatException e) { //TODO suspicious exception catch (create validator?)
+        } catch (NumberFormatException e) {
             throw new CommandException("could not parse parameter", e);
         }
         return commandResult;

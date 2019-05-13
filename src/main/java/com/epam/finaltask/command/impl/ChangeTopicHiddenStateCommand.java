@@ -47,7 +47,7 @@ public class ChangeTopicHiddenStateCommand implements Command {
                             " could not hide topic id=" + topicId, e);
                 }
             }
-        } catch (NumberFormatException e) { //TODO NumberFormatException catch
+        } catch (NumberFormatException e) {
             throw new CommandException("could not parse topic id to long value", e);
         }
         return commandResult;

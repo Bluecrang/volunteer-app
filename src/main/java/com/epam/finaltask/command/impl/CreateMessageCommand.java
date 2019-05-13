@@ -42,7 +42,7 @@ public class CreateMessageCommand implements Command {
                     } else {
                         logger.log(Level.WARN, "could not create message using given parameters");
                         data.putRequestAttribute(ApplicationConstants.TOPIC_ACTION_NOTIFICATION,
-                                MESSAGE_CREATION_ERROR_PROPERTY); //todo
+                                MESSAGE_CREATION_ERROR_PROPERTY);
                     }
                 } catch (ServiceException e) {
                     throw new CommandException("could not create message", e);

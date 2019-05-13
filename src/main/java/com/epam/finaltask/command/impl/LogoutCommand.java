@@ -6,7 +6,7 @@ import com.epam.finaltask.command.CommandResult;
 import com.epam.finaltask.util.ApplicationConstants;
 import com.epam.finaltask.util.PageConstants;
 
-public class LogoutCommand implements Command { //TODO invalidate session
+public class LogoutCommand implements Command {
 
     @Override
     public CommandResult execute(CommandData data) {

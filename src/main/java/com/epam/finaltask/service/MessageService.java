@@ -15,6 +15,7 @@ import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import java.util.Comparator;
 import java.util.List;
 
 public class MessageService extends AbstractService {
@@ -36,6 +37,7 @@ public class MessageService extends AbstractService {
             try {
                 MessageDao messageDao = daoFactory.createMessageDao(connectionManager);
                 List<Message> messageList = messageDao.findPageMessages(topicId, currentPage, numberOfMessagesPerPage);
+                messageList.sort(Comparator.comparing(Message::getDate));
                 for (Message message : messageList) {
                     AccountDao accountDao = daoFactory.createAccountDao(connectionManager);
                     Account account = accountDao.findEntityById(message.getAccount().getAccountId());
@@ -94,7 +96,6 @@ public class MessageService extends AbstractService {
                 connectionManager.rollback();
             } catch (PersistenceException e) {
                 connectionManager.rollback();
-                logger.log(Level.DEBUG, "unable to delete message, transaction is rolled back");
                 throw new ServiceException(e);
             }
         } catch (PersistenceException e) {

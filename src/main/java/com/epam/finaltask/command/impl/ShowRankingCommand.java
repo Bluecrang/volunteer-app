@@ -27,20 +27,22 @@ public class ShowRankingCommand implements Command {
     public CommandResult execute(CommandData data) throws CommandException {
         CommandResult commandResult = new CommandResult();
         commandResult.assignTransitionTypeForward();
-        int currentPage = Integer.parseInt(data.getRequestParameter(ApplicationConstants.PAGE_PARAMETER)); //todo validate
         try {
+            int currentPage = Integer.parseInt(data.getRequestParameter(ApplicationConstants.PAGE_PARAMETER));
             AccountService accountService = new AccountService();
             List<Account> accountList = accountService.findRatingPageAccounts(currentPage, NUMBER_OF_ACCOUNTS_PER_PAGE);
             logger.log(Level.DEBUG, "account list: " + accountList);
             data.putRequestAttribute(ACCOUNT_LIST_ATTRIBUTE, accountList);
             int accountCount = accountService.countAccounts();
-            int numberOfPages = Math.toIntExact(Math.round(Math.ceil((double)accountCount / NUMBER_OF_ACCOUNTS_PER_PAGE))); //todo handle ArithmeticalException
+            int numberOfPages = Math.toIntExact(Math.round(Math.ceil((double)accountCount / NUMBER_OF_ACCOUNTS_PER_PAGE)));
             data.putRequestAttribute(ApplicationConstants.RANKING_PAGE_COUNT_ATTRIBUTE, numberOfPages);
             data.putRequestAttribute(ApplicationConstants.RANKING_CURRENT_PAGE_ATTRIBUTE, currentPage);
             data.putRequestAttribute(NUMBER_OF_ACCOUNTS_PER_PAGE_ATTRIBUTE, NUMBER_OF_ACCOUNTS_PER_PAGE);
             commandResult.setPage(PageConstants.RANKING_PAGE);
         } catch (ServiceException e) {
             throw new CommandException("Unable to show rating page: ServiceException has occurred", e);
+        } catch (NumberFormatException e) {
+            throw new CommandException("Unable to parse parameter", e);
         }
         return commandResult;
     }

@@ -23,7 +23,7 @@ public class PromoteUserToAdminCommand implements Command {
         commandResult.assignTransitionTypeForward();
         try {
             long accountId = Long.parseLong(data.getRequestParameter(ApplicationConstants.ACCOUNT_ID_PARAMETER));
-            commandResult.setPage(ApplicationConstants.SHOW_PROFILE + accountId); //todo
+            commandResult.setPage(ApplicationConstants.SHOW_PROFILE + accountId);
             if (sessionAccountObject instanceof Account) {
                 try {
                     AccountService accountService = new AccountService();

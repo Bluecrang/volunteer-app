@@ -15,8 +15,9 @@ import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
 
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
+import javax.xml.ws.Service;
+
+import static org.mockito.Mockito.*;
 import static org.testng.Assert.fail;
 
 public class RegistrationServiceTest {
@@ -25,6 +26,7 @@ public class RegistrationServiceTest {
     RegistrationService registrationService;
     AccountDao accountDao;
     HashGenerator hashGenerator;
+    AbstractConnectionManager connectionManager;
 
     @BeforeMethod
     public void setUp() {
@@ -36,7 +38,7 @@ public class RegistrationServiceTest {
 
         ConnectionManagerFactory connectionManagerFactory = mock(ConnectionManagerFactory.class);
 
-        AbstractConnectionManager connectionManager = mock(AbstractConnectionManager.class);
+        connectionManager = mock(AbstractConnectionManager.class);
         try {
             when(connectionManagerFactory.createConnectionManager()).thenReturn(connectionManager);
         } catch (PersistenceException e) {
@@ -135,5 +137,18 @@ public class RegistrationServiceTest {
         } catch (ServiceException e) {
             fail("Unexpected ServiceException", e);
         }
+    }
+
+    @Test(expectedExceptions = ServiceException.class)
+    public void registerUserTestPersistenceExceptionThrownBeforeTransaction() throws ServiceException {
+        String login = "login";
+        String password = "password";
+        String email = "mail@mail.com";
+        try {
+            doThrow(new PersistenceException()).when(connectionManager).disableAutoCommit();
+        } catch (PersistenceException e) {
+            e.printStackTrace();
+        }
+        registrationService.registerUser(login, password, email);
     }
 }

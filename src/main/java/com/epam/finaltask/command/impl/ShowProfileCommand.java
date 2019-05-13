@@ -29,7 +29,7 @@ public class ShowProfileCommand implements Command {
                 AccountService accountService = new AccountService();
                 Account account = accountService.findAccountById(accountId);
                 if (account == null) {
-                    throw new CommandException("Could not find account by chosen id, id=" + accountId); //todo
+                    throw new CommandException("Could not find account by chosen id, id=" + accountId);
                 }
                 logger.log(Level.INFO, "account id=" + accountId + " found");
                 data.putRequestAttribute(PROFILE_ATTRIBUTE, account);
@@ -37,7 +37,7 @@ public class ShowProfileCommand implements Command {
             } catch (ServiceException e) {
                 throw new CommandException("could not find account with id=" + accountId, e);
             }
-        } catch (NumberFormatException e) { //TODO NumberFormatException catch
+        } catch (NumberFormatException e) {
             throw new CommandException("could not parse account id to long value", e);
         }
         return commandResult;
