@@ -1,4 +1,4 @@
-package com.epam.finaltask.connectionpool;
+package com.epam.finaltask.util.impl;
 
 import com.epam.finaltask.validation.FileValidator;
 import org.apache.logging.log4j.Level;
@@ -8,11 +8,11 @@ import org.apache.logging.log4j.Logger;
 import java.io.*;
 import java.util.Properties;
 
-class PropertiesReader {
+public class PropertiesReader {
 
     private static final Logger logger = LogManager.getLogger();
 
-    Properties readProperties(Reader reader) {
+    public Properties readProperties(Reader reader) {
         if (reader == null) {
             String message = "reader is null";
             logger.log(Level.FATAL, message);
@@ -29,7 +29,7 @@ class PropertiesReader {
         return properties;
     }
 
-    Properties readProperties(String filename) {
+    public Properties readProperties(String filename) {
         FileValidator fileValidator = new FileValidator();
         if (!fileValidator.validate(filename)) {
             String message = "properties filename is invalid";
