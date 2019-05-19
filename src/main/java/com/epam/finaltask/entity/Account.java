@@ -5,7 +5,7 @@ public class Account extends Entity {
     private String username;
     private String passwordHash;
     private String email;
-    private AccessLevel accessLevel;
+    private AccountType accountType;
     private int rating;
     private boolean verified;
     private boolean blocked;
@@ -19,12 +19,12 @@ public class Account extends Entity {
         this.accountId = accountId;
     }
 
-    public Account(String username, String passwordHash, String email, AccessLevel accessLevel,
+    public Account(String username, String passwordHash, String email, AccountType accountType,
                    int rating, boolean verified, boolean blocked, String salt, String avatarBase64) {
         this.username = username;
         this.passwordHash = passwordHash;
         this.email = email;
-        this.accessLevel = accessLevel;
+        this.accountType = accountType;
         this.rating = rating;
         this.verified = verified;
         this.blocked = blocked;
@@ -32,13 +32,13 @@ public class Account extends Entity {
         this.avatarBase64 = avatarBase64;
     }
 
-    public Account(long accountId, String username, String passwordHash, String email, AccessLevel accessLevel,
+    public Account(long accountId, String username, String passwordHash, String email, AccountType accountType,
                    int rating, boolean verified, boolean blocked, String salt, String avatarBase64) {
         this.accountId = accountId;
         this.username = username;
         this.passwordHash = passwordHash;
         this.email = email;
-        this.accessLevel = accessLevel;
+        this.accountType = accountType;
         this.rating = rating;
         this.verified = verified;
         this.blocked = blocked;
@@ -78,12 +78,12 @@ public class Account extends Entity {
         this.email = email;
     }
 
-    public AccessLevel getAccessLevel() {
-        return accessLevel;
+    public AccountType getAccountType() {
+        return accountType;
     }
 
-    public void setAccessLevel(AccessLevel accessLevel) {
-        this.accessLevel = accessLevel;
+    public void setAccountType(AccountType accountType) {
+        this.accountType = accountType;
     }
 
     public int getRating() {
@@ -141,7 +141,7 @@ public class Account extends Entity {
         if (passwordHash != null ? !passwordHash.equals(account.passwordHash) : account.passwordHash != null)
             return false;
         if (email != null ? !email.equals(account.email) : account.email != null) return false;
-        if (accessLevel != account.accessLevel) return false;
+        if (accountType != account.accountType) return false;
         if (salt != null ? !salt.equals(account.salt) : account.salt != null) return false;
         return avatarBase64 != null ? avatarBase64.equals(account.avatarBase64) : account.avatarBase64 == null;
     }
@@ -152,7 +152,7 @@ public class Account extends Entity {
         result = 31 * result + (username != null ? username.hashCode() : 0);
         result = 31 * result + (passwordHash != null ? passwordHash.hashCode() : 0);
         result = 31 * result + (email != null ? email.hashCode() : 0);
-        result = 31 * result + (accessLevel != null ? accessLevel.hashCode() : 0);
+        result = 31 * result + (accountType != null ? accountType.hashCode() : 0);
         result = 31 * result + rating;
         result = 31 * result + (verified ? 1 : 0);
         result = 31 * result + (blocked ? 1 : 0);
@@ -168,7 +168,7 @@ public class Account extends Entity {
         sb.append(", username='").append(username).append('\'');
         sb.append(", passwordHash='").append(passwordHash).append('\'');
         sb.append(", email='").append(email).append('\'');
-        sb.append(", accessLevel=").append(accessLevel);
+        sb.append(", accountType=").append(accountType);
         sb.append(", rating=").append(rating);
         sb.append(", verified=").append(verified);
         sb.append(", blocked=").append(blocked);

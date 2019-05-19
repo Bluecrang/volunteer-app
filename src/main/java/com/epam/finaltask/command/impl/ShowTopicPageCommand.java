@@ -4,6 +4,8 @@ import com.epam.finaltask.command.Command;
 import com.epam.finaltask.command.CommandData;
 import com.epam.finaltask.command.CommandException;
 import com.epam.finaltask.command.CommandResult;
+import com.epam.finaltask.entity.Account;
+import com.epam.finaltask.entity.AccountType;
 import com.epam.finaltask.entity.Message;
 import com.epam.finaltask.entity.Topic;
 import com.epam.finaltask.service.MessageService;
@@ -30,13 +32,28 @@ public class ShowTopicPageCommand implements Command {
     @Override
     public CommandResult execute(CommandData data) throws CommandException {
         CommandResult commandResult = new CommandResult();
-        commandResult.assignTransitionTypeForward();
         try {
             long topicId = Long.parseLong(data.getRequestParameter(ApplicationConstants.TOPIC_ID_PARAMETER));
             TopicService topicService = new TopicService();
             try {
                 Topic topic = topicService.findTopicById(topicId);
                 data.putRequestAttribute(TOPIC_ATTRIBUTE, topic);
+                if (topic.isHidden()) {
+                    Object sessionAccountObject = data.getSessionAttribute(ApplicationConstants.ACCOUNT_ATTRIBUTE);
+                    if (!(sessionAccountObject instanceof Account)) {
+                        commandResult.assignTransitionTypeError();
+                        commandResult.setCode(ApplicationConstants.PAGE_NOT_FOUND_ERROR_CODE);
+                        return commandResult;
+                    } else {
+                        Account sessionAccount = (Account) sessionAccountObject;
+                        if (sessionAccount.getAccountType() != AccountType.ADMIN) {
+                            commandResult.assignTransitionTypeError();
+                            commandResult.setCode(ApplicationConstants.PAGE_NOT_FOUND_ERROR_CODE);
+                            return commandResult;
+                        }
+                    }
+                }
+                commandResult.assignTransitionTypeForward();
                 String currentPageString = data.getRequestParameter(ApplicationConstants.PAGE_PARAMETER);
                 MessageService messageService = new MessageService();
                 int messageCount = messageService.countMessages(topicId);

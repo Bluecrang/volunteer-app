@@ -35,7 +35,7 @@
                 <fmt:message key="${registration_message}"/><br/>
             </c:if>
         </div>
-        <a href="${pageContext.request.contextPath}/jsp/login.jsp"><fmt:message key="registration.login_link"/></a>
+        <a href="${pageContext.request.contextPath}/controller?command=show_login_page"><fmt:message key="registration.login_link"/></a>
     </div>
 </body>
 </html>

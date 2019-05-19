@@ -1,7 +1,7 @@
 package com.epam.finaltask.dao.impl;
 
 import com.epam.finaltask.dao.AccountDao;
-import com.epam.finaltask.entity.AccessLevel;
+import com.epam.finaltask.entity.AccountType;
 import com.epam.finaltask.entity.Account;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
@@ -41,12 +41,12 @@ public class AccountDaoImplTest {
 
     @BeforeMethod
     public void initBeforeMethod() {
-        account = new Account(BEFORE_METHOD_ACCOUNT_USERNAME, "PASS", BEFORE_METHOD_ACCOUNT_MAIL, AccessLevel.USER,
+        account = new Account(BEFORE_METHOD_ACCOUNT_USERNAME, "PASS", BEFORE_METHOD_ACCOUNT_MAIL, AccountType.USER,
         0, true, false, "salt", null);
     }
 
     @AfterMethod
-    public void cleanUpDatabaseAccounts() {
+    public void cleanDatabaseAccountsTable() {
         try {
             List<Account> actual = accountDao.findAll();
             for (Account databaseAccount : actual) {
@@ -75,6 +75,48 @@ public class AccountDaoImplTest {
         try {
             accountDao.create(account);
             List<Account> actual = accountDao.findAll();
+            Assert.assertEquals(actual.size(), 2);
+        } catch (PersistenceException e) {
+            fail("Unexpected PersistenceException", e);
+        }
+    }
+
+    @Test
+    public void findAllByAccountTypeTestNoAccountsWithChosenAccountTypeExistAccountTypeAdmin() {
+        try {
+            accountDao.create(account);
+
+            List<Account> actual = accountDao.findAllByAccountType(AccountType.ADMIN);
+
+            Assert.assertEquals(actual.size(), 0);
+        } catch (PersistenceException e) {
+            fail("Unexpected PersistenceException", e);
+        }
+    }
+
+    @Test
+    public void findAllByAccountTypeTestAccountWithChosenAccountTypeExistsAccountTypeAdmin() {
+        try {
+            accountDao.create(account);
+            Account accountAdmin = new Account("name3", "PAS", "mail@ma.ru", AccountType.ADMIN,
+                    10, true, false, "s", null);
+            accountDao.create(accountAdmin);
+
+            List<Account> actual = accountDao.findAllByAccountType(AccountType.ADMIN);
+
+            Assert.assertEquals(actual.size(), 1);
+        } catch (PersistenceException e) {
+            fail("Unexpected PersistenceException", e);
+        }
+    }
+
+    @Test
+    public void findAllByAccountTypeTestAccountTypeUser() {
+        try {
+            accountDao.create(account);
+
+            List<Account> actual = accountDao.findAllByAccountType(AccountType.USER);
+
             Assert.assertEquals(actual.size(), 2);
         } catch (PersistenceException e) {
             fail("Unexpected PersistenceException", e);

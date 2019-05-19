@@ -1,4 +1,4 @@
-package com.epam.finaltask.util.impl;
+package com.epam.finaltask.connectionpool;
 
 import com.epam.finaltask.validation.FileValidator;
 import org.apache.logging.log4j.Level;

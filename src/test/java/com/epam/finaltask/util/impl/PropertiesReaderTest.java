@@ -1,5 +1,6 @@
 package com.epam.finaltask.util.impl;
 
+import com.epam.finaltask.connectionpool.PropertiesReader;
 import org.testng.Assert;
 import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;

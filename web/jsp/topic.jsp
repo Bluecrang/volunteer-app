@@ -11,8 +11,8 @@
 <body>
     <div class="container align-content-center">
         <h4><c:out value="${topic.title}"/></h4>
-        <c:if test="${account.accessLevel == 'ADMIN' && not topic.closed}">
-            <form class="my-2" method="post" id="close_topic" action="${pageContext.request.contextPath}/servlet">
+        <c:if test="${account.accountType == 'ADMIN' && not topic.closed}">
+            <form class="my-2" method="post" id="close_topic" action="${pageContext.request.contextPath}/controller">
                 <input type="hidden" name="topic_id" value="${topic.topicId}"/>
                 <input type="hidden" name="command" value="close_topic"/>
                 <input class="btn btn-primary" type="submit" value="<fmt:message key="topic.close_topic.submit"/>"/>
@@ -28,7 +28,7 @@
             </div>
             <div class="mb-4 clearfix media-body">
                 <div>
-                    <strong><a href="${pageContext.request.contextPath}/profile?account_id=${topic.account.accountId}&command=show_profile"><c:out value="${topic.account.username}"/></a></strong>
+                    <strong><a href="${pageContext.request.contextPath}/controller?account_id=${topic.account.accountId}&command=show_profile"><c:out value="${topic.account.username}"/></a></strong>
                     <p class="float-right text-muted"><c:out value="${topic.date}"/></p>
                 </div>
                 <p><c:out value="${topic.text}"/></p>
@@ -48,14 +48,14 @@
                         </div>
                         <div class="clearfix media-body">
                             <div>
-                                <strong><a href="${pageContext.request.contextPath}/profile?account_id=${message.account.accountId}&command=show_profile"><c:out value="${message.account.username}"/></a></strong>
+                                <strong><a href="${pageContext.request.contextPath}/controller?account_id=${message.account.accountId}&command=show_profile"><c:out value="${message.account.username}"/></a></strong>
                                 <p class="float-right text-muted"><c:out value="${message.date}"/></p>
                             </div>
                             <p><c:out value="${message.message}"/></p>
                         </div>
                     </div>
-                    <c:if test="${not empty account && account.accessLevel == 'ADMIN'}">
-                        <form class="mt-2" method="post" action="${pageContext.request.contextPath}/servlet">
+                    <c:if test="${not empty account && account.accountType == 'ADMIN'}">
+                        <form class="mt-2" method="post" action="${pageContext.request.contextPath}/controller">
                             <input type="hidden" name="command" value="delete_message"/>
                             <input type="hidden" name="message_id" value="${message.messageId}"/>
                             <input class="btn btn-danger btn-sm" type="submit" value="<fmt:message key="topic.delete_message"/>"/>
@@ -91,7 +91,7 @@
             <c:if test="${not empty account}">
                 <c:choose>
                     <c:when test="${not topic.closed}">
-                        <form method="post" id="create_message" onsubmit="return validateMessageForm();" name="message" action="${pageContext.request.contextPath}/servlet">
+                        <form method="post" id="create_message" onsubmit="return validateMessageForm();" name="message" action="${pageContext.request.contextPath}/controller">
                             <input type="hidden" name="topic_id" value="${topic.topicId}"/>
                             <input type="hidden" name="command" value="create_message"/>
                             <textarea class="form-control" id="message_text" name="text" form="create_message"><fmt:message key="topic.create_message.textarea"/></textarea><br/>

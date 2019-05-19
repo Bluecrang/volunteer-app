@@ -23,6 +23,10 @@ public abstract class AbstractServlet extends HttpServlet {
                 response.sendRedirect(getServletContext().getContextPath() + commandResult.getPage());
                 break;
             }
+            case ERROR: {
+                response.sendError(commandResult.getCode());
+                break;
+            }
             default: {
                 throw new EnumConstantNotPresentException(commandResult.getTransitionType().getClass(),
                         "TransitionType constant is not present");

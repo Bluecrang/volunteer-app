@@ -9,7 +9,7 @@
 <body>
     <div class="container mt-3 col-sm-6 offset-sm-3">
         <h2 class="display-4 text-center"><fmt:message key="login.form_header"/></h2>
-        <form class="justify-content-center" method="post" action="${pageContext.request.contextPath}/servlet">
+        <form class="justify-content-center" method="post" action="${pageContext.request.contextPath}/controller">
             <div class="form-group">
                 <label for="inputEmail"><fmt:message key="login.email"/></label>
                 <input class="form-control" type="email" id="inputEmail" name="email" placeholder="<fmt:message key="login.email_placeholder"/>"/>
@@ -26,7 +26,7 @@
         <c:if test="${not empty authorization_message}">
             <fmt:message key="${authorization_message}"/><br/>
         </c:if>
-        <a href="${pageContext.request.contextPath}/jsp/registration.jsp"><fmt:message key="login.registration_link"/></a>
+        <a href="${pageContext.request.contextPath}/controller?command=show_registration_page"><fmt:message key="login.registration_link"/></a>
     </div>
 </body>
 </html>

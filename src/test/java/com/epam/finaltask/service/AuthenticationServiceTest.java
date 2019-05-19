@@ -5,7 +5,7 @@ import com.epam.finaltask.dao.ConnectionManagerFactory;
 import com.epam.finaltask.dao.DaoFactory;
 import com.epam.finaltask.dao.impl.AbstractConnectionManager;
 import com.epam.finaltask.dao.impl.PersistenceException;
-import com.epam.finaltask.entity.AccessLevel;
+import com.epam.finaltask.entity.AccountType;
 import com.epam.finaltask.entity.Account;
 import com.epam.finaltask.util.HashGenerator;
 import com.epam.finaltask.util.HashGeneratorFactory;
@@ -59,7 +59,7 @@ public class AuthenticationServiceTest {
         when(hashGenerator.hash(eq(password), eq(DEFAULT_SALT), anyString())).thenReturn(DEFAULT_HASH);
         try {
             when(accountDao.findAccountByEmail(email)).thenReturn(new Account(1, email, DEFAULT_HASH,
-                    "email@mail.com", AccessLevel.USER, 0, true, false, DEFAULT_SALT, null));
+                    "email@mail.com", AccountType.USER, 0, true, false, DEFAULT_SALT, null));
         } catch (PersistenceException e) {
             fail("Unexpected PersistenceException", e);
         }
@@ -115,7 +115,7 @@ public class AuthenticationServiceTest {
         when(hashGenerator.hash(eq(password), eq(DEFAULT_SALT), anyString())).thenReturn("other_hash");
         try {
             when(accountDao.findAccountByEmail(email)).thenReturn(new Account(1, email, DEFAULT_HASH,
-                    "email@mail.com", AccessLevel.USER, 0, true, false, DEFAULT_SALT, null));
+                    "email@mail.com", AccountType.USER, 0, true, false, DEFAULT_SALT, null));
         } catch (PersistenceException e) {
             fail("Unexpected PersistenceException", e);
         }

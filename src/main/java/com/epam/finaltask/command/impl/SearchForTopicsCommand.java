@@ -29,7 +29,7 @@ public class SearchForTopicsCommand implements Command {
         try {
             String regex = data.getRequestParameter(SEARCH_STRING_PARAMETER);
             TopicService service = new TopicService();
-            List<Topic> topicList = service.findTopicsByTitleRegex(regex);
+            List<Topic> topicList = service.findTopicsByTitleSubstring(regex);
             logger.log(Level.DEBUG, "number of found topics: " + topicList.size());
             if (!topicList.isEmpty()) {
                 data.putRequestAttribute(TOPIC_LIST_ATTRIBUTE, topicList);

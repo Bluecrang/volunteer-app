@@ -43,7 +43,7 @@ public class AuthenticationCommand implements Command {
 //                    return commandResult;
 //                } todo
                 data.putSessionAttribute(ApplicationConstants.ACCOUNT_ATTRIBUTE, account);
-                commandResult.setPage(PageConstants.MAIN_PAGE);
+                commandResult.setPage(ApplicationConstants.SHOW_MAIN_PAGE);
             } else {
                 logger.log(Level.INFO, "user with email=" + email + " does not exist or password does not match");
                 data.putSessionAttribute(ApplicationConstants.AUTHORIZATION_MESSAGE_ATTRIBUTE, ACCOUNT_DOES_NOT_EXIST_OR_PASSWORD_DOES_NOT_MATCH_PROPERTY);

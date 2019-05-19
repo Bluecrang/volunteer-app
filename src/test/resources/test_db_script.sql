@@ -70,6 +70,6 @@ ENGINE = InnoDB;
 SET SQL_MODE=@OLD_SQL_MODE;
 SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS;
 SET UNIQUE_CHECKS=@OLD_UNIQUE_CHECKS;
-INSERT INTO `volunteerdbtest`.`account_type` (`type`) VALUES("USER");
+INSERT INTO `volunteerdbtest`.`account_type` (`type`) VALUES("USER"), ("ADMIN");
 INSERT INTO `volunteerdbtest`.`account`(`username`, `password`, `account_type_id`, `email`, `rating`, `verified`, `blocked`, `salt`) VALUES("username", "password", 1, "user@mail.com", 10, 1, 0, "salt");
 INSERT INTO `volunteerdbtest`.`topic`(`title`, `closed`, `account_id`, `hidden`) VALUES("title", 0, 1, 0);

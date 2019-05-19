@@ -5,6 +5,6 @@ import com.epam.finaltask.dao.ConnectionManagerFactory;
 public class ConnectionManagerFactoryImpl implements ConnectionManagerFactory {
     @Override
     public AbstractConnectionManager createConnectionManager() throws PersistenceException {
-        return new AbstractConnectionManagerImpl();
+        return new ConnectionManager();
     }
 }

@@ -28,25 +28,25 @@
                     <fmt:message key="profile.rating"/> <c:out value="${profile.rating}"/>
                 </div>
                 <div class="row">
-                    <c:if test="${profile.accessLevel == 'ADMIN'}"><fmt:message key="profile.access_level_admin"/></c:if>
+                    <c:if test="${profile.accountType == 'ADMIN'}"><fmt:message key="profile.account_type_admin"/></c:if>
                 </div>
                 <div class="row">
                     <c:if test="${not empty account}">
-                        <c:if test="${account.accountId == profile.accountId or account.accessLevel == 'ADMIN'}">
+                        <c:if test="${account.accountId == profile.accountId or account.accountType == 'ADMIN'}">
                             <fmt:message key="profile.email"/> <c:out value="${profile.email}"/>
                         </c:if>
                     </c:if>
                 </div>
                 <div class="row mt-2">
-                    <c:if test="${account.accessLevel == 'ADMIN'}">
-                        <form method="post" id="block_account" action="${pageContext.request.contextPath}/servlet">
+                    <c:if test="${account.accountType == 'ADMIN'}">
+                        <form method="post" id="block_account" action="${pageContext.request.contextPath}/controller">
                             <input type="hidden" name="account_id" value="${profile.accountId}"/>
                             <input type="hidden" name="command" value="promote_user_to_admin"/>
-                            <c:if test="${profile.accessLevel != 'ADMIN'}">
+                            <c:if test="${profile.accountType != 'ADMIN'}">
                                 <input class="btn btn-primary" type="submit" value="<fmt:message key="profile.promote_to_admin.submit"/>"/>
                             </c:if>
                         </form>
-                        <form method="post" id="block_account" action="${pageContext.request.contextPath}/servlet">
+                        <form method="post" id="block_account" action="${pageContext.request.contextPath}/controller">
                             <input type="hidden" name="account_id" value="${profile.accountId}"/>
                             <input type="hidden" name="command" value="change_account_block_state"/>
                             <c:choose>
@@ -76,10 +76,10 @@
                 </form>
             </div>
         </c:if>
-        <c:if test="${account.accessLevel == 'ADMIN'}">
+        <c:if test="${account.accountType == 'ADMIN'}">
             <h6><fmt:message key="profile.rating_form.header"/></h6>
             <div class="row">
-                <form class="form-inline"  id="rating_addition_form" method="post" onsubmit="return validateRatingAdditionForm();" name="rating_form" action="${pageContext.request.contextPath}/servlet">
+                <form class="form-inline"  id="rating_addition_form" method="post" onsubmit="return validateRatingAdditionForm();" name="rating_form" action="${pageContext.request.contextPath}/controller">
                     <div class="form-group">
                         <input class="form-control" id="rating_addition_text" name="rating" type="text"/>
                     </div>

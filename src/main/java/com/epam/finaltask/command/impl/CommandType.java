@@ -2,7 +2,7 @@ package com.epam.finaltask.command.impl;
 
 import com.epam.finaltask.command.Command;
 
-public enum CommandType {
+public enum CommandType { //todo restrictions
     AUTHENTICATION(new AuthenticationCommand()),
     USER_REGISTRATION(new RegistrationCommand()),
     LOGOUT(new LogoutCommand()),
@@ -20,7 +20,11 @@ public enum CommandType {
     SHOW_RANKING_PAGE(new ShowRankingCommand()),
     CHANGE_RATING(new ChangeRatingCommand()),
     PROMOTE_USER_TO_ADMIN(new PromoteUserToAdminCommand()),
-    SEARCH_FOR_TOPICS(new SearchForTopicsCommand());
+    SEARCH_FOR_TOPICS(new SearchForTopicsCommand()),
+    SHOW_MAIN_PAGE(new ShowMainPageCommand()),
+    SHOW_REGISTRATION_PAGE(new ShowRegistrationPageCommand()),
+    SHOW_LOGIN_PAGE(new ShowLoginPageCommand()),
+    SHOW_ADMINISTRATORS(new ShowAdministratorsCommand());
 
     private Command command;
 

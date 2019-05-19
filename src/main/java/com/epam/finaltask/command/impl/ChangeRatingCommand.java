@@ -4,8 +4,8 @@ import com.epam.finaltask.command.Command;
 import com.epam.finaltask.command.CommandData;
 import com.epam.finaltask.command.CommandException;
 import com.epam.finaltask.command.CommandResult;
-import com.epam.finaltask.entity.AccessLevel;
 import com.epam.finaltask.entity.Account;
+import com.epam.finaltask.entity.AccountType;
 import com.epam.finaltask.service.AccountService;
 import com.epam.finaltask.service.ServiceException;
 import com.epam.finaltask.util.ApplicationConstants;
@@ -28,7 +28,7 @@ public class ChangeRatingCommand implements Command {
             if (sessionAccountObject instanceof Account) {
                 Account sessionAccount = (Account) sessionAccountObject;
                 try {
-                    if (sessionAccount.getAccessLevel() == AccessLevel.ADMIN) {
+                    if (sessionAccount.getAccountType() == AccountType.ADMIN) {
                         AccountService accountService = new AccountService();
                         if (accountService.addValueToRating(sessionAccount, accountId, value)) {
                             logger.log(Level.INFO, "account id=" + accountId + " rating changed by " + value);

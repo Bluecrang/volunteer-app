@@ -1,6 +1,6 @@
 package com.epam.finaltask.entity;
 
-public enum AccessLevel {
+public enum AccountType {
     ADMIN,
     USER
 }

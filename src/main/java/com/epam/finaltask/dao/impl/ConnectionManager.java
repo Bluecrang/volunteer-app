@@ -6,10 +6,10 @@ import com.epam.finaltask.connectionpool.ConnectionPoolException;
 import java.sql.Connection;
 import java.sql.SQLException;
 
-class AbstractConnectionManagerImpl extends AbstractConnectionManager {
+class ConnectionManager extends AbstractConnectionManager {
     private Connection connection;
 
-    public AbstractConnectionManagerImpl() throws PersistenceException {
+    public ConnectionManager() throws PersistenceException {
         try {
             connection = ConnectionPool.INSTANCE.getConnection();
         } catch (ConnectionPoolException e) {

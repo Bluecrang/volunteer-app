@@ -9,7 +9,7 @@ import java.io.IOException;
 import java.io.Reader;
 import java.sql.*;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 
 class TopicDaoImpl extends AbstractDao<Topic> implements TopicDao {
@@ -94,7 +94,7 @@ class TopicDaoImpl extends AbstractDao<Topic> implements TopicDao {
 
     @Override
     public List<Topic> findAll() throws PersistenceException {
-        List<Topic> list = new ArrayList<>();
+        List<Topic> list = new LinkedList<>();
         try (PreparedStatement statement = getConnection().prepareStatement(FIND_ALL_TOPICS)){
             try (ResultSet resultSet = statement.executeQuery()) {
                 while (resultSet.next()) {

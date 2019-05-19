@@ -14,23 +14,23 @@
                 <h3 class="text-center"><fmt:message key="${topics_message}"/></h3>
             </c:if>
             <c:forEach var="topic" items="${topic_list}">
-                <c:if test="${!topic.hidden || account.accessLevel == 'ADMIN'}">
+                <c:if test="${!topic.hidden || account.accountType == 'ADMIN'}">
                     <li class="mb-4">
                         <div>
-                            <h6><a href="${pageContext.request.contextPath}/topic?topic_id=${topic.topicId}&page=last&command=show_topic_page&page=last"><c:out value="${topic.title}"/></a></h6>
+                            <h6><a href="${pageContext.request.contextPath}/controller?topic_id=${topic.topicId}&page=last&command=show_topic_page&page=last"><c:out value="${topic.title}"/></a></h6>
                             <p class="float-right text-muted"><c:out value="${topic.date}"/></p>
                         </div>
-                        <fmt:message key="topics.account_username"/> <a href="${pageContext.request.contextPath}/profile?account_id=${topic.account.accountId}&command=show_profile"><c:out value="${topic.account.username}"/></a><br/>
+                        <fmt:message key="topics.account_username"/> <a href="${pageContext.request.contextPath}/controller?account_id=${topic.account.accountId}&command=show_profile"><c:out value="${topic.account.username}"/></a><br/>
                         <c:if test="${topic.closed}">
                             <fmt:message key="topics.topic_closed"/><br/>
                         </c:if>
-                        <c:if test="${account.accessLevel == 'ADMIN'}">
+                        <c:if test="${account.accountType == 'ADMIN'}">
                             <c:if test="${topic.hidden}">
                                 <fmt:message key="topics.topic_hidden"/><br/>
                             </c:if>
                             <c:choose>
                                 <c:when test="${not topic.hidden}">
-                                    <form method="post" action="${pageContext.request.contextPath}/servlet">
+                                    <form method="post" action="${pageContext.request.contextPath}/controller">
                                         <input type="hidden" name="command" value="change_topic_hidden_state"/>
                                         <input type="hidden" name="topic_id" value="${topic.topicId}"/>
                                         <input type="hidden" name="hide" value="true"/>
@@ -38,7 +38,7 @@
                                     </form>
                                 </c:when>
                                 <c:otherwise>
-                                    <form method="post" action="${pageContext.request.contextPath}/servlet">
+                                    <form method="post" action="${pageContext.request.contextPath}/controller">
                                         <input type="hidden" name="command" value="change_topic_hidden_state"/>
                                         <input type="hidden" name="topic_id" value="${topic.topicId}"/>
                                         <input type="hidden" name="hide" value="false"/>
@@ -54,7 +54,7 @@
         </ul>
         <c:if test="${not empty account}">
             <h4 class="text-center"><fmt:message key="topics.create_topic_header"/><h4/>
-            <form method="post" id="create_topic" onsubmit="return validateTopicForm();" name="topic" action="${pageContext.request.contextPath}/servlet">
+            <form method="post" id="create_topic" onsubmit="return validateTopicForm();" name="topic" action="${pageContext.request.contextPath}/controller">
                 <input type="hidden" name="command" value="create_topic"/>
                 <fmt:message key="topics.create_topic.topic_name"/><br/>
                 <input class="form-control" type="text" name="title"/><br/>

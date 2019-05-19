@@ -6,7 +6,7 @@ import com.epam.finaltask.dao.DaoFactory;
 import com.epam.finaltask.dao.MessageDao;
 import com.epam.finaltask.dao.impl.AbstractConnectionManager;
 import com.epam.finaltask.dao.impl.PersistenceException;
-import com.epam.finaltask.entity.AccessLevel;
+import com.epam.finaltask.entity.AccountType;
 import com.epam.finaltask.entity.Account;
 import com.epam.finaltask.entity.Message;
 import com.epam.finaltask.entity.Topic;
@@ -21,7 +21,6 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
-import static org.mockito.Matchers.anyLong;
 import static org.mockito.Matchers.anyObject;
 import static org.mockito.Mockito.*;
 import static org.testng.Assert.fail;
@@ -57,7 +56,7 @@ public class MessageServiceTest {
         String hash = "hash";
         String email = "email@mail.com";
         Account account = new Account(1, login, hash,
-                email, AccessLevel.USER, 0, true, false, "salt", null);
+                email, AccountType.USER, 0, true, false, "salt", null);
         StringBuilder tooLongStringBuilder = new StringBuilder();
         for (int i = 0; i < 257; i++) {
             tooLongStringBuilder.append("a");
@@ -76,7 +75,7 @@ public class MessageServiceTest {
         String hash = "hash";
         String email = "email@mail.com";
         Account account = new Account(1, login, hash,
-                email, AccessLevel.USER, 0, true, false, "salt", null);
+                email, AccountType.USER, 0, true, false, "salt", null);
         try {
             when(messageDao.createWithGeneratedDate(anyObject())).thenReturn(true);
 
@@ -111,7 +110,7 @@ public class MessageServiceTest {
         String hash = "hash";
         String email = "email@mail.com";
         Account account = new Account(1, login, hash,
-                email, AccessLevel.USER, 0, true, false, "salt", null);
+                email, AccountType.USER, 0, true, false, "salt", null);
         try {
             when(messageDao.createWithGeneratedDate(anyObject())).thenReturn(false);
 
@@ -133,7 +132,7 @@ public class MessageServiceTest {
         long topicId = 1;
         String text = "text";
         Account account = new Account(1, login, hash,
-                email, AccessLevel.ADMIN, 0, true, false, "salt", null);
+                email, AccountType.ADMIN, 0, true, false, "salt", null);
         try {
             doThrow(new PersistenceException()).when(connectionManagerFactory).createConnectionManager();
             messageService.createMessage(account, topicId, text);
@@ -150,7 +149,7 @@ public class MessageServiceTest {
         String email = "email@mail.com";
         long messageId = 1;
         Account account = new Account(1, login, hash,
-                email, AccessLevel.ADMIN, 0, true, false, "salt", null);
+                email, AccountType.ADMIN, 0, true, false, "salt", null);
         try {
             when(messageDao.findEntityById(messageId))
                     .thenReturn(new Message(messageId,
@@ -177,7 +176,7 @@ public class MessageServiceTest {
         String hash = "hash";
         String email = "email@mail.com";
         Account account = new Account(1, login, hash,
-                email, AccessLevel.ADMIN, 0, true, false, "salt", null);
+                email, AccountType.ADMIN, 0, true, false, "salt", null);
         try {
             when(messageDao.findEntityById(1)).thenReturn(null);
 
@@ -198,7 +197,7 @@ public class MessageServiceTest {
         String email = "email@mail.com";
         long messageId = 1;
         Account account = new Account(1, login, hash,
-                email, AccessLevel.ADMIN, 0, true, false, "salt", null);
+                email, AccountType.ADMIN, 0, true, false, "salt", null);
         try {
             when(messageDao.findEntityById(messageId)).thenThrow(new PersistenceException());
 
@@ -216,7 +215,7 @@ public class MessageServiceTest {
         String email = "email@mail.com";
         long messageId = 1;
         Account account = new Account(1, login, hash,
-                email, AccessLevel.ADMIN, 0, true, false, "salt", null);
+                email, AccountType.ADMIN, 0, true, false, "salt", null);
         try {
             doThrow(new PersistenceException()).when(connectionManager).disableAutoCommit();
 
@@ -245,7 +244,7 @@ public class MessageServiceTest {
         String hash = "hash";
         String email = "email@mail.com";
         Account account = new Account(1, login, hash,
-                email, AccessLevel.USER, 0, true, false, "salt", null);
+                email, AccountType.USER, 0, true, false, "salt", null);
         try {
             when(messageDao.findEntityById(1))
                     .thenReturn(new Message(1,
@@ -276,7 +275,7 @@ public class MessageServiceTest {
         int currentPage = 1;
         int numberOfMessagesPerPage = 3;
         Account account = new Account(accountId, login, hash,
-                email, AccessLevel.USER, 0, true, false, "salt", null);
+                email, AccountType.USER, 0, true, false, "salt", null);
         try {
             List<Message> messagesFromDao = new ArrayList<>();
             messagesFromDao.add(new Message(1,

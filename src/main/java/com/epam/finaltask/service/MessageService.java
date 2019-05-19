@@ -6,8 +6,8 @@ import com.epam.finaltask.dao.DaoFactory;
 import com.epam.finaltask.dao.MessageDao;
 import com.epam.finaltask.dao.impl.AbstractConnectionManager;
 import com.epam.finaltask.dao.impl.PersistenceException;
-import com.epam.finaltask.entity.AccessLevel;
 import com.epam.finaltask.entity.Account;
+import com.epam.finaltask.entity.AccountType;
 import com.epam.finaltask.entity.Message;
 import com.epam.finaltask.entity.Topic;
 import org.apache.commons.lang3.StringUtils;
@@ -87,7 +87,7 @@ public class MessageService extends AbstractService {
                     logger.log(Level.WARN, "could not find message id=" + messageId + " to delete");
                     return false;
                 }
-                if (account.getAccessLevel().equals(AccessLevel.ADMIN)) {
+                if (account.getAccountType().equals(AccountType.ADMIN)) {
                     messageDao.delete(messageId);
                     connectionManager.commit();
                     logger.log(Level.INFO, "message id=" + messageId + " successfully deleted");
@@ -124,28 +124,6 @@ public class MessageService extends AbstractService {
             message.setTopic(new Topic(topicId));
             MessageDao messageDao = daoFactory.createMessageDao(connectionManager);
             return messageDao.createWithGeneratedDate(message);
-        } catch (PersistenceException e) {
-            throw new ServiceException(e);
-        }
-    }
-
-    public List<Message> findMessagesByTopicId(long topicId) throws ServiceException {  //TODO remove?
-        try (AbstractConnectionManager connectionManager = connectionManagerFactory.createConnectionManager()) {
-            connectionManager.disableAutoCommit();
-            try {
-                MessageDao messageDao = daoFactory.createMessageDao(connectionManager);
-                List<Message> messageList = messageDao.findMessagesByTopicId(topicId);
-                AccountDao accountDao = daoFactory.createAccountDao(connectionManager);
-                for (Message message : messageList) {
-                    Account currentAccount = accountDao.findEntityById(message.getAccount().getAccountId());
-                    message.setAccount(currentAccount);
-                }
-                connectionManager.commit();
-                return messageList;
-            } catch (PersistenceException e) {
-                connectionManager.rollback();
-                throw new ServiceException(e);
-            }
         } catch (PersistenceException e) {
             throw new ServiceException(e);
         }

@@ -5,9 +5,11 @@ import com.epam.finaltask.dao.ConnectionManagerFactory;
 import com.epam.finaltask.dao.DaoFactory;
 import com.epam.finaltask.dao.impl.AbstractConnectionManager;
 import com.epam.finaltask.dao.impl.PersistenceException;
-import com.epam.finaltask.entity.AccessLevel;
 import com.epam.finaltask.entity.Account;
-import com.epam.finaltask.util.*;
+import com.epam.finaltask.entity.AccountType;
+import com.epam.finaltask.util.ApplicationConstants;
+import com.epam.finaltask.util.HashGenerator;
+import com.epam.finaltask.util.HashGeneratorFactory;
 import com.epam.finaltask.util.impl.HashGeneratorFactoryImpl;
 import com.epam.finaltask.util.impl.SaltGenerator;
 import org.apache.logging.log4j.Level;
@@ -57,7 +59,7 @@ public class RegistrationService extends AbstractService {
                     SaltGenerator saltGenerator = new SaltGenerator();
                     String salt = saltGenerator.generateSalt();
                     String passwordHash = hashGenerator.hash(password, salt, ApplicationConstants.HASHING_ALGORITHM);
-                    Account account = new Account(login, passwordHash, email, AccessLevel.USER, DEFAULT_RATING,
+                    Account account = new Account(login, passwordHash, email, AccountType.USER, DEFAULT_RATING,
                             DEFAULT_VERIFIED, DEFAULT_BLOCKED, salt, null); //todo
                     accountDao.create(account);
                     logger.log(Level.INFO, "account with email=" + email + " added to database");

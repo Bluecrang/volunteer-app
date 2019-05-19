@@ -1,8 +1,8 @@
 package com.epam.finaltask.dao.impl;
 
 import com.epam.finaltask.dao.AccountDao;
-import com.epam.finaltask.entity.AccessLevel;
 import com.epam.finaltask.entity.Account;
+import com.epam.finaltask.entity.AccountType;
 import org.apache.commons.codec.binary.Base64;
 
 import javax.sql.rowset.serial.SerialBlob;
@@ -10,7 +10,6 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Types;
-import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -45,6 +44,10 @@ class AccountDaoImpl extends AbstractDao<Account> implements AccountDao {
             "ORDER BY acc.rating DESC " +
             "LIMIT ? OFFSET ?";
     private static final String FIND_ACCOUNT_COUNT = "SELECT COUNT(account_id) FROM account";
+    private static final String FIND_ALL_BY_ACCOUNT_TYPE = "SELECT acc.account_id, acc.username, acc.password, acc.email, " +
+            "acc_type.type, acc.rating, acc.verified, acc.blocked, acc.salt, acc.avatar " +
+            "FROM account acc INNER JOIN account_type acc_type on acc.account_type_id = acc_type.account_type_id " +
+            "WHERE acc_type.type = ?";
 
     public AccountDaoImpl(AbstractConnectionManager connectionManager) {
         super(connectionManager);
@@ -115,30 +118,24 @@ class AccountDaoImpl extends AbstractDao<Account> implements AccountDao {
         return account;
     }
 
-    private Account createAccountFromResultSet(ResultSet resultSet) throws SQLException {
-        long accountId = resultSet.getLong(1);
-        String username = resultSet.getString(2);
-        String passwordHash = resultSet.getString(3);
-        String email = resultSet.getString(4);
-        String accountType = resultSet.getString(5);
-        int rating = resultSet.getInt(6);
-        boolean verified = resultSet.getBoolean(7);
-        boolean blocked = resultSet.getBoolean(8);
-        String salt = resultSet.getString(9);
-        byte[] avatar = resultSet.getBytes(10);
-        String avatarBase64;
-        if (avatar != null) {
-            avatarBase64 = Base64.encodeBase64String(avatar);
-        } else {
-            avatarBase64 = null;
+    public List<Account> findAllByAccountType(AccountType accountType) throws PersistenceException {
+        List<Account> list = new LinkedList<>();
+        try (PreparedStatement statement = getConnection().prepareStatement(FIND_ALL_BY_ACCOUNT_TYPE)){
+            statement.setString(1, accountType.name());
+            try (ResultSet resultSet = statement.executeQuery()) {
+                while (resultSet.next()) {
+                    list.add(createAccountFromResultSet(resultSet));
+                }
+            }
+        } catch (SQLException e) {
+            throw new PersistenceException("SQLException while finding accounts by account type", e);
         }
-        return new Account(accountId, username, passwordHash, email, AccessLevel.valueOf(accountType.toUpperCase()),
-                rating, verified, blocked, salt, avatarBase64);
+        return list;
     }
 
     @Override
     public List<Account> findAll() throws PersistenceException {
-        List<Account> list = new ArrayList<>();
+        List<Account> list = new LinkedList<>();
         try (PreparedStatement statement = getConnection().prepareStatement(FIND_ALL_ACCOUNTS);
              ResultSet resultSet = statement.executeQuery()){
             while (resultSet.next()) {
@@ -180,7 +177,7 @@ class AccountDaoImpl extends AbstractDao<Account> implements AccountDao {
             statement.setString(1, entity.getUsername());
             statement.setString(2, entity.getPasswordHash());
             statement.setString(3, entity.getEmail());
-            statement.setString(4, entity.getAccessLevel().name());
+            statement.setString(4, entity.getAccountType().name());
             statement.setInt(5, entity.getRating());
             statement.setBoolean(6, entity.isVerified());
             statement.setBoolean(7, entity.isBlocked());
@@ -207,7 +204,7 @@ class AccountDaoImpl extends AbstractDao<Account> implements AccountDao {
             statement.setString(1, entity.getUsername());
             statement.setString(2, entity.getPasswordHash());
             statement.setString(3, entity.getEmail());
-            statement.setString(4, entity.getAccessLevel().name());
+            statement.setString(4, entity.getAccountType().name());
             statement.setInt(5,entity.getRating());
             statement.setBoolean(6, entity.isVerified());
             statement.setBoolean(7, entity.isBlocked());
@@ -223,5 +220,26 @@ class AccountDaoImpl extends AbstractDao<Account> implements AccountDao {
         } catch (SQLException e) {
             throw new PersistenceException("SQLException while updating", e);
         }
+    }
+
+    private Account createAccountFromResultSet(ResultSet resultSet) throws SQLException {
+        long accountId = resultSet.getLong(1);
+        String username = resultSet.getString(2);
+        String passwordHash = resultSet.getString(3);
+        String email = resultSet.getString(4);
+        String accountType = resultSet.getString(5);
+        int rating = resultSet.getInt(6);
+        boolean verified = resultSet.getBoolean(7);
+        boolean blocked = resultSet.getBoolean(8);
+        String salt = resultSet.getString(9);
+        byte[] avatar = resultSet.getBytes(10);
+        String avatarBase64;
+        if (avatar != null) {
+            avatarBase64 = Base64.encodeBase64String(avatar);
+        } else {
+            avatarBase64 = null;
+        }
+        return new Account(accountId, username, passwordHash, email, AccountType.valueOf(accountType.toUpperCase()),
+                rating, verified, blocked, salt, avatarBase64);
     }
 }

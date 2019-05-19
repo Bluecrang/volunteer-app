@@ -6,7 +6,7 @@ import com.epam.finaltask.dao.DaoFactory;
 import com.epam.finaltask.dao.TopicDao;
 import com.epam.finaltask.dao.impl.AbstractConnectionManager;
 import com.epam.finaltask.dao.impl.PersistenceException;
-import com.epam.finaltask.entity.AccessLevel;
+import com.epam.finaltask.entity.AccountType;
 import com.epam.finaltask.entity.Account;
 import com.epam.finaltask.entity.Topic;
 import org.mockito.Mock;
@@ -17,6 +17,8 @@ import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 import static org.mockito.Matchers.anyObject;
 import static org.mockito.Mockito.*;
@@ -53,7 +55,7 @@ public class TopicServiceTest {
         String hash = "hash";
         String email = "email@mail.com";
         Account account = new Account(1, login, hash,
-                email, AccessLevel.USER, 0, true, false, "salt", null);
+                email, AccountType.USER, 0, true, false, "salt", null);
         return new Object[][] {
                 {null, "title", "text"},
                 {account, "title", ""},
@@ -69,7 +71,7 @@ public class TopicServiceTest {
         String hash = "hash";
         String email = "email@mail.com";
         Account account = new Account(1, login, hash,
-                email, AccessLevel.USER, 0, true, false, "salt", null);
+                email, AccountType.USER, 0, true, false, "salt", null);
         try {
             when(topicDao.createWithGeneratedDate(anyObject())).thenReturn(true);
 
@@ -104,7 +106,7 @@ public class TopicServiceTest {
         String hash = "hash";
         String email = "email@mail.com";
         Account account = new Account(1, login, hash,
-                email, AccessLevel.USER, 0, true, false, "salt", null);
+                email, AccountType.USER, 0, true, false, "salt", null);
         try {
             when(topicDao.createWithGeneratedDate(anyObject())).thenReturn(false);
 
@@ -124,7 +126,7 @@ public class TopicServiceTest {
         String hash = "hash";
         String email = "email@mail.com";
         Account account = new Account(1, login, hash,
-                email, AccessLevel.ADMIN, 0, true, false, "salt", null);
+                email, AccountType.ADMIN, 0, true, false, "salt", null);
         try {
             when(topicDao.findEntityById(1)).thenReturn(new Topic(1, "title", "text",
                     LocalDateTime.of(2013, 3, 5, 1, 12),
@@ -148,7 +150,7 @@ public class TopicServiceTest {
         String hash = "hash";
         String email = "email@mail.com";
         Account account = new Account(1, login, hash,
-                email, AccessLevel.USER, 0, true, false, "salt", null);
+                email, AccountType.USER, 0, true, false, "salt", null);
         try {
             when(topicDao.findEntityById(1)).thenReturn(new Topic(1, "title", "text",
                     LocalDateTime.of(2013, 3, 5, 1, 12),
@@ -192,7 +194,7 @@ public class TopicServiceTest {
         String hash = "hash";
         String email = "email@mail.com";
         Account account = new Account(1, login, hash,
-                email, AccessLevel.ADMIN, 0, true, false, "salt", null);
+                email, AccountType.ADMIN, 0, true, false, "salt", null);
         try {
             when(topicDao.findEntityById(1)).thenReturn(null);
             when(topicDao.update(null)).thenReturn(0);
@@ -212,7 +214,7 @@ public class TopicServiceTest {
         String hash = "hash";
         String email = "email@mail.com";
         Account account = new Account(1, login, hash,
-                email, AccessLevel.ADMIN, 0, true, false, "salt", null);
+                email, AccountType.ADMIN, 0, true, false, "salt", null);
         try {
             when(topicDao.findEntityById(1)).thenReturn(new Topic(1, "title", "text",
                     LocalDateTime.of(2013, 3, 5, 1, 12),
@@ -236,7 +238,7 @@ public class TopicServiceTest {
         String hash = "hash";
         String email = "email@mail.com";
         Account account = new Account(1, login, hash,
-                email, AccessLevel.USER, 0, true, false, "salt", null);
+                email, AccountType.USER, 0, true, false, "salt", null);
         try {
             when(topicDao.findEntityById(1)).thenReturn(new Topic(1, "title", "text",
                     LocalDateTime.of(2013, 3, 5, 1, 12),
@@ -280,7 +282,7 @@ public class TopicServiceTest {
         String hash = "hash";
         String email = "email@mail.com";
         Account account = new Account(1, login, hash,
-                email, AccessLevel.ADMIN, 0, true, false, "salt", null);
+                email, AccountType.ADMIN, 0, true, false, "salt", null);
         try {
             when(topicDao.findEntityById(1)).thenReturn(null);
             when(topicDao.update(null)).thenReturn(0);
@@ -306,7 +308,7 @@ public class TopicServiceTest {
                     false);
             when(topicDao.findTopicByTitle(title)).thenReturn(expected);
             AccountDao accountDao = mock(AccountDao.class);
-            when(daoFactory.createAccountDao(anyObject())).thenReturn(accountDao);
+            when(daoFactory.createAccountDao(connectionManager)).thenReturn(accountDao);
             when(accountDao.findEntityById(account.getAccountId())).thenReturn(new Account(1));
 
             Topic actual = topicService.findTopicByTitle(title);
@@ -392,6 +394,198 @@ public class TopicServiceTest {
         try {
             doThrow(new PersistenceException()).when(connectionManagerFactory).createConnectionManager();
             topicService.findTopicById(topicId);
+        } catch (PersistenceException e) {
+            fail("Unexpected PersistenceException", e);
+        }
+    }
+
+    @Test
+    public void findAllTopicsTestNoPersistenceException() {
+        try {
+            Account account1 = new Account(1);
+            Topic expected1 = new Topic(1, "title1", "text2",
+                    LocalDateTime.of(2113, 10, 3, 1, 10),
+                    account1,
+                    false,
+                    false);
+            Topic expected2 = new Topic(2, "title2", "text2",
+                    LocalDateTime.of(2013, 1, 5, 10, 12),
+                    account1,
+                    false,
+                    false);
+            Account account2 = new Account(2);
+            Topic expected3 = new Topic(3, "title4", "text4",
+                    LocalDateTime.of(2012, 4, 7, 4, 38),
+                    account2,
+                    true,
+                    true);
+            when(topicDao.findAll()).thenReturn(new ArrayList<Topic>() {
+                {
+                    add(expected1);
+                    add(expected2);
+                    add(expected3);
+                }
+            });
+            AccountDao accountDao = mock(AccountDao.class);
+            when(daoFactory.createAccountDao(connectionManager)).thenReturn(accountDao);
+            when(accountDao.findEntityById(account1.getAccountId())).thenReturn(new Account(1));
+            when(accountDao.findEntityById(account2.getAccountId())).thenReturn(new Account(2));
+
+            List<Topic> actual = topicService.findAllTopics();
+
+            Assert.assertEquals(actual.size(), 3);
+        } catch (PersistenceException e) {
+            fail("Unexpected PersistenceException", e);
+        } catch (ServiceException e) {
+            fail("Unexpected ServiceException", e);
+        }
+    }
+
+    @Test(expectedExceptions = ServiceException.class)
+    public void findAllTopicsTestPersistenceExceptionThrownInTopicDao() throws ServiceException {
+        try {
+            when(topicDao.findAll()).thenThrow(new PersistenceException());
+            AccountDao accountDao = mock(AccountDao.class);
+            when(daoFactory.createAccountDao(connectionManager)).thenReturn(accountDao);
+
+            topicService.findAllTopics();
+
+        } catch (PersistenceException e) {
+            fail("Unexpected PersistenceException", e);
+        }
+    }
+
+    @Test(expectedExceptions = ServiceException.class)
+    public void findAllTopicsTestPersistenceExceptionThrownInAccountDao() throws ServiceException {
+        try {
+            Account account1 = new Account(1);
+            Topic expected1 = new Topic(1, "title1", "text2",
+                    LocalDateTime.of(2113, 10, 3, 1, 10),
+                    account1,
+                    false,
+                    false);
+            Account account2 = new Account(2);
+            Topic expected2 = new Topic(3, "title4", "text4",
+                    LocalDateTime.of(2012, 4, 7, 4, 38),
+                    account2,
+                    true,
+                    true);
+            when(topicDao.findAll()).thenReturn(new ArrayList<Topic>() {
+                {
+                    add(expected1);
+                    add(expected2);
+                }
+            });
+            AccountDao accountDao = mock(AccountDao.class);
+            when(daoFactory.createAccountDao(connectionManager)).thenReturn(accountDao);
+            when(accountDao.findEntityById(account1.getAccountId())).thenReturn(new Account(1));
+            when(accountDao.findEntityById(account2.getAccountId())).thenThrow(new PersistenceException());
+
+            topicService.findAllTopics();
+
+        } catch (PersistenceException e) {
+            fail("Unexpected PersistenceException", e);
+        }
+    }
+
+    @DataProvider(name = "SearchStringProvider")
+    public Object[][] provideSearchStrings() {
+        return new Object[][] {
+                {"title", 3},
+                {"2", 1},
+                {"title1", 1},
+                {"abc", 0},
+                {null, 0}
+        };
+    }
+
+    @Test(dataProvider = "SearchStringProvider")
+    public void findTopicsByTitleRegexTestNoPersistenceException(String searchString, int expectedSize) {
+        try {
+            Account account1 = new Account(1);
+            Topic expected1 = new Topic(1, "title1", "text2",
+                    LocalDateTime.of(2113, 10, 3, 1, 10),
+                    account1,
+                    false,
+                    false);
+            Topic expected2 = new Topic(2, "title2", "text2",
+                    LocalDateTime.of(2013, 1, 5, 10, 12),
+                    account1,
+                    false,
+                    false);
+            Account account2 = new Account(2);
+            Topic expected3 = new Topic(3, "title3", "text3",
+                    LocalDateTime.of(2012, 4, 7, 4, 38),
+                    account2,
+                    true,
+                    true);
+            when(topicDao.findAll()).thenReturn(new ArrayList<Topic>() {
+                {
+                    add(expected1);
+                    add(expected2);
+                    add(expected3);
+                }
+            });
+            AccountDao accountDao = mock(AccountDao.class);
+            when(daoFactory.createAccountDao(connectionManager)).thenReturn(accountDao);
+            when(accountDao.findEntityById(account1.getAccountId())).thenReturn(new Account(1));
+            when(accountDao.findEntityById(account2.getAccountId())).thenReturn(new Account(2));
+
+            List<Topic> actual = topicService.findTopicsByTitleSubstring(searchString);
+
+            Assert.assertEquals(actual.size(), expectedSize);
+        } catch (PersistenceException e) {
+            fail("Unexpected PersistenceException", e);
+        } catch (ServiceException e) {
+            fail("Unexpected ServiceException", e);
+        }
+    }
+
+    @Test(expectedExceptions = ServiceException.class)
+    public void findTopicsByTitleRegexTestPersistenceExceptionThrownByTopicDao() throws ServiceException {
+        try {
+            when(topicDao.findAll()).thenThrow(new PersistenceException());
+            AccountDao accountDao = mock(AccountDao.class);
+            when(daoFactory.createAccountDao(connectionManager)).thenReturn(accountDao);
+
+            topicService.findTopicsByTitleSubstring("title");
+        } catch (PersistenceException e) {
+            fail("Unexpected PersistenceException", e);
+        }
+    }
+
+    @Test(expectedExceptions = ServiceException.class)
+    public void findTopicsByTitleRegexTestPersistenceExceptionThrownByAccountDao() throws ServiceException {
+        try {
+            Account account1 = new Account(1);
+            Topic expected1 = new Topic(1, "title1", "text2",
+                    LocalDateTime.of(2113, 10, 3, 1, 10),
+                    account1,
+                    false,
+                    false);
+            Topic expected2 = new Topic(2, "title2", "text2",
+                    LocalDateTime.of(2013, 1, 5, 10, 12),
+                    account1,
+                    false,
+                    false);
+            Account account2 = new Account(2);
+            Topic expected3 = new Topic(3, "title3", "text3",
+                    LocalDateTime.of(2012, 4, 7, 4, 38),
+                    account2,
+                    true,
+                    true);
+            when(topicDao.findAll()).thenReturn(new ArrayList<Topic>() {
+                {
+                    add(expected1);
+                    add(expected2);
+                    add(expected3);
+                }
+            });
+            AccountDao accountDao = mock(AccountDao.class);
+            when(daoFactory.createAccountDao(connectionManager)).thenReturn(accountDao);
+            when(accountDao.findEntityById(account1.getAccountId())).thenThrow(new PersistenceException());
+
+            topicService.findTopicsByTitleSubstring("title");
         } catch (PersistenceException e) {
             fail("Unexpected PersistenceException", e);
         }

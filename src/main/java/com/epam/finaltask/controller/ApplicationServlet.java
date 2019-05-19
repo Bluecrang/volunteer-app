@@ -16,7 +16,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
-@WebServlet(urlPatterns = {"/servlet", "/topics", "/topic", "/profile", "/ranking"})
+@WebServlet(urlPatterns = {"/controller"})
 public class ApplicationServlet extends AbstractServlet {
 
     private static final Logger logger = LogManager.getLogger();
@@ -46,7 +46,7 @@ public class ApplicationServlet extends AbstractServlet {
 
     private void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws IOException, ServletException {
-        CommandFactory commandFactory = new CommandFactory();
+        CommandFactory commandFactory = CommandFactory.getInstance();
         Command command = commandFactory.defineCommand(request);
         logger.log(Level.INFO, "defined command=" + command);
         CommandData commandData = new CommandData(request);

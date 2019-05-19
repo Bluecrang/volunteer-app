@@ -5,7 +5,7 @@ import com.epam.finaltask.dao.ConnectionManagerFactory;
 import com.epam.finaltask.dao.DaoFactory;
 import com.epam.finaltask.dao.impl.AbstractConnectionManager;
 import com.epam.finaltask.dao.impl.PersistenceException;
-import com.epam.finaltask.entity.AccessLevel;
+import com.epam.finaltask.entity.AccountType;
 import com.epam.finaltask.entity.Account;
 import com.epam.finaltask.util.HashGenerator;
 import com.epam.finaltask.util.HashGeneratorFactory;
@@ -15,8 +15,6 @@ import org.testng.Assert;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
-
-import javax.xml.ws.Service;
 
 import static org.mockito.Mockito.*;
 import static org.testng.Assert.fail;
@@ -102,7 +100,7 @@ public class RegistrationServiceTest {
         String login = "login";
         String password = "password";
         String email = "mail@mail.com";
-        Account account = new Account(1, login, DEFAULT_HASH, email, AccessLevel.USER,
+        Account account = new Account(1, login, DEFAULT_HASH, email, AccountType.USER,
                 0, true, false, "salt", null);
         try {
             when(accountDao.findAccountByEmail(email)).thenReturn(account);
@@ -123,7 +121,7 @@ public class RegistrationServiceTest {
         String login = "login";
         String password = "password";
         String email = "mail@mail.com";
-        Account account = new Account(1, login, DEFAULT_HASH, email, AccessLevel.USER,
+        Account account = new Account(1, login, DEFAULT_HASH, email, AccountType.USER,
                 0, true, false, "salt", null);
         try {
             when(accountDao.findAccountByEmail(email)).thenThrow(new PersistenceException());

@@ -6,6 +6,6 @@
 </head>
 <body>
     <h2>Error</h2><br/>
-    <a href="${pageContext.request.contextPath}/index.jsp">Return to the main page</a>
+    <a href="${pageContext.request.contextPath}/controller?command=move_to_index_page">To the main page</a>
 </body>
 </html>

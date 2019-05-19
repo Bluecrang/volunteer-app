@@ -6,8 +6,8 @@ import com.epam.finaltask.dao.DaoFactory;
 import com.epam.finaltask.dao.impl.AbstractConnectionManager;
 import com.epam.finaltask.dao.impl.ConnectionManagerFactoryImpl;
 import com.epam.finaltask.dao.impl.PersistenceException;
-import com.epam.finaltask.entity.AccessLevel;
 import com.epam.finaltask.entity.Account;
+import com.epam.finaltask.entity.AccountType;
 import com.epam.finaltask.validation.ImageFilenameValidator;
 import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.io.IOUtils;
@@ -56,8 +56,8 @@ public class AccountService extends AbstractService {
     }
 
     public boolean addValueToRating(Account actingAccount, long accountId, int value) throws ServiceException {
-        if (actingAccount != null && actingAccount.getAccessLevel() != null &&
-                actingAccount.getAccessLevel().equals(AccessLevel.ADMIN)) {
+        if (actingAccount != null && actingAccount.getAccountType() != null &&
+                actingAccount.getAccountType().equals(AccountType.ADMIN)) {
             try (AbstractConnectionManager connectionManager = connectionManagerFactory.createConnectionManager()) {
                 connectionManager.disableAutoCommit();
                 try {
@@ -83,8 +83,8 @@ public class AccountService extends AbstractService {
     }
 
     public boolean changeAccountBlockState(Account blockingAccount, long accountId, boolean block) throws ServiceException {
-        if (blockingAccount != null && blockingAccount.getAccessLevel() != null &&
-                blockingAccount.getAccessLevel().equals(AccessLevel.ADMIN)) {
+        if (blockingAccount != null && blockingAccount.getAccountType() != null &&
+                blockingAccount.getAccountType().equals(AccountType.ADMIN)) {
             try (AbstractConnectionManager connectionManager = connectionManagerFactory.createConnectionManager()) {
                 connectionManager.disableAutoCommit();
                 try {
@@ -159,7 +159,7 @@ public class AccountService extends AbstractService {
             logger.log(Level.WARN, "cannot promote account: sessionAccount is null");
             return false;
         }
-        if (!AccessLevel.ADMIN.equals(sessionAccount.getAccessLevel())) {
+        if (!AccountType.ADMIN.equals(sessionAccount.getAccountType())) {
             logger.log(Level.WARN, "cannot promote account: sessionAccount access level is not admin");
             return false;
         }
@@ -167,7 +167,7 @@ public class AccountService extends AbstractService {
             connectionManager.disableAutoCommit();
             Account account = findAccountById(accountId, connectionManager);
             if (account != null) {
-                account.setAccessLevel(AccessLevel.ADMIN);
+                account.setAccountType(AccountType.ADMIN);
                 AccountDao accountDao = daoFactory.createAccountDao(connectionManager);
                 int result = accountDao.update(account);
                 connectionManager.commit();
@@ -179,5 +179,14 @@ public class AccountService extends AbstractService {
             throw new ServiceException(e);
         }
         return false;
+    }
+
+    public List<Account> findAdministrators() throws ServiceException {
+        try (AbstractConnectionManager connectionManager = connectionManagerFactory.createConnectionManager()) {
+            AccountDao accountDao = daoFactory.createAccountDao(connectionManager);
+            return accountDao.findAllByAccountType(AccountType.ADMIN);
+        } catch (PersistenceException e) {
+            throw new ServiceException(e);
+        }
     }
 }

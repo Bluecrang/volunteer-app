@@ -6,8 +6,8 @@ import com.epam.finaltask.dao.DaoFactory;
 import com.epam.finaltask.dao.TopicDao;
 import com.epam.finaltask.dao.impl.AbstractConnectionManager;
 import com.epam.finaltask.dao.impl.PersistenceException;
-import com.epam.finaltask.entity.AccessLevel;
 import com.epam.finaltask.entity.Account;
+import com.epam.finaltask.entity.AccountType;
 import com.epam.finaltask.entity.Topic;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.Level;
@@ -16,6 +16,7 @@ import org.apache.logging.log4j.Logger;
 
 import java.util.ArrayList;
 import java.util.Comparator;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.regex.Pattern;
 import java.util.regex.PatternSyntaxException;
@@ -38,7 +39,7 @@ public class TopicService extends AbstractService {
             logger.log(Level.WARN, "unable to close topic: closing account is null");
             return false;
         }
-        if (!closingAccount.getAccessLevel().equals(AccessLevel.ADMIN)) {
+        if (!closingAccount.getAccountType().equals(AccountType.ADMIN)) {
             logger.log(Level.WARN, "unable to close topic: account id=" + closingAccount.getAccountId() + " does not have rights to close topic");
             return false;
         }
@@ -69,7 +70,7 @@ public class TopicService extends AbstractService {
             logger.log(Level.WARN, "cannot hide topic: account is null, topicId=" + topicId);
             return false;
         }
-        if (account.getAccessLevel().equals(AccessLevel.ADMIN)) {
+        if (account.getAccountType().equals(AccountType.ADMIN)) {
             try (AbstractConnectionManager connectionManager = connectionManagerFactory.createConnectionManager()) {
                 connectionManager.disableAutoCommit();
                 try {
@@ -194,28 +195,22 @@ public class TopicService extends AbstractService {
         }
     }
 
-    public List<Topic> findTopicsByTitleRegex(String searchString) throws ServiceException {
+    public List<Topic> findTopicsByTitleSubstring(String searchString) throws ServiceException {
         if (searchString == null) {
             logger.log(Level.WARN, "unable to find topics by title searchString: searchString is null");
-            return new ArrayList<>();
+            return new LinkedList<>();
         }
-        try {
-            String regex = ".*" + Pattern.quote(searchString) + ".*";
-            Pattern pattern = Pattern.compile(regex, Pattern.CASE_INSENSITIVE);
-            return findAllTopics().stream()
-                    .filter((topic -> {
-                        String title = topic.getTitle();
-                        if (title != null) {
-                            logger.log(Level.DEBUG, "title = " + title);
-                            logger.log(Level.DEBUG, "matching result = " + pattern.matcher(title).matches());
-                            return pattern.matcher(title).matches();
-                        }
-                        return false;
-                    }))
-                    .collect(Collectors.toList());
-        } catch (PatternSyntaxException e) {
-            logger.log(Level.WARN, "illegal searchString used", e);
-            return new ArrayList<>();
-        }
+        return findAllTopics().stream()
+                .filter((topic -> {
+                    String title = topic.getTitle();
+                    if (title != null) {
+                        boolean result = title.contains(searchString);
+                        logger.log(Level.DEBUG, "title = " + title);
+                        logger.log(Level.DEBUG, "searching result = " + result);
+                        return result;
+                    }
+                    return false;
+                }))
+                .collect(Collectors.toList());
     }
 }

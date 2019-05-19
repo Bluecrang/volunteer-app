@@ -6,10 +6,11 @@ public final class PageConstants {
     public static final String MAIN_PAGE = "/jsp/main.jsp";
     public static final String LOGIN_PAGE = "/jsp/login.jsp";
     public static final String REGISTRATION_PAGE = "/jsp/registration.jsp";
-    public static final String TOPICS_PAGE = "/WEB-INF/jsp/topics.jsp";
-    public static final String TOPIC_PAGE = "/WEB-INF/jsp/topic.jsp";
-    public static final String PROFILE_PAGE = "/WEB-INF/jsp/profile.jsp";
-    public static final String RANKING_PAGE = "/WEB-INF/jsp/ranking.jsp";
+    public static final String ADMINISTRATORS_PAGE = "/jsp/admin/administrators.jsp";
+    public static final String TOPICS_PAGE = "/jsp/topics.jsp";
+    public static final String TOPIC_PAGE = "/jsp/topic.jsp";
+    public static final String PROFILE_PAGE = "/jsp/profile.jsp";
+    public static final String RANKING_PAGE = "/jsp/ranking.jsp";
 
     private PageConstants() {
     }

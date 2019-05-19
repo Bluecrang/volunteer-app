@@ -7,10 +7,9 @@ import com.epam.finaltask.command.CommandResult;
 import com.epam.finaltask.service.RegistrationService;
 import com.epam.finaltask.service.ServiceException;
 import com.epam.finaltask.util.ApplicationConstants;
-import com.epam.finaltask.util.PageConstants;
 import com.epam.finaltask.validation.EmailValidator;
-import com.epam.finaltask.validation.UsernameValidator;
 import com.epam.finaltask.validation.PasswordValidator;
+import com.epam.finaltask.validation.UsernameValidator;
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -32,7 +31,7 @@ public class RegistrationCommand implements Command {
         String email = data.getRequestParameter(ApplicationConstants.EMAIL_PARAMETER);
 
         CommandResult commandResult = new CommandResult();
-        commandResult.setPage(PageConstants.REGISTRATION_PAGE);
+        commandResult.setPage(ApplicationConstants.SHOW_REGISTRATION_PAGE);
 
         EmailValidator emailValidator = new EmailValidator();
         if (!emailValidator.validate(email)) {
@@ -55,7 +54,7 @@ public class RegistrationCommand implements Command {
             if (registrationService.registerUser(username, password, email)) {
                 logger.log(Level.INFO, "user with username=" + username + " successfully registered");
                 data.putRequestAttribute(ApplicationConstants.AUTHORIZATION_MESSAGE_ATTRIBUTE, ACCOUNT_SUCCESSFULLY_REGISTERED);
-                commandResult.setPage(PageConstants.LOGIN_PAGE);
+                commandResult.setPage(ApplicationConstants.SHOW_LOGIN_PAGE);
             } else {
                 logger.log(Level.INFO, "could not register user with username=" + username);
                 data.putRequestAttribute(ApplicationConstants.REGISTRATION_MESSAGE_ATTRIBUTE, ACCOUNT_EXISTS);

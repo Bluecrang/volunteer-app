@@ -1,11 +1,12 @@
 package com.epam.finaltask.command;
 
-import com.epam.finaltask.util.PageConstants;
+import com.epam.finaltask.util.ApplicationConstants;
 
 public class CommandResult {
-    private String page = PageConstants.INDEX_PAGE;
+    private String page = ApplicationConstants.SHOW_INDEX_PAGE;
     private TransitionType transitionType = TransitionType.REDIRECT;
-    boolean sessionInvalidationFlag;
+    private boolean sessionInvalidationFlag;
+    private int code;
 
     public TransitionType getTransitionType() {
         return transitionType;
@@ -13,6 +14,10 @@ public class CommandResult {
 
     public void assignTransitionTypeForward() {
         transitionType = TransitionType.FORWARD;
+    }
+
+    public void assignTransitionTypeError() {
+        transitionType = TransitionType.ERROR;
     }
 
     public void raiseSessionInvalidationFlag() {
@@ -31,5 +36,13 @@ public class CommandResult {
 
     public boolean isSessionInvalidationFlag() {
         return sessionInvalidationFlag;
+    }
+
+    public int getCode() {
+        return code;
+    }
+
+    public void setCode(int code) {
+        this.code = code;
     }
 }

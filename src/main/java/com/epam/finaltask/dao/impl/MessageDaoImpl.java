@@ -11,7 +11,6 @@ import java.io.IOException;
 import java.io.Reader;
 import java.sql.*;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -78,7 +77,7 @@ class MessageDaoImpl extends AbstractDao<Message> implements MessageDao {
     }
 
     public List<Message> findMessagesByTopicId(long topicId) throws PersistenceException {
-        List<Message> list = new ArrayList<>();
+        List<Message> list = new LinkedList<>();
         try (PreparedStatement statement = getConnection().prepareStatement(FIND_MESSAGES_BY_TOPIC_ID)) {
             statement.setLong(1, topicId);
             try (ResultSet resultSet = statement.executeQuery()) {
@@ -131,7 +130,7 @@ class MessageDaoImpl extends AbstractDao<Message> implements MessageDao {
 
     @Override
     public List<Message> findAll() throws PersistenceException {
-        List<Message> list = new ArrayList<>();
+        List<Message> list = new LinkedList<>();
         try (PreparedStatement statement = getConnection().prepareStatement(FIND_ALL_MESSAGES);
              ResultSet resultSet = statement.executeQuery()){
             while (resultSet.next()) {

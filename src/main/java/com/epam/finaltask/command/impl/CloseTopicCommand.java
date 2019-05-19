@@ -4,8 +4,8 @@ import com.epam.finaltask.command.Command;
 import com.epam.finaltask.command.CommandData;
 import com.epam.finaltask.command.CommandException;
 import com.epam.finaltask.command.CommandResult;
-import com.epam.finaltask.entity.AccessLevel;
 import com.epam.finaltask.entity.Account;
+import com.epam.finaltask.entity.AccountType;
 import com.epam.finaltask.service.ServiceException;
 import com.epam.finaltask.service.TopicService;
 import com.epam.finaltask.util.ApplicationConstants;
@@ -27,7 +27,7 @@ public class CloseTopicCommand implements Command {
             if (sessionAccountObject instanceof Account) {
                 Account sessionAccount = (Account) sessionAccountObject;
                 try {
-                    if (sessionAccount.getAccessLevel() == AccessLevel.ADMIN) {
+                    if (sessionAccount.getAccountType() == AccountType.ADMIN) {
                         TopicService topicService = new TopicService();
                         if (topicService.closeTopic(sessionAccount, topicId)) {
                             logger.log(Level.INFO, "topic id=" + topicId + " closed");
