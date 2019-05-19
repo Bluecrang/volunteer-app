@@ -17,23 +17,20 @@ import java.util.Timer;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.LinkedBlockingQueue;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 
 public enum ConnectionPool {
-    instance;
+    INSTANCE;
 
-    private final Logger logger;
+    private static final Logger logger = LogManager.getLogger();
 
     private PoolConfig config;
     private BlockingQueue<ProxyConnection> idlingConnections = new LinkedBlockingQueue<>();
     private Set<ProxyConnection> allConnections = ConcurrentHashMap.newKeySet();
     private Lock lock = new ReentrantLock();
-    private boolean closed;
-
-    ConnectionPool() {
-        logger = LogManager.getLogger();
-    }
+    private AtomicBoolean closed = new AtomicBoolean(false);
 
     public void init(String configFilename, int maintenancePeriod) {
         try {
@@ -63,7 +60,7 @@ public enum ConnectionPool {
     }
 
     public Connection getConnection() throws ConnectionPoolException {
-        if (closed) {
+        if (closed.get()) {
             throw new ConnectionPoolException("Could not get connection: pool is closed");
         }
         try {
@@ -85,7 +82,7 @@ public enum ConnectionPool {
     public void closePool() {
         try {
             lock.lock();
-            closed = true;
+            closed.set(true);
             for (int i = 0; i < allConnections.size(); i++) {
                 try {
                     ProxyConnection connection = idlingConnections.take();
@@ -117,7 +114,7 @@ public enum ConnectionPool {
 
     void addConnection() {
         try {
-            if (!closed) {
+            if (!closed.get()) {
                 ProxyConnection connection = new ProxyConnection(DriverManager.getConnection(
                         config.getDatabaseUrl(),
                         config.getUser(),
@@ -137,7 +134,7 @@ public enum ConnectionPool {
         logger.log(Level.TRACE, "removeClosedConnections start");
         try {
             lock.lock();
-            if (!closed) {
+            if (!closed.get()) {
                 for (ProxyConnection connection : allConnections) {
                     try {
                         if (connection.isClosed()) {

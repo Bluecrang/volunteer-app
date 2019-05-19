@@ -30,7 +30,6 @@ public class CreateTopicCommand implements Command {
     public CommandResult execute(CommandData data) throws CommandException {
         Object object = data.getSessionAttribute(ApplicationConstants.ACCOUNT_ATTRIBUTE);
         CommandResult result = new CommandResult();
-        result.assignTransitionTypeForward();
         result.setPage(ApplicationConstants.SHOW_TOPICS);
         if (object instanceof Account) {
             Account account = (Account) object;

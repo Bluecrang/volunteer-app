@@ -13,7 +13,6 @@ import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.List;
 
-import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 import static org.testng.Assert.fail;
 
@@ -29,7 +28,9 @@ public class AccountDaoImplTest {
     @BeforeClass
     public void init() {
         try {
-            Connection connection = DatabaseTestUtil.initiateDatabaseAndGetConnection();
+            DatabaseTestUtil.registerDrivers();
+            DatabaseTestUtil.initializeDatabase();
+            Connection connection = DatabaseTestUtil.getConnection();
             MockitoAnnotations.initMocks(this);
             when(connectionManager.getConnection()).thenReturn(connection);
             accountDao = new AccountDaoImpl(connectionManager);
@@ -162,6 +163,7 @@ public class AccountDaoImplTest {
     @AfterClass(alwaysRun = true)
     public void cleanUp() {
         try {
+            DatabaseTestUtil.dropSchema();
             DatabaseTestUtil.deregisterDrivers();
         } catch (SQLException | IOException e) {
             throw new RuntimeException(e);

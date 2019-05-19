@@ -26,7 +26,7 @@ public class ApplicationServlet extends AbstractServlet {
     @Override
     public void init() {
         String configFilename = getServletContext().getRealPath("/") + POOL_PROPERTIES_FILENAME;
-        ConnectionPool.instance.init(configFilename, POOL_MAINTENANCE_PERIOD_MILLIS);
+        ConnectionPool.INSTANCE.init(configFilename, POOL_MAINTENANCE_PERIOD_MILLIS);
     }
 
     @Override
@@ -41,7 +41,7 @@ public class ApplicationServlet extends AbstractServlet {
 
     @Override
     public void destroy() {
-        ConnectionPool.instance.closePool();
+        ConnectionPool.INSTANCE.closePool();
     }
 
     private void processRequest(HttpServletRequest request, HttpServletResponse response)

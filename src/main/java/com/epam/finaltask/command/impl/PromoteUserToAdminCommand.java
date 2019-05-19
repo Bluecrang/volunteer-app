@@ -20,7 +20,6 @@ public class PromoteUserToAdminCommand implements Command {
     public CommandResult execute(CommandData data) throws CommandException {
         Object sessionAccountObject = data.getSessionAttribute(ApplicationConstants.ACCOUNT_ATTRIBUTE);
         CommandResult commandResult = new CommandResult();
-        commandResult.assignTransitionTypeForward();
         try {
             long accountId = Long.parseLong(data.getRequestParameter(ApplicationConstants.ACCOUNT_ID_PARAMETER));
             commandResult.setPage(ApplicationConstants.SHOW_PROFILE + accountId);

@@ -18,7 +18,7 @@ class ProxyConnection implements Connection {
         if (!connection.getAutoCommit()) {
             connection.setAutoCommit(true);
         }
-        ConnectionPool.instance.releaseConnection(this);
+        ConnectionPool.INSTANCE.releaseConnection(this);
     }
 
     void closeInnerConnection() throws SQLException {

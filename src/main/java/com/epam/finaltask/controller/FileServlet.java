@@ -17,10 +17,11 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
 @WebServlet(urlPatterns = "/upload")
-@MultipartConfig(fileSizeThreshold = 1024 * 1024, maxFileSize = 1024 * 1024 * 5, maxRequestSize = 1024 * 1024 * 5 * 5)
+@MultipartConfig(fileSizeThreshold = 1024 * 50, maxFileSize = 1024 * 64, maxRequestSize = 1024 * 1024 * 5) //todo change blob to longblob, adjust settings
 public class FileServlet extends AbstractServlet {
 
     private static final Logger logger = LogManager.getLogger();
+
     @Override
     public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
         processRequest(request, response);

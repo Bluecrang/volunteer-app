@@ -29,7 +29,9 @@ public class TopicDaoImplTest {
     @BeforeClass
     public void init() {
         try {
-            Connection connection = DatabaseTestUtil.initiateDatabaseAndGetConnection();
+            DatabaseTestUtil.registerDrivers();
+            DatabaseTestUtil.initializeDatabase();
+            Connection connection = DatabaseTestUtil.getConnection();
             MockitoAnnotations.initMocks(this);
             when(connectionManager.getConnection()).thenReturn(connection);
             topicDao = new TopicDaoImpl(connectionManager);
@@ -137,6 +139,7 @@ public class TopicDaoImplTest {
     @AfterClass(alwaysRun = true)
     public void cleanUp() {
         try {
+            DatabaseTestUtil.dropSchema();
             DatabaseTestUtil.deregisterDrivers();
         } catch (SQLException | IOException e) {
             throw new RuntimeException(e);

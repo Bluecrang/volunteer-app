@@ -11,7 +11,7 @@
 <body>
     <div class="container align-content-center">
         <h4><c:out value="${topic.title}"/></h4>
-        <c:if test="${not empty account && account.accessLevel == 'ADMIN' && not topic.closed}">
+        <c:if test="${account.accessLevel == 'ADMIN' && not topic.closed}">
             <form class="my-2" method="post" id="close_topic" action="${pageContext.request.contextPath}/servlet">
                 <input type="hidden" name="topic_id" value="${topic.topicId}"/>
                 <input type="hidden" name="command" value="close_topic"/>

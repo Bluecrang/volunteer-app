@@ -6,6 +6,6 @@ class PoolSupervisor extends TimerTask {
 
     @Override
     public void run() {
-        ConnectionPool.instance.removeClosedConnections();
+        ConnectionPool.INSTANCE.removeClosedConnections();
     }
 }

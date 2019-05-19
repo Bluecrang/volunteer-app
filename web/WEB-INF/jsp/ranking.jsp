@@ -12,7 +12,6 @@
             <tr>
                 <th><fmt:message key="ranking.username_header"/></th>
                 <th><fmt:message key="ranking.rating_header"/></th>
-                <th><fmt:message key="ranking.account_type_header"/></th>
             </tr>
             <c:forEach var="account_from_list" items="${account_list}">
                 <tr>

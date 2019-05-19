@@ -11,7 +11,7 @@ class AbstractConnectionManagerImpl extends AbstractConnectionManager {
 
     public AbstractConnectionManagerImpl() throws PersistenceException {
         try {
-            connection = ConnectionPool.instance.getConnection();
+            connection = ConnectionPool.INSTANCE.getConnection();
         } catch (ConnectionPoolException e) {
             throw new PersistenceException("unable to get connection from the pool", e);
         }

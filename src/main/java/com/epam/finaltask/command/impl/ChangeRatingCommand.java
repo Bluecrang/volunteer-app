@@ -20,7 +20,6 @@ public class ChangeRatingCommand implements Command {
     @Override
     public CommandResult execute(CommandData data) throws CommandException {
         CommandResult commandResult = new CommandResult();
-        commandResult.assignTransitionTypeForward();
         try {
             long accountId = Long.parseLong(data.getRequestParameter(ApplicationConstants.ACCOUNT_ID_PARAMETER));
             commandResult.setPage(ApplicationConstants.SHOW_PROFILE + accountId);

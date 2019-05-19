@@ -29,7 +29,9 @@ public class MessageDaoImplTest {
     @BeforeClass
     public void init() {
         try {
-            Connection connection = DatabaseTestUtil.initiateDatabaseAndGetConnection();
+            DatabaseTestUtil.registerDrivers();
+            DatabaseTestUtil.initializeDatabase();
+            Connection connection = DatabaseTestUtil.getConnection();
             MockitoAnnotations.initMocks(this);
             when(connectionManager.getConnection()).thenReturn(connection);
             messageDao = new MessageDaoImpl(connectionManager);
@@ -190,6 +192,7 @@ public class MessageDaoImplTest {
     @AfterClass(alwaysRun = true)
     public void cleanUp() {
         try {
+            DatabaseTestUtil.dropSchema();
             DatabaseTestUtil.deregisterDrivers();
         } catch (SQLException | IOException e) {
             throw new RuntimeException(e);

@@ -19,7 +19,7 @@ public class FileValidator {
         logger.log(Level.DEBUG, "argument " + filename);
         File file = new File(filename);
         boolean result = file.exists() && file.isFile();
-        logger.log(Level.INFO, filename + "validation result is " + result);
+        logger.log(Level.INFO, filename + " validation result is " + result);
         return result;
     }
 }

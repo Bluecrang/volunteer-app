@@ -25,7 +25,6 @@ public class ChangeTopicHiddenStateCommand implements Command {
     public CommandResult execute(CommandData data) throws CommandException {
         Object sessionAccountObject = data.getSessionAttribute(ApplicationConstants.ACCOUNT_ATTRIBUTE);
         CommandResult commandResult = new CommandResult();
-        commandResult.assignTransitionTypeForward();
         try {
             long topicId = Long.parseLong(data.getRequestParameter(ApplicationConstants.TOPIC_ID_PARAMETER));
             data.putRequestAttribute(ApplicationConstants.TOPIC_ACTION_NOTIFICATION, MESSAGE_DELETION_ERROR_PROPERTY);

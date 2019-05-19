@@ -12,15 +12,15 @@ import java.util.Enumeration;
 public class DatabaseTestUtil {
 
     private static Connection connection;
+    private static String urlAfterSchemaCreation;
 
-    public static Connection initiateDatabaseAndGetConnection() throws SQLException, IOException {
-        DriverManager.registerDriver(new com.mysql.jdbc.Driver());
+    public static void initializeDatabase() throws SQLException, IOException {
         String[] script = String.join("",
                 Files.readAllLines(Paths.get("src/test/resources/test_db_script.sql"), StandardCharsets.UTF_8)).split(";");
         try (BufferedReader bufferedReader =
                      new BufferedReader(new FileReader("src/test/resources/db_settings.txt"))) {
             String urlBeforeSchemaCreation = bufferedReader.readLine();
-            String urlAfterSchemaCreation = bufferedReader.readLine();
+            urlAfterSchemaCreation = bufferedReader.readLine();
             try (Connection connection = DriverManager
                     .getConnection(urlBeforeSchemaCreation)) {
                 for (String query : script) {
@@ -29,18 +29,33 @@ public class DatabaseTestUtil {
                     }
                 }
             }
-            connection = DriverManager.getConnection(urlAfterSchemaCreation);
         }
-        return  connection;
     }
 
-    public static void deregisterDrivers() throws SQLException, IOException {
-        try (Statement statement = connection.createStatement()) {
+    public static Connection getConnection() throws SQLException {
+        if (connection == null) {
+            connection = DriverManager.getConnection(urlAfterSchemaCreation);
+        }
+        return connection;
+    }
+
+    public static void registerDrivers() throws SQLException {
+        DriverManager.registerDriver(new com.mysql.jdbc.Driver());
+    }
+
+    public static void dropSchema() throws SQLException, IOException {
+        try (Statement statement = getConnection().createStatement()) {
             String script = String.join("",
                     Files.readAllLines(Paths.get("src/test/resources/test_db_drop_schema.sql"), StandardCharsets.UTF_8));
             statement.execute(script);
         }
-        connection.close();
+    }
+
+    public static void deregisterDrivers() throws SQLException {
+        if (connection != null) {
+            connection.close();
+            connection = null;
+        }
         Enumeration<Driver> enumeration = DriverManager.getDrivers();
         while (enumeration.hasMoreElements()){
             DriverManager.deregisterDriver(enumeration.nextElement());

@@ -33,7 +33,6 @@ public class RegistrationCommand implements Command {
 
         CommandResult commandResult = new CommandResult();
         commandResult.setPage(PageConstants.REGISTRATION_PAGE);
-        commandResult.assignTransitionTypeForward();
 
         EmailValidator emailValidator = new EmailValidator();
         if (!emailValidator.validate(email)) {

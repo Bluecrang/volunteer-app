@@ -23,7 +23,7 @@ public final class ApplicationConstants {
     public static final String LOCALE_ATTRIBUTE = "locale";
     public static final String TOPICS_MESSAGE_ATTRIBUTE = "topics_message";
 
-    public static final String SHOW_TOPICS = "/topics?command=show_topics"; //todo filter
+    public static final String SHOW_TOPICS = "/topics?command=show_topics";
     public static final String SHOW_PROFILE = "/profile?command=show_profile&account_id=";
     public static final String SHOW_TOPIC = "/topic?command=show_topic_page&load_messages=true&page=1&topic_id=";
     public static final String SHOW_TOPIC_LAST_PAGE = "/topic?command=show_topic_page&load_messages=true&page=last&topic_id=";
