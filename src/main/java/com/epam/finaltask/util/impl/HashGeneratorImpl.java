@@ -11,10 +11,21 @@ import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 
+/**
+ * The implementation of {@link HashGenerator}. Generates hash using {@link MessageDigest}.
+ */
 class HashGeneratorImpl implements HashGenerator {
 
     private static final Logger logger = LogManager.getLogger();
 
+    /**
+     * Generates hash using specified data string and salt. Uses chosen algorithm to generate hash, but only algorithms
+     * supported by {@link MessageDigest} can be used.
+     * @param data          the data to be hashed
+     * @param salt          the salt to be used in hash generation.
+     * @param algorithm     the hashing algorithm. Only algorithms supported by {@link MessageDigest} can be used
+     * @return the generated hash
+     */
     public String hash(String data, String salt, String algorithm) {
         String dataToUse;
         if (data != null) {

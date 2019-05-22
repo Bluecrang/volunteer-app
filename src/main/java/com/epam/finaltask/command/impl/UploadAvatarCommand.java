@@ -15,6 +15,9 @@ import org.apache.logging.log4j.Logger;
 import javax.servlet.http.Part;
 import java.util.Collection;
 
+/**
+ * Command which is used to upload avatar.
+ */
 public class UploadAvatarCommand implements UploadCommand {
 
     private static final Logger logger = LogManager.getLogger();

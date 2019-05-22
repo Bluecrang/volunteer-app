@@ -2,11 +2,23 @@ package com.epam.finaltask.entity;
 
 import java.time.LocalDateTime;
 
+/**
+ * Message entity.
+ */
 public class Message extends Entity {
     private long messageId;
     private String message;
+    /**
+     * Account of the message author.
+     */
     private Account account;
+    /**
+     * Date of the message creation.
+     */
     private LocalDateTime date;
+    /**
+     * Topic to which message was added.
+     */
     private Topic topic;
 
     public Message() {

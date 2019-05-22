@@ -1,5 +1,8 @@
 package com.epam.finaltask.service;
 
+/**
+ * Exception thrown by service layer.
+ */
 public class ServiceException extends Exception {
     public ServiceException() {
     }

@@ -16,28 +16,54 @@ import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+/**
+ * Service class which provides registration logic.
+ */
 public class RegistrationService extends AbstractService {
 
     private static final Logger logger = LogManager.getLogger();
+
     private static final int DEFAULT_RATING = 0;
     private static final boolean DEFAULT_BLOCKED = false;
     private static final boolean DEFAULT_VERIFIED = false;
+    /**
+     * Factory which is used to generate password hashes.
+     */
     private HashGeneratorFactory hashGeneratorFactory;
 
+    /**
+     * Creates RegistrationService with chosen DaoFactory, connectionManagerFactory, hashGeneratorFactory.
+     * @param daoFactory Factory which is used to create DAO objects
+     * @param connectionManagerFactory Factory which is used to create {@link com.epam.finaltask.dao.impl.AbstractConnectionManager} subclass instances
+     * @param hashGeneratorFactory Factory which is used to create {@link HashGenerator} implementations
+     */
     public RegistrationService(DaoFactory daoFactory, ConnectionManagerFactory connectionManagerFactory,
                                HashGeneratorFactory hashGeneratorFactory) {
         super(daoFactory, connectionManagerFactory);
         this.hashGeneratorFactory = hashGeneratorFactory;
     }
 
+    /**
+     * Creates RegistrationService with {@link DaoFactory} and {@link ConnectionManagerFactory}
+     * defined in {@link AbstractService} no-argument constructor and {@link HashGeneratorFactoryImpl} as HashGeneratorFactory.
+     */
     public RegistrationService() {
         super();
         this.hashGeneratorFactory = new HashGeneratorFactoryImpl();
     }
 
-    public boolean registerUser(String login, String password, String email) throws ServiceException { //todo javamail
-        if (login == null) {
-            logger.log(Level.WARN, "cannot register account, login is null");
+    /**
+     * Register account, storing it's data in the database.
+     * If account with chosen email or username already exists, returns {@code false}.
+     * @param username Accounts username
+     * @param password Accounts password
+     * @param email Accounts email. Registration of the account with email which is already used by another account is not permitted
+     * @return {@code true} if account successfully registered, else returns {@code false}
+     * @throws ServiceException If PersistenceException thrown
+     */
+    public boolean registerAccount(String username, String password, String email) throws ServiceException { //todo unique username
+        if (username == null) {
+            logger.log(Level.WARN, "cannot register account, username is null");
             return false;
         }
         if (password == null) {
@@ -59,7 +85,7 @@ public class RegistrationService extends AbstractService {
                     SaltGenerator saltGenerator = new SaltGenerator();
                     String salt = saltGenerator.generateSalt();
                     String passwordHash = hashGenerator.hash(password, salt, ApplicationConstants.HASHING_ALGORITHM);
-                    Account account = new Account(login, passwordHash, email, AccountType.USER, DEFAULT_RATING,
+                    Account account = new Account(username, passwordHash, email, AccountType.USER, DEFAULT_RATING,
                             DEFAULT_VERIFIED, DEFAULT_BLOCKED, salt, null); //todo
                     accountDao.create(account);
                     logger.log(Level.INFO, "account with email=" + email + " added to database");

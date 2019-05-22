@@ -13,6 +13,9 @@ import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+/**
+ * Command which is used to initialize data for the profile page.
+ */
 public class ShowProfileCommand implements Command {
 
     private static final Logger logger = LogManager.getLogger();

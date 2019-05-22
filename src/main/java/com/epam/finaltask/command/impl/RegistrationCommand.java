@@ -14,6 +14,9 @@ import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+/**
+ * Command which is used to register user.
+ */
 public class RegistrationCommand implements Command {
 
     private static final Logger logger = LogManager.getLogger();
@@ -51,7 +54,7 @@ public class RegistrationCommand implements Command {
 
         RegistrationService registrationService = new RegistrationService();
         try {
-            if (registrationService.registerUser(username, password, email)) {
+            if (registrationService.registerAccount(username, password, email)) {
                 logger.log(Level.INFO, "user with username=" + username + " successfully registered");
                 data.putRequestAttribute(ApplicationConstants.AUTHORIZATION_MESSAGE_ATTRIBUTE, ACCOUNT_SUCCESSFULLY_REGISTERED);
                 commandResult.setPage(ApplicationConstants.SHOW_LOGIN_PAGE);

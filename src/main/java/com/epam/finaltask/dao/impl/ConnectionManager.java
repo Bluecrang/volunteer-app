@@ -6,9 +6,19 @@ import com.epam.finaltask.connectionpool.ConnectionPoolException;
 import java.sql.Connection;
 import java.sql.SQLException;
 
+/**
+ * Class which instances are used to provide connection to DAOs.
+ */
 class ConnectionManager extends AbstractConnectionManager {
+    /**
+     * Connection which is being provided.
+     */
     private Connection connection;
 
+    /**
+     * Creates ConnectionManager with connection from the database.
+     * @throws PersistenceException if ConnetionPoolException is thrown
+     */
     public ConnectionManager() throws PersistenceException {
         try {
             connection = ConnectionPool.INSTANCE.getConnection();
@@ -17,6 +27,10 @@ class ConnectionManager extends AbstractConnectionManager {
         }
     }
 
+    /**
+     * Disables auto commit.
+     * @throws PersistenceException if SQLException is thrown
+     */
     @Override
     public void disableAutoCommit() throws PersistenceException {
         try {
@@ -28,6 +42,10 @@ class ConnectionManager extends AbstractConnectionManager {
         }
     }
 
+    /**
+     * Enables auto commit.
+     * @throws PersistenceException If SQLException is thrown
+     */
     @Override
     public void enableAutoCommit() throws PersistenceException {
         try {
@@ -39,6 +57,10 @@ class ConnectionManager extends AbstractConnectionManager {
         }
     }
 
+    /**
+     * Delegates commit call to the connection.
+     * @throws PersistenceException If SQLException is thrown
+     */
     @Override
     public void commit() throws PersistenceException {
         try {
@@ -48,6 +70,10 @@ class ConnectionManager extends AbstractConnectionManager {
         }
     }
 
+    /**
+     * Delegates rollback call to the connection.
+     * @throws PersistenceException If SQLException is thrown
+     */
     @Override
     public void rollback() throws PersistenceException {
         try {
@@ -57,6 +83,10 @@ class ConnectionManager extends AbstractConnectionManager {
         }
     }
 
+    /**
+     * Delegates close call to the connection.
+     * @throws PersistenceException If SQLException is thrown
+     */
     @Override
     public void close() throws PersistenceException {
         try {
@@ -66,6 +96,11 @@ class ConnectionManager extends AbstractConnectionManager {
         }
     }
 
+    /**
+     * Returns {@link ConnectionManager#connection}.
+     * Used to provide connection to DAO.
+     * @return {@link ConnectionManager#connection}
+     */
     @Override
     Connection getConnection() {
         return connection;

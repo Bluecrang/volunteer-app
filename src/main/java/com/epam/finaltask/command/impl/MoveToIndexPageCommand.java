@@ -5,6 +5,9 @@ import com.epam.finaltask.command.CommandData;
 import com.epam.finaltask.command.CommandResult;
 import com.epam.finaltask.util.PageConstants;
 
+/**
+ * Command which is used to move to the index page.
+ */
 public class MoveToIndexPageCommand implements Command {
     @Override
     public CommandResult execute(CommandData data) {

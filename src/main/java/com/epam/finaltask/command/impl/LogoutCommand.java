@@ -5,6 +5,9 @@ import com.epam.finaltask.command.CommandData;
 import com.epam.finaltask.command.CommandResult;
 import com.epam.finaltask.util.ApplicationConstants;
 
+/**
+ * Command which is used to log out.
+ */
 public class LogoutCommand implements Command {
 
     @Override

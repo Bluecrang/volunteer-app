@@ -5,6 +5,9 @@ import com.epam.finaltask.command.CommandData;
 import com.epam.finaltask.command.CommandResult;
 import com.epam.finaltask.util.PageConstants;
 
+/**
+ * Command which is used to move to the login page.
+ */
 public class ShowLoginPageCommand implements Command {
 
     @Override

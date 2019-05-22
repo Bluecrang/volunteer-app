@@ -5,19 +5,56 @@ import javax.servlet.jsp.JspWriter;
 import javax.servlet.jsp.tagext.TagSupport;
 import java.io.IOException;
 
+/**
+ * Jsp tag class, Can be used to create tag which shows one image if condition is met, and other image if it isn't.
+ */
 public class ImageTag extends TagSupport {
 
     private static final Integer DEFAULT_WIDTH = 128;
     private static final Integer DEFAULT_HEIGHT = 128;
 
+    /**
+     * Condition to be tested.
+     */
     private boolean test;
+
+    /**
+     * Text which will show if image won't load. Also used by screen readers.
+     */
     private String alt;
+
+    /**
+     * Image width.
+     */
     private Integer width;
+
+    /**
+     * Image height.
+     */
     private Integer height;
+
+    /**
+     * Image source. Will be used if tested condition is {@code true}.
+     */
     private String src;
+
+    /**
+     * Default image source which will be used if tested condition is {@code false}.
+     */
     private String defaultSrc;
+    /**
+     * img tag style class.
+     */
     private String imgClass;
 
+    /**
+     *  Generates html to display image. If {@link #test} is {@code true}, then image specified in {@link #src} will be
+     *  displayed. Otherwise {@link #defaultSrc} image will be used. Width and height can be specified using
+     *  {@link #width} and {@link #height}. Style if the img tag can be specified using {@link #imgClass}. {@link #alt}
+     *  content is passed to {@code alt} attribute of the img html tag.
+     * @return SKIP_BODY constant, which stops the execution.
+     * @throws JspException if IOException will be thrown by JspWriter
+     */
     @Override
     public int doStartTag() throws JspException {
         if (width == null) {

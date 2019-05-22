@@ -20,23 +20,48 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.List;
 
+/**
+ * Service class which provides methods to add and manipulate database accounts.
+ */
 public class AccountService extends AbstractService {
 
+    private static final Logger logger = LogManager.getLogger();
+
+    /**
+     * Creates AccountService object with specified {@link DaoFactory} and {@link ConnectionManagerFactory}. Uses default
+     * DaoFactory or ConnectionManagerFactory implementation specified in {@link AbstractService}
+     * if corresponding factory parameter is null.
+     * @param daoFactory Factory used to create DAO objects
+     * @param connectionManagerFactory Factory used to create {@link com.epam.finaltask.dao.impl.AbstractConnectionManager} subclasses
+     */
     public AccountService(DaoFactory daoFactory, ConnectionManagerFactory connectionManagerFactory) {
         super(daoFactory, connectionManagerFactory);
     }
 
+    /**
+     * Creates AccountService object with specified {@link DaoFactory}. Uses default
+     * DaoFactory implementation specified in {@link AbstractService} if daoFactory parameter is null.
+     * Creates new {@link ConnectionManagerFactoryImpl} to be used as ConnectionManagerFactory.
+     * @param daoFactory Factory used to create DAO objects
+     */
     public AccountService(DaoFactory daoFactory) {
         super(daoFactory);
         this.connectionManagerFactory = new ConnectionManagerFactoryImpl();
     }
 
+    /**
+     * Creates AccountService with default {@link DaoFactory} and {@link ConnectionManagerFactory} implementations
+     * specified in the {@link AbstractService}.
+     */
     public AccountService() {
         super();
     }
 
-    private static final Logger logger = LogManager.getLogger();
-
+    /**
+     * Returns database account count.
+     * @return account count
+     * @throws ServiceException if {@link PersistenceException} has occurred when working with database
+     */
     public int countAccounts() throws ServiceException {
         try (AbstractConnectionManager connectionManager = connectionManagerFactory.createConnectionManager()) {
             AccountDao accountDao = daoFactory.createAccountDao(connectionManager);
@@ -46,6 +71,13 @@ public class AccountService extends AbstractService {
         }
     }
 
+    /**
+     * Returns accounts from the specific rating page.
+     * @param page Page number
+     * @param numberOfAccountsPerPage Number of account displayed on one page
+     * @return Account on the page
+     * @throws ServiceException if {@link PersistenceException} has occurred when working with database
+     */
     public List<Account> findRatingPageAccounts(int page, int numberOfAccountsPerPage) throws ServiceException {
         try (AbstractConnectionManager connectionManager = connectionManagerFactory.createConnectionManager()) {
             AccountDao accountDao = daoFactory.createAccountDao(connectionManager);
@@ -55,60 +87,75 @@ public class AccountService extends AbstractService {
         }
     }
 
-    public boolean addValueToRating(Account actingAccount, long accountId, int value) throws ServiceException {
-        if (actingAccount != null && actingAccount.getAccountType() != null &&
-                actingAccount.getAccountType().equals(AccountType.ADMIN)) {
-            try (AbstractConnectionManager connectionManager = connectionManagerFactory.createConnectionManager()) {
-                connectionManager.disableAutoCommit();
-                try {
-                    Account account = findAccountById(accountId, connectionManager);
-                    if (account != null) {
-                        account.setRating(account.getRating() + value);
-                        AccountDao accountDao = daoFactory.createAccountDao(connectionManager);
-                        if (accountDao.update(account) == 1) {
-                            connectionManager.commit();
-                            return true;
-                        }
+    /**
+     * Adds chosen value to accounts rating. Returns {@code true if rating was successfully added}.
+     * @param accountId Id of the account which rating will be changed
+     * @param value Rating value which will be added to the rating of the chosen account
+     * @return {@code true} if rating was successfully added
+     * @throws ServiceException if {@link PersistenceException} has occurred when working with database
+     */
+    public boolean addValueToRating(long accountId, int value) throws ServiceException {
+        try (AbstractConnectionManager connectionManager = connectionManagerFactory.createConnectionManager()) {
+            connectionManager.disableAutoCommit();
+            try {
+                Account account = findAccountById(accountId, connectionManager);
+                if (account != null) {
+                    account.setRating(account.getRating() + value);
+                    AccountDao accountDao = daoFactory.createAccountDao(connectionManager);
+                    if (accountDao.update(account) == 1) {
+                        connectionManager.commit();
+                        return true;
                     }
-                    connectionManager.rollback();
-                } catch (PersistenceException e) {
-                    connectionManager.rollback();
-                    throw new ServiceException(e);
                 }
+                connectionManager.rollback();
             } catch (PersistenceException e) {
+                connectionManager.rollback();
                 throw new ServiceException(e);
             }
+        } catch (PersistenceException e) {
+            throw new ServiceException(e);
         }
         return false;
     }
 
-    public boolean changeAccountBlockState(Account blockingAccount, long accountId, boolean block) throws ServiceException {
-        if (blockingAccount != null && blockingAccount.getAccountType() != null &&
-                blockingAccount.getAccountType().equals(AccountType.ADMIN)) {
-            try (AbstractConnectionManager connectionManager = connectionManagerFactory.createConnectionManager()) {
-                connectionManager.disableAutoCommit();
-                try {
-                    Account account = findAccountById(accountId, connectionManager);
-                    if (account != null) {
-                        account.setBlocked(block);
-                        AccountDao accountDao = daoFactory.createAccountDao(connectionManager);
-                        if (accountDao.update(account) == 1) {
-                            connectionManager.commit();
-                            return true;
-                        }
+    /**
+     * Changes account block state. Returns {@code true} if block state was successfully changed.
+     * @param accountId Id of the account which block state will be changed
+     * @param block New block state
+     * @return {@code true} if account block state was successfully changed
+     * @throws ServiceException if {@link PersistenceException} has occurred when working with database
+     */
+    public boolean changeAccountBlockState(long accountId, boolean block) throws ServiceException {
+        try (AbstractConnectionManager connectionManager = connectionManagerFactory.createConnectionManager()) {
+            connectionManager.disableAutoCommit();
+            try {
+                Account account = findAccountById(accountId, connectionManager);
+                if (account != null) {
+                    account.setBlocked(block);
+                    AccountDao accountDao = daoFactory.createAccountDao(connectionManager);
+                    if (accountDao.update(account) == 1) {
+                        connectionManager.commit();
+                        return true;
                     }
-                    connectionManager.rollback();
-                } catch (PersistenceException e) {
-                    connectionManager.rollback();
-                    throw new ServiceException(e);
                 }
+                connectionManager.rollback();
             } catch (PersistenceException e) {
+                connectionManager.rollback();
                 throw new ServiceException(e);
             }
+        } catch (PersistenceException e) {
+            throw new ServiceException(e);
         }
         return false;
     }
 
+    /**
+     * Changed account avatar to the specified avatar.
+     * @param account Account which avatar should be updated
+     * @param part {@link Part} which contains new avatar
+     * @return {@code true} if avatar was successfully updated
+     * @throws ServiceException if {@link PersistenceException} has occurred when working with database
+     */
     public boolean updateAvatar(Account account, Part part) throws ServiceException {
         if (account == null) {
             logger.log(Level.WARN, "cannot update avatar: account is null");
@@ -137,6 +184,12 @@ public class AccountService extends AbstractService {
         }
     }
 
+    /**
+     * Returns account with specified from the database. Returns null if account with chosen id does not exist.
+     * @param accountId Id of the account to be searched for
+     * @return {@link Account} instance if account is found, {@code null} if account is not found
+     * @throws ServiceException if {@link PersistenceException} has occurred when working with database
+     */
     public Account findAccountById(long accountId) throws ServiceException {
         try (AbstractConnectionManager connectionManager = connectionManagerFactory.createConnectionManager()) {
             return findAccountById(accountId, connectionManager);
@@ -145,6 +198,14 @@ public class AccountService extends AbstractService {
         }
     }
 
+    /**
+     * Returns account with specified from the database. Returns null if account with chosen id does not exist.
+     * Uses existing {@link AbstractConnectionManager} to find account.
+     * @param accountId Id of the account to be searched for
+     * @param connectionManager {@link AbstractConnectionManager} subclass, which provides database access
+     * @return {@link Account} instance if account is found, {@code null} if account is not found
+     * @throws ServiceException if {@link PersistenceException} has occurred when working with database
+     */
     Account findAccountById(long accountId, AbstractConnectionManager connectionManager) throws ServiceException {
         AccountDao accountDao = daoFactory.createAccountDao(connectionManager);
         try {
@@ -154,15 +215,13 @@ public class AccountService extends AbstractService {
         }
     }
 
-    public boolean promoteUserToAdmin(Account sessionAccount, long accountId) throws ServiceException {
-        if (sessionAccount == null) {
-            logger.log(Level.WARN, "cannot promote account: sessionAccount is null");
-            return false;
-        }
-        if (!AccountType.ADMIN.equals(sessionAccount.getAccountType())) {
-            logger.log(Level.WARN, "cannot promote account: sessionAccount access level is not admin");
-            return false;
-        }
+    /**
+     * Promotes user to administrator. Returns {@code true} if account successfully promoted to administrator.
+     * @param accountId Id of the account to be promoted
+     * @return {@code true} if account promoted successfully.
+     * @throws ServiceException if {@link PersistenceException} has occurred when working with database
+     */
+    public boolean promoteUserToAdmin(long accountId) throws ServiceException {
         try (AbstractConnectionManager connectionManager = connectionManagerFactory.createConnectionManager()) {
             connectionManager.disableAutoCommit();
             Account account = findAccountById(accountId, connectionManager);
@@ -181,6 +240,11 @@ public class AccountService extends AbstractService {
         return false;
     }
 
+    /**
+     * Returns list of all account which {@link AccountType} is {@link AccountType#ADMIN}.
+     * @return List of administrators accounts.
+     * @throws ServiceException if {@link PersistenceException} has occurred when working with database
+     */
     public List<Account> findAdministrators() throws ServiceException {
         try (AbstractConnectionManager connectionManager = connectionManagerFactory.createConnectionManager()) {
             AccountDao accountDao = daoFactory.createAccountDao(connectionManager);

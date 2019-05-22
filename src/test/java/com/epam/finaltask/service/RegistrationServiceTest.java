@@ -68,7 +68,7 @@ public class RegistrationServiceTest {
             fail("Unexpected PersistenceException", e);
         }
         try {
-            boolean result = registrationService.registerUser(login, password, email);
+            boolean result = registrationService.registerAccount(login, password, email);
 
             Assert.assertFalse(result);
         } catch (ServiceException e) {
@@ -87,7 +87,7 @@ public class RegistrationServiceTest {
             fail("Unexpected PersistenceException", e);
         }
         try {
-            boolean result = registrationService.registerUser(login, password, email);
+            boolean result = registrationService.registerAccount(login, password, email);
 
             Assert.assertTrue(result);
         } catch (ServiceException e) {
@@ -108,7 +108,7 @@ public class RegistrationServiceTest {
             fail("Unexpected PersistenceException", e);
         }
         try {
-            boolean result = registrationService.registerUser(login, password, email);
+            boolean result = registrationService.registerAccount(login, password, email);
 
             Assert.assertFalse(result);
         } catch (ServiceException e) {
@@ -129,7 +129,7 @@ public class RegistrationServiceTest {
             fail("Unexpected PersistenceException", e);
         }
         try {
-            boolean result = registrationService.registerUser(login, password, email);
+            boolean result = registrationService.registerAccount(login, password, email);
 
             Assert.assertFalse(result);
         } catch (ServiceException e) {
@@ -147,6 +147,6 @@ public class RegistrationServiceTest {
         } catch (PersistenceException e) {
             e.printStackTrace();
         }
-        registrationService.registerUser(login, password, email);
+        registrationService.registerAccount(login, password, email);
     }
 }

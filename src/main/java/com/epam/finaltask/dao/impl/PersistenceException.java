@@ -1,5 +1,8 @@
 package com.epam.finaltask.dao.impl;
 
+/**
+ * Exception which is thrown by DAO layer.
+ */
 public class PersistenceException extends Exception {
 
     public PersistenceException() {

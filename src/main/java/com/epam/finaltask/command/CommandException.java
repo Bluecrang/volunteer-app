@@ -1,5 +1,8 @@
 package com.epam.finaltask.command;
 
+/**
+ * Exception thrown by command layer.
+ */
 public class CommandException extends Exception {
 
     public CommandException() {

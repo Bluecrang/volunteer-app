@@ -5,6 +5,9 @@ import com.epam.finaltask.command.CommandData;
 import com.epam.finaltask.command.CommandResult;
 import com.epam.finaltask.util.ApplicationConstants;
 
+/**
+ * Command which is used to change locale.
+ */
 public class ChangeLocaleCommand implements Command {
 
     @Override

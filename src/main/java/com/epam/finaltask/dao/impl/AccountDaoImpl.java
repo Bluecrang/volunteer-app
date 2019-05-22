@@ -13,6 +13,9 @@ import java.sql.Types;
 import java.util.LinkedList;
 import java.util.List;
 
+/**
+ * Class which implements CRUD and several other operations to work with database accounts.
+ */
 class AccountDaoImpl extends AbstractDao<Account> implements AccountDao {
 
     private static final String FIND_ALL_ACCOUNTS = "SELECT acc.account_id, acc.username, acc.password, acc.email, " +
@@ -49,10 +52,19 @@ class AccountDaoImpl extends AbstractDao<Account> implements AccountDao {
             "FROM account acc INNER JOIN account_type acc_type on acc.account_type_id = acc_type.account_type_id " +
             "WHERE acc_type.type = ?";
 
+    /**
+     * Creates AccountDaoImpl using connection provided by connectionManager.
+     * @param connectionManager Connection manager which provides connection to the DAO
+     */
     public AccountDaoImpl(AbstractConnectionManager connectionManager) {
         super(connectionManager);
     }
 
+    /**
+     * Returns database account count.
+     * @return Database account count
+     * @throws PersistenceException If SQLException is thrown
+     */
     public int findAccountCount() throws PersistenceException {
         try (PreparedStatement statement = getConnection().prepareStatement(FIND_ACCOUNT_COUNT)){
             try (ResultSet resultSet = statement.executeQuery()) {
@@ -66,11 +78,18 @@ class AccountDaoImpl extends AbstractDao<Account> implements AccountDao {
         return 0;
     }
 
-    public List<Account> findPageAccountsSortByRating(int startPage, int numberOfAccountsPerPage) throws PersistenceException {
+    /**
+     * Finds account on page sorted by rating.
+     * @param page page to show accounts from
+     * @param numberOfAccountsPerPage Number of account on each page
+     * @return Accounts from the page
+     * @throws PersistenceException If SQLException is thrown
+     */
+    public List<Account> findPageAccountsSortByRating(int page, int numberOfAccountsPerPage) throws PersistenceException {
         List<Account> accountList = new LinkedList<>();
         try (PreparedStatement statement = getConnection().prepareStatement(FIND_ACCOUNTS_IN_RANGE_SORT_BY_RATING)){
             statement.setInt(1, numberOfAccountsPerPage);
-            statement.setInt(2, (startPage - 1) * numberOfAccountsPerPage);
+            statement.setInt(2, (page - 1) * numberOfAccountsPerPage);
             try (ResultSet resultSet = statement.executeQuery()) {
                 while (resultSet.next()) {
                     accountList.add(createAccountFromResultSet(resultSet));
@@ -82,6 +101,12 @@ class AccountDaoImpl extends AbstractDao<Account> implements AccountDao {
         return accountList;
     }
 
+    /**
+     * Finds account by username.
+     * @param username Account's username
+     * @return Account if it exists, else returns null
+     * @throws PersistenceException If SQLException is thrown
+     */
     public Account findAccountByUsername(String username) throws PersistenceException {
         if (username == null) {
             return null;
@@ -100,6 +125,12 @@ class AccountDaoImpl extends AbstractDao<Account> implements AccountDao {
         return account;
     }
 
+    /**
+     * Finds account by email.
+     * @param email Account's email
+     * @return Account if it exists, else returns null
+     * @throws PersistenceException If SQLException is thrown
+     */
     public Account findAccountByEmail(String email) throws PersistenceException {
         if (email == null) {
             return null;
@@ -118,6 +149,12 @@ class AccountDaoImpl extends AbstractDao<Account> implements AccountDao {
         return account;
     }
 
+    /**
+     * Finds all accounts with chosen account type.
+     * @param accountType Account type of accounts to return
+     * @return All accounts with chosen account type
+     * @throws PersistenceException If SQLException is thrown
+     */
     public List<Account> findAllByAccountType(AccountType accountType) throws PersistenceException {
         List<Account> list = new LinkedList<>();
         try (PreparedStatement statement = getConnection().prepareStatement(FIND_ALL_BY_ACCOUNT_TYPE)){
@@ -133,6 +170,11 @@ class AccountDaoImpl extends AbstractDao<Account> implements AccountDao {
         return list;
     }
 
+    /**
+     * Returns all database accounts.
+     * @return All database accounts
+     * @throws PersistenceException If SQLException is thrown
+     */
     @Override
     public List<Account> findAll() throws PersistenceException {
         List<Account> list = new LinkedList<>();
@@ -147,6 +189,12 @@ class AccountDaoImpl extends AbstractDao<Account> implements AccountDao {
         return list;
     }
 
+    /**
+     * Finds entity by id.
+     * @param id Id of the entity to find
+     * @return Account which chosen id if it exists, else returns null
+     * @throws PersistenceException If SQLException is thrown
+     */
     @Override
     public Account findEntityById(long id) throws PersistenceException {
         Account account = null;
@@ -163,11 +211,21 @@ class AccountDaoImpl extends AbstractDao<Account> implements AccountDao {
         return account;
     }
 
+    /**
+     * Returns query which deletes account by id.
+     * @return Query which deletes account by id.
+     */
     @Override
     public String getDeleteByIdQuery() {
         return DELETE_ACCOUNT_BY_ID;
     }
 
+    /**
+     * Adds account to the database.
+     * @param entity Account to add to the database
+     * @return {@code true} if account was successfully created, else returns {@code false}
+     * @throws PersistenceException If SQLException is thrown
+     */
     @Override
     public boolean create(Account entity) throws PersistenceException {
         if (entity == null) {
@@ -195,6 +253,12 @@ class AccountDaoImpl extends AbstractDao<Account> implements AccountDao {
         }
     }
 
+    /**
+     * Updates account in the database.
+     * @param entity Account to update
+     * @return {@code true} if account was successfully updated, else returns {@code false}
+     * @throws PersistenceException If SQLException is thrown
+     */
     @Override
     public int update(Account entity) throws PersistenceException {
         if (entity == null) {
@@ -222,6 +286,12 @@ class AccountDaoImpl extends AbstractDao<Account> implements AccountDao {
         }
     }
 
+    /**
+     * Creates account using data from result set.
+     * @param resultSet Result set which provides data to create account
+     * @return Created account
+     * @throws SQLException If SQLException is thrown
+     */
     private Account createAccountFromResultSet(ResultSet resultSet) throws SQLException {
         long accountId = resultSet.getLong(1);
         String username = resultSet.getString(2);

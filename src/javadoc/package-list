@@ -1,0 +1,13 @@
+com.epam.finaltask.command
+com.epam.finaltask.command.impl
+com.epam.finaltask.connectionpool
+com.epam.finaltask.controller
+com.epam.finaltask.dao
+com.epam.finaltask.dao.impl
+com.epam.finaltask.entity
+com.epam.finaltask.filter
+com.epam.finaltask.service
+com.epam.finaltask.tag
+com.epam.finaltask.util
+com.epam.finaltask.util.impl
+com.epam.finaltask.validation

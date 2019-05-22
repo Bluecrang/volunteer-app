@@ -57,6 +57,7 @@
                     <c:if test="${not empty account && account.accountType == 'ADMIN'}">
                         <form class="mt-2" method="post" action="${pageContext.request.contextPath}/controller">
                             <input type="hidden" name="command" value="delete_message"/>
+                            <input type="hidden" name="topic_id" value="${topic.topicId}"/>
                             <input type="hidden" name="message_id" value="${message.messageId}"/>
                             <input class="btn btn-danger btn-sm" type="submit" value="<fmt:message key="topic.delete_message"/>"/>
                         </form>
@@ -100,6 +101,7 @@
                         <div id="topic_action_notification">
                             <c:if test="${not empty topic_action_notification}">
                                 <fmt:message key="${topic_action_notification}"/>
+                                <c:remove var="topic_action_notification" scope="session"/>
                             </c:if>
                         </div>
                     </c:when>

@@ -33,6 +33,7 @@
         <div id="registration_message">
             <c:if test="${not empty registration_message}">
                 <fmt:message key="${registration_message}"/><br/>
+                <c:remove var="regisration_message" scope="session"/>
             </c:if>
         </div>
         <a href="${pageContext.request.contextPath}/controller?command=show_login_page"><fmt:message key="registration.login_link"/></a>

@@ -144,12 +144,7 @@ public class MessageServiceTest {
 
     @Test
     public void deleteMessageTestValidParameters() {
-        String login = "login";
-        String hash = "hash";
-        String email = "email@mail.com";
         long messageId = 1;
-        Account account = new Account(1, login, hash,
-                email, AccountType.ADMIN, 0, true, false, "salt", null);
         try {
             when(messageDao.findEntityById(messageId))
                     .thenReturn(new Message(messageId,
@@ -160,7 +155,7 @@ public class MessageServiceTest {
 
             when(messageDao.delete(messageId)).thenReturn(true);
 
-            boolean result = messageService.deleteMessage(account, messageId);
+            boolean result = messageService.deleteMessage(messageId);
 
             Assert.assertTrue(result);
         } catch (ServiceException e) {
@@ -172,15 +167,10 @@ public class MessageServiceTest {
 
     @Test
     public void deleteMessageTestMessageNotFound() {
-        String login = "login";
-        String hash = "hash";
-        String email = "email@mail.com";
-        Account account = new Account(1, login, hash,
-                email, AccountType.ADMIN, 0, true, false, "salt", null);
         try {
             when(messageDao.findEntityById(1)).thenReturn(null);
 
-            boolean result = messageService.deleteMessage(account, 1);
+            boolean result = messageService.deleteMessage(1);
 
             Assert.assertFalse(result);
         } catch (ServiceException e) {
@@ -191,17 +181,12 @@ public class MessageServiceTest {
     }
 
     @Test(expectedExceptions = ServiceException.class)
-    public void deleteMessageTestPersistenceExceptionThrown() throws ServiceException {
-        String login = "login";
-        String hash = "hash";
-        String email = "email@mail.com";
+    public void deleteMessageTestPersistenceExceptionThrownInTransaction() throws ServiceException {
         long messageId = 1;
-        Account account = new Account(1, login, hash,
-                email, AccountType.ADMIN, 0, true, false, "salt", null);
         try {
             when(messageDao.findEntityById(messageId)).thenThrow(new PersistenceException());
 
-            messageService.deleteMessage(account, messageId);
+            messageService.deleteMessage(messageId);
 
         } catch (PersistenceException e) {
             fail("Unexpected PersistenceException", e);
@@ -210,56 +195,11 @@ public class MessageServiceTest {
 
     @Test(expectedExceptions = ServiceException.class)
     public void deleteMessageTestPersistenceExceptionThrownBeforeTransaction() throws ServiceException {
-        String login = "login";
-        String hash = "hash";
-        String email = "email@mail.com";
         long messageId = 1;
-        Account account = new Account(1, login, hash,
-                email, AccountType.ADMIN, 0, true, false, "salt", null);
         try {
             doThrow(new PersistenceException()).when(connectionManager).disableAutoCommit();
 
-            messageService.deleteMessage(account, messageId);
-        } catch (PersistenceException e) {
-            fail("Unexpected PersistenceException", e);
-        }
-    }
-
-    @Test
-    public void deleteMessageTestAccountNull() {
-        Account account = null;
-        try {
-
-            boolean result = messageService.deleteMessage(account, 1);
-
-            Assert.assertFalse(result);
-        } catch (ServiceException e) {
-            fail("Unexpected ServiceException", e);
-        }
-    }
-
-    @Test
-    public void deleteMessageTestAccountNotAdmin() {
-        String login = "login";
-        String hash = "hash";
-        String email = "email@mail.com";
-        Account account = new Account(1, login, hash,
-                email, AccountType.USER, 0, true, false, "salt", null);
-        try {
-            when(messageDao.findEntityById(1))
-                    .thenReturn(new Message(1,
-                            "message",
-                            new Account(1),
-                            LocalDateTime.of(2000, 1, 3, 4, 5),
-                            new Topic(1)));
-
-            when(messageDao.delete(1)).thenReturn(true);
-
-            boolean result = messageService.deleteMessage(account, 1);
-
-            Assert.assertFalse(result);
-        } catch (ServiceException e) {
-            fail("Unexpected ServiceException", e);
+            messageService.deleteMessage(messageId);
         } catch (PersistenceException e) {
             fail("Unexpected PersistenceException", e);
         }

@@ -1,5 +1,8 @@
 package com.epam.finaltask.util;
 
+/**
+ * Utility class, contains application constants.
+ */
 public final class ApplicationConstants {
 
     public static final String HASHING_ALGORITHM = "SHA-256";
@@ -24,6 +27,9 @@ public final class ApplicationConstants {
     public static final String REGISTRATION_MESSAGE_ATTRIBUTE = "registration_message";
     public static final String LOCALE_ATTRIBUTE = "locale";
     public static final String TOPICS_MESSAGE_ATTRIBUTE = "topics_message";
+    public static final String ACCOUNT_ATTRIBUTE = "account";
+    public static final String TOPIC_ACTION_NOTIFICATION_ATTRIBUTE = "topic_action_notification";
+    public static final String PROFILE_ACTION_NOTIFICATION_ATTRIBUTE = "profile_action_notification";
 
     public static final String SHOW_TOPICS = "/controller?command=show_topics";
     public static final String SHOW_PROFILE = "/controller?command=show_profile&account_id=";
@@ -33,10 +39,6 @@ public final class ApplicationConstants {
     public static final String SHOW_INDEX_PAGE = "/controller?command=show_index_page";
     public static final String SHOW_REGISTRATION_PAGE = "/controller?command=show_registration_page";
     public static final String SHOW_LOGIN_PAGE = "/controller?command=show_login_page";
-
-    public static final String ACCOUNT_ATTRIBUTE = "account";
-
-    public static final String TOPIC_ACTION_NOTIFICATION = "topic_action_notification";
 
     private ApplicationConstants() {
     }

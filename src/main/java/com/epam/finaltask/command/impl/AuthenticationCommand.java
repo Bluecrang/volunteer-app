@@ -12,6 +12,9 @@ import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+/**
+ * Command which allows to authenticate user.
+ */
 public class AuthenticationCommand implements Command {
 
     private static final Logger logger = LogManager.getLogger();

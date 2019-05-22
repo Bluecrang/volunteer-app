@@ -15,6 +15,9 @@ import org.apache.logging.log4j.Logger;
 
 import java.util.List;
 
+/**
+ * Command which is used to show all topics.
+ */
 public class ShowTopicsCommand implements Command {
 
     private static final Logger logger = LogManager.getLogger();

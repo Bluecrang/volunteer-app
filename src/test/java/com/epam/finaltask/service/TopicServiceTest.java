@@ -122,19 +122,16 @@ public class TopicServiceTest {
 
     @Test
     public void changeTopicHiddenStateTestValidParameters() {
-        String login = "login";
-        String hash = "hash";
-        String email = "email@mail.com";
-        Account account = new Account(1, login, hash,
-                email, AccountType.ADMIN, 0, true, false, "salt", null);
+        long topicId = 1;
+        Topic topic = new Topic(topicId, "title", "text",
+                LocalDateTime.of(2013, 3, 5, 1, 12),
+                new Account(1),
+                false,
+                false);
         try {
-            when(topicDao.findEntityById(1)).thenReturn(new Topic(1, "title", "text",
-                    LocalDateTime.of(2013, 3, 5, 1, 12),
-                    new Account(1),
-                    false,
-                    false));
-            when(topicDao.update(anyObject())).thenReturn(1);
-            boolean result = topicService.changeTopicHiddenState(account, 1,true);
+            when(topicDao.findEntityById(topicId)).thenReturn(topic);
+            when(topicDao.update(topic)).thenReturn(1);
+            boolean result = topicService.changeTopicHiddenState(topicId, true);
 
             Assert.assertTrue(result);
         } catch (ServiceException e) {
@@ -145,60 +142,12 @@ public class TopicServiceTest {
     }
 
     @Test
-    public void changeTopicHiddenStateTestAccountNotAdmin() {
-        String login = "login";
-        String hash = "hash";
-        String email = "email@mail.com";
-        Account account = new Account(1, login, hash,
-                email, AccountType.USER, 0, true, false, "salt", null);
-        try {
-            when(topicDao.findEntityById(1)).thenReturn(new Topic(1, "title", "text",
-                    LocalDateTime.of(2013, 3, 5, 1, 12),
-                    new Account(1),
-                    false,
-                    false));
-            when(topicDao.update(anyObject())).thenReturn(1);
-            boolean result = topicService.changeTopicHiddenState(account, 1,true);
-
-            Assert.assertFalse(result);
-        } catch (ServiceException e) {
-            fail("Unexpected ServiceException", e);
-        } catch (PersistenceException e) {
-            fail("Unexpected PersistenceException", e);
-        }
-    }
-
-    @Test
-    public void changeTopicHiddenStateTestAccountNull() {
-        Account account = null;
-        try {
-            when(topicDao.findEntityById(1)).thenReturn(new Topic(1, "title", "text",
-                    LocalDateTime.of(2013, 3, 5, 1, 12),
-                    new Account(1),
-                    false,
-                    false));
-            when(topicDao.update(anyObject())).thenReturn(1);
-            boolean result = topicService.changeTopicHiddenState(account, 1,true);
-
-            Assert.assertFalse(result);
-        } catch (ServiceException e) {
-            fail("Unexpected ServiceException", e);
-        } catch (PersistenceException e) {
-            fail("Unexpected PersistenceException", e);
-        }
-    }
-
-    @Test
     public void changeTopicHiddenStateTestTopicNotFoundInDatabase() {
-        String login = "login";
-        String hash = "hash";
-        String email = "email@mail.com";
-        Account account = new Account(1, login, hash,
-                email, AccountType.ADMIN, 0, true, false, "salt", null);
+        long topicId = 1;
         try {
-            when(topicDao.findEntityById(1)).thenReturn(null);
+            when(topicDao.findEntityById(topicId)).thenReturn(null);
             when(topicDao.update(null)).thenReturn(0);
-            boolean result = topicService.changeTopicHiddenState(account, 1,true);
+            boolean result = topicService.changeTopicHiddenState(1,true);
 
             Assert.assertFalse(result);
         } catch (ServiceException e) {
@@ -210,19 +159,16 @@ public class TopicServiceTest {
 
     @Test
     public void closeTopicTestValidParameters() {
-        String login = "login";
-        String hash = "hash";
-        String email = "email@mail.com";
-        Account account = new Account(1, login, hash,
-                email, AccountType.ADMIN, 0, true, false, "salt", null);
+        long topicId = 1;
+        Topic topic = new Topic(1, "title", "text",
+                LocalDateTime.of(2013, 3, 5, 1, 12),
+                new Account(1),
+                false,
+                false);
         try {
-            when(topicDao.findEntityById(1)).thenReturn(new Topic(1, "title", "text",
-                    LocalDateTime.of(2013, 3, 5, 1, 12),
-                    new Account(1),
-                    false,
-                    false));
-            when(topicDao.update(anyObject())).thenReturn(1);
-            boolean result = topicService.closeTopic(account, 1);
+            when(topicDao.findEntityById(topicId)).thenReturn(topic);
+            when(topicDao.update(topic)).thenReturn(1);
+            boolean result = topicService.closeTopic(1);
 
             Assert.assertTrue(result);
         } catch (ServiceException e) {
@@ -233,60 +179,12 @@ public class TopicServiceTest {
     }
 
     @Test
-    public void closeTopicTestAccountNotAdmin() {
-        String login = "login";
-        String hash = "hash";
-        String email = "email@mail.com";
-        Account account = new Account(1, login, hash,
-                email, AccountType.USER, 0, true, false, "salt", null);
-        try {
-            when(topicDao.findEntityById(1)).thenReturn(new Topic(1, "title", "text",
-                    LocalDateTime.of(2013, 3, 5, 1, 12),
-                    new Account(1),
-                    false,
-                    false));
-            when(topicDao.update(anyObject())).thenReturn(1);
-            boolean result = topicService.closeTopic(account, 1);
-
-            Assert.assertFalse(result);
-        } catch (ServiceException e) {
-            fail("Unexpected ServiceException", e);
-        } catch (PersistenceException e) {
-            fail("Unexpected PersistenceException", e);
-        }
-    }
-
-    @Test
-    public void closeTopicTestAccountNull() {
-        Account account = null;
-        try {
-            when(topicDao.findEntityById(1)).thenReturn(new Topic(1, "title", "text",
-                    LocalDateTime.of(2013, 3, 5, 1, 12),
-                    new Account(1),
-                    false,
-                    false));
-            when(topicDao.update(anyObject())).thenReturn(1);
-            boolean result = topicService.closeTopic(account, 1);
-
-            Assert.assertFalse(result);
-        } catch (ServiceException e) {
-            fail("Unexpected ServiceException", e);
-        } catch (PersistenceException e) {
-            fail("Unexpected PersistenceException", e);
-        }
-    }
-
-    @Test
     public void closeTopicTestTopicNotFoundInDatabase() {
-        String login = "login";
-        String hash = "hash";
-        String email = "email@mail.com";
-        Account account = new Account(1, login, hash,
-                email, AccountType.ADMIN, 0, true, false, "salt", null);
+        long topicId = 1;
         try {
-            when(topicDao.findEntityById(1)).thenReturn(null);
+            when(topicDao.findEntityById(topicId)).thenReturn(null);
             when(topicDao.update(null)).thenReturn(0);
-            boolean result = topicService.closeTopic(account, 1);
+            boolean result = topicService.closeTopic(topicId);
 
             Assert.assertFalse(result);
         } catch (ServiceException e) {
@@ -299,9 +197,10 @@ public class TopicServiceTest {
     @Test
     public void findTopicByTitleTestValidTitle() {
         String title = "title";
+        long topicId = 1;
         try {
             Account account = new Account(1);
-            Topic expected = new Topic(1, "title", "text",
+            Topic expected = new Topic(topicId, "title", "text",
                     LocalDateTime.of(2013, 3, 5, 1, 12),
                     account,
                     false,

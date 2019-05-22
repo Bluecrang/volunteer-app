@@ -20,17 +20,47 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 
+/**
+ * Database connection pool. Requires call of the method {@link ConnectionPool#init(String, int)} before any interactions.
+ */
 public enum ConnectionPool {
     INSTANCE;
 
     private static final Logger logger = LogManager.getLogger();
 
+    /**
+     * Object which contains pool configurations.
+     */
     private PoolConfig config;
+
+    /**
+     * Queue which contains connection not currently in use.
+     */
     private BlockingQueue<ProxyConnection> idlingConnections = new LinkedBlockingQueue<>();
+
+    /**
+     * Set which contains all connections of the connection pool.
+     */
     private Set<ProxyConnection> allConnections = ConcurrentHashMap.newKeySet();
+
+    /**
+     * Lock which is used to prevent pool cleaning when closing it.
+     */
     private Lock lock = new ReentrantLock();
+
+    /**
+     * Flag which shows if connection pool is closed.
+     */
     private AtomicBoolean closed = new AtomicBoolean(false);
 
+    /**
+     * Initializes connection pool. Successful Invocation of this method is required before any interactions with pool.
+     * Reads properties from file with chosen filename and creates {@link PoolConfig} using them.
+     * Fills pool with maximal number of connections.
+     * Schedules {@link PoolSupervisor} to clean pool from closed connections.
+     * @param configFilename Filename of the connection pool config file
+     * @param maintenancePeriod Period of pool cleansing in milliseconds
+     */
     public void init(String configFilename, int maintenancePeriod) {
         try {
             DriverManager.registerDriver(new com.mysql.jdbc.Driver());
@@ -58,6 +88,11 @@ public enum ConnectionPool {
         timer.scheduleAtFixedRate(new PoolSupervisor(), maintenancePeriod, maintenancePeriod);
     }
 
+    /**
+     * Retrieves {@link ProxyConnection} from the pool. If there are no free connections, waits until connections frees.
+     * @return {@link ProxyConnection} which provides access to {@link Connection}
+     * @throws ConnectionPoolException If connection.isClosed() throws SQLException or thread is interrupted while taking connection
+     */
     public Connection getConnection() throws ConnectionPoolException {
         if (closed.get()) {
             throw new ConnectionPoolException("Could not get connection: pool is closed");
@@ -78,6 +113,10 @@ public enum ConnectionPool {
         }
     }
 
+    /**
+     * Closes connection pool and sets it's {@link ConnectionPool#closed} flag to {@code} true.
+     * Deregister drivers and closes all connections.
+     */
     public void closePool() {
         try {
             lock.lock();
@@ -98,6 +137,10 @@ public enum ConnectionPool {
         }
     }
 
+    /**
+     * Puts ProxyConnection to the pool.
+     * @param connection Connection to put in the pool
+     */
     void releaseConnection(ProxyConnection connection) {
         try {
             if (allConnections.contains(connection) && !connection.isClosed()) {
@@ -111,6 +154,9 @@ public enum ConnectionPool {
         }
     }
 
+    /**
+     * Opens new database connection and adds it to the pool.
+     */
     void addConnection() {
         try {
             if (!closed.get()) {
@@ -129,6 +175,9 @@ public enum ConnectionPool {
         }
     }
 
+    /**
+     * Removes closed connections from the pool.
+     */
     void removeClosedConnections() {
         logger.log(Level.TRACE, "removeClosedConnections start");
         try {
@@ -153,6 +202,9 @@ public enum ConnectionPool {
         logger.log(Level.TRACE, "removeClosedConnections end");
     }
 
+    /**
+     * Deregister all drivers.
+     */
     private void deregisterDrivers() {
         Enumeration<Driver> enumeration = DriverManager.getDrivers();
         while (enumeration.hasMoreElements()){

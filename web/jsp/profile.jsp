@@ -90,6 +90,10 @@
             </div>
             <div id="rating_change_message"></div>
         </c:if>
+        <c:if test="${not empty profile_action_notiifaction}">
+            <fmt:message key="${profile_action_notiification}"/>
+            <c:remove var="profile_action_notification" scope="session"/>
+        </c:if>
     </div>
 </body>
 </html>

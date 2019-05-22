@@ -1,5 +1,8 @@
 package com.epam.finaltask.entity;
 
+/**
+ * Account entity.
+ */
 public class Account extends Entity {
     private long accountId;
     private String username;
@@ -9,7 +12,13 @@ public class Account extends Entity {
     private int rating;
     private boolean verified;
     private boolean blocked;
+    /**
+     * Salt which is used for hashing.
+     */
     private String salt;
+    /**
+     * Avatar encoded in base64.
+     */
     private String avatarBase64;
 
     public Account() {

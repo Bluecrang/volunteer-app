@@ -1,5 +1,8 @@
 package com.epam.finaltask.util;
 
+/**
+ * Utility class, contains page constants.
+ */
 public final class PageConstants {
 
     public static final String INDEX_PAGE = "/index.jsp";

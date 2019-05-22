@@ -15,6 +15,9 @@ import org.apache.logging.log4j.Logger;
 
 import java.util.List;
 
+/**
+ * Command which is used to initialize data for the ranking page.
+ */
 public class ShowRankingCommand implements Command {
 
     private static final Logger logger = LogManager.getLogger();

@@ -9,6 +9,9 @@ import org.apache.logging.log4j.Logger;
 
 import javax.servlet.http.HttpServletRequest;
 
+/**
+ * Factory which is used to create commands.
+ */
 public class CommandFactory {
 
     private static final Logger logger = LogManager.getLogger();
@@ -21,6 +24,11 @@ public class CommandFactory {
         return COMMAND_FACTORY;
     }
 
+    /**
+     * Retrieves command parameter from the request and tries to create command using it.
+     * @param request Request containing command parameter
+     * @return Created command
+     */
     public Command defineCommand(HttpServletRequest request) {
         String commandString = request.getParameter(ApplicationConstants.COMMAND_PARAMETER);
         CommandValidator commandValidator = new CommandValidator();

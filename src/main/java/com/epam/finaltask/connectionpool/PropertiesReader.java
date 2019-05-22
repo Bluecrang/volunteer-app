@@ -8,10 +8,18 @@ import org.apache.logging.log4j.Logger;
 import java.io.*;
 import java.util.Properties;
 
+/**
+ * Provides methods to read properties.
+ */
 public class PropertiesReader {
 
     private static final Logger logger = LogManager.getLogger();
 
+    /**
+     * Reads properties from reader.
+     * @param reader Reader to read properties from
+     * @return Properties object with all properties from the chosen reader
+     */
     public Properties readProperties(Reader reader) {
         if (reader == null) {
             String message = "reader is null";
@@ -29,6 +37,11 @@ public class PropertiesReader {
         return properties;
     }
 
+    /**
+     * Reads properties from file with specified filename.
+     * @param filename Filename of the file to read properties from
+     * @return Properties object with all properties from the file with chosen filename
+     */
     public Properties readProperties(String filename) {
         FileValidator fileValidator = new FileValidator();
         if (!fileValidator.validate(filename)) {

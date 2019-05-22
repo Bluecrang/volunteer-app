@@ -51,11 +51,6 @@ public class AccountServiceTest {
 
     @Test
     public void addValueToRatingTestValidParameters() {
-        String username = "username";
-        String hash = "hash";
-        String email = "email@mail.com";
-        Account actingAccount = new Account(1, username, hash,
-                email, AccountType.ADMIN, 0, true, false, "salt", null);
         long accountId = 2;
         String username2 = "username2";
         String hash2 = "hash2";
@@ -71,7 +66,7 @@ public class AccountServiceTest {
             fail("Unexpected PersistenceException", e);
         }
         try {
-            boolean result = accountService.addValueToRating(actingAccount, accountId, 2);
+            boolean result = accountService.addValueToRating(accountId, 2);
 
             Assert.assertTrue(result);
         } catch (ServiceException e) {
@@ -81,11 +76,6 @@ public class AccountServiceTest {
 
     @Test
     public void addValueToRatingTestFoundAccountNull() {
-        String username = "username";
-        String hash = "hash";
-        String email = "email@mail.com";
-        Account actingAccount = new Account(1, username, hash,
-                email, AccountType.ADMIN, 0, true, false, "salt", null);
         long accountId = 2;
         try {
             when(accountDao.findEntityById(accountId)).thenReturn(null);
@@ -93,24 +83,7 @@ public class AccountServiceTest {
             fail("Unexpected PersistenceException", e);
         }
         try {
-            boolean result = accountService.addValueToRating(actingAccount, accountId, 2);
-
-            Assert.assertFalse(result);
-        } catch (ServiceException e) {
-            fail("Unexpected ServiceException", e);
-        }
-    }
-
-    @Test
-    public void addValueToRatingTestActingAccountNotAdmin() {
-        String username = "username";
-        String hash = "hash";
-        String email = "email@mail.com";
-        Account actingAccount = new Account(1, username, hash,
-                email, AccountType.USER, 0, true, false, "salt", null);
-        long accountId = 2;
-        try {
-            boolean result = accountService.addValueToRating(actingAccount, accountId, 2);
+            boolean result = accountService.addValueToRating(accountId, 2);
 
             Assert.assertFalse(result);
         } catch (ServiceException e) {
@@ -120,18 +93,13 @@ public class AccountServiceTest {
 
     @Test(expectedExceptions = ServiceException.class)
     public void addValueToRatingTestPersistenceExceptionThrownWhenFindingById() throws ServiceException {
-        String username = "username";
-        String hash = "hash";
-        String email = "email@mail.com";
-        Account actingAccount = new Account(1, username, hash,
-                email, AccountType.ADMIN, 0, true, false, "salt", null);
         long accountId = 2;
         try {
             AccountDao accountDao2 = mock(AccountDao.class);
             when(daoFactory.createAccountDao(connectionManager)).thenReturn(accountDao2, accountDao);
             when(accountDao2.findEntityById(accountId)).thenThrow(new PersistenceException());
 
-            accountService.addValueToRating(actingAccount, accountId, 2);
+            accountService.addValueToRating(accountId, 2);
         } catch (PersistenceException e) {
             fail("Unexpected PersistenceException", e);
         }
@@ -139,11 +107,6 @@ public class AccountServiceTest {
 
     @Test(expectedExceptions = ServiceException.class)
     public void addValueToRatingTestPersistenceExceptionThrownWhenUpdating() throws ServiceException {
-        String username = "username";
-        String hash = "hash";
-        String email = "email@mail.com";
-        Account actingAccount = new Account(1, username, hash,
-                email, AccountType.ADMIN, 0, true, false, "salt", null);
         long accountId = 2;
         String username2 = "username2";
         String hash2 = "hash2";
@@ -157,7 +120,7 @@ public class AccountServiceTest {
             when(updater.update(account)).thenThrow(new PersistenceException());
             when(daoFactory.createAccountDao(connectionManager)).thenReturn(accountDao2, updater);
 
-            accountService.addValueToRating(actingAccount, accountId, 2);
+            accountService.addValueToRating(accountId, 2);
         } catch (PersistenceException e) {
             fail("Unexpected PersistenceException", e);
         }
@@ -165,16 +128,11 @@ public class AccountServiceTest {
 
     @Test(expectedExceptions = ServiceException.class)
     public void addValueToRatingTestPersistenceExceptionThrownWhileCreatingConnectionManager() throws ServiceException {
-        String username = "username";
-        String hash = "hash";
-        String email = "email@mail.com";
-        Account actingAccount = new Account(1, username, hash,
-                email, AccountType.ADMIN, 0, true, false, "salt", null);
         long accountId = 2;
         try {
             doThrow(new PersistenceException()).when(connectionManagerFactory).createConnectionManager();
 
-            accountService.addValueToRating(actingAccount, accountId, 2);
+            accountService.addValueToRating(accountId, 2);
         } catch (PersistenceException e) {
             fail("Unexpected PersistenceException", e);
         }
@@ -328,18 +286,14 @@ public class AccountServiceTest {
 
     @Test
     public void changeAccountBlockStateTestValidParameters() {
-        String username = "username";
-        String hash = "hash";
-        String email = "email@mail.com";
-        Account blockingAccount = new Account(1, username, hash,
-                email, AccountType.ADMIN, 0, true, false, "salt", null);
-        String username2 = "username2";
-        String hash2 = "hash2";
-        String email2 = "email2@mail.com";
-        Account account = new Account(2, username2, hash2,
-                email2, AccountType.USER, 0, true, false, "salt", null);
+        long accountId = 2;
+        String username = "username2";
+        String hash = "hash2";
+        String email = "email2@mail.com";
+        Account account = new Account(accountId, username, hash,
+                email, AccountType.USER, 0, true, false, "salt", null);
         try {
-            when(accountDao.findEntityById(2)).thenReturn(account);
+            when(accountDao.findEntityById(accountId)).thenReturn(account);
             AccountDao updater = mock(AccountDao.class);
             when(updater.update(account)).thenReturn(1);
             when(daoFactory.createAccountDao(connectionManager)).thenReturn(accountDao, updater);
@@ -347,7 +301,7 @@ public class AccountServiceTest {
             fail("Unexpected PersistenceException", e);
         }
         try {
-            boolean result = accountService.changeAccountBlockState(blockingAccount, 2, true);
+            boolean result = accountService.changeAccountBlockState(accountId, true);
 
             Assert.assertTrue(result);
         } catch (ServiceException e) {
@@ -357,50 +311,15 @@ public class AccountServiceTest {
 
     @Test
     public void changeAccountBlockStateTestAccountNull() {
-        String username = "username";
-        String hash = "hash";
-        String email = "email@mail.com";
-        Account blockingAccount = new Account(1, username, hash,
-                email, AccountType.ADMIN, 0, true, false, "salt", null);
+        long accountId = 2;
         Account account = null;
         try {
-            when(accountDao.findEntityById(2)).thenReturn(account);
+            when(accountDao.findEntityById(accountId)).thenReturn(account);
         } catch (PersistenceException e) {
             fail("Unexpected PersistenceException", e);
         }
         try {
-            boolean result = accountService.changeAccountBlockState(blockingAccount, 2, true);
-
-            Assert.assertFalse(result);
-        } catch (ServiceException e) {
-            fail("Unexpected ServiceException", e);
-        }
-    }
-
-    @Test
-    public void changeAccountBlockStateTestBlockingAccountNotAdmin() {
-        String username = "username";
-        String hash = "hash";
-        String email = "email@mail.com";
-        Account blockingAccount = new Account(1, username, hash,
-                email, AccountType.USER, 0, true, false, "salt", null);
-        String username2 = "username2";
-        String hash2 = "hash2";
-        String email2 = "email2@mail.com";
-        Account account = new Account(2, username2, hash2,
-                email2, AccountType.USER, 0, true, false, "salt", null);
-        try {
-            AccountDao accountDao2 = mock(AccountDao.class);
-            when(daoFactory.createAccountDao(connectionManager)).thenReturn(accountDao2, accountDao);
-            when(accountDao2.findEntityById(2)).thenReturn(account);
-            AccountDao updater = mock(AccountDao.class);
-            when(updater.update(account)).thenReturn(1);
-            when(daoFactory.createAccountDao(connectionManager)).thenReturn(accountDao, updater);
-        } catch (PersistenceException e) {
-            fail("Unexpected PersistenceException", e);
-        }
-        try {
-            boolean result = accountService.changeAccountBlockState(blockingAccount, 2, true);
+            boolean result = accountService.changeAccountBlockState(accountId, true);
 
             Assert.assertFalse(result);
         } catch (ServiceException e) {
@@ -410,57 +329,44 @@ public class AccountServiceTest {
 
     @Test(expectedExceptions = ServiceException.class)
     public void changeAccountBlockStateTestPersistenceExceptionThrownWhenFindingEntityById() throws ServiceException {
-        String username = "username";
-        String hash = "hash";
-        String email = "email@mail.com";
-        Account blockingAccount = new Account(1, username, hash,
-                email, AccountType.ADMIN, 0, true, false, "salt", null);
+        long accountId = 2;
         try {
             AccountDao accountDao2 = mock(AccountDao.class);
             when(daoFactory.createAccountDao(connectionManager)).thenReturn(accountDao2, accountDao);
-            when(accountDao2.findEntityById(2)).thenThrow(new PersistenceException());
+            when(accountDao2.findEntityById(accountId)).thenThrow(new PersistenceException());
         } catch (PersistenceException e) {
             fail("Unexpected PersistenceException", e);
         }
-        accountService.changeAccountBlockState(blockingAccount, 2, true);
+        accountService.changeAccountBlockState(accountId, true);
     }
 
     @Test(expectedExceptions = ServiceException.class)
     public void changeAccountBlockStateTestPersistenceExceptionThrownWhenUpdating() throws ServiceException {
-        String username = "username";
-        String hash = "hash";
-        String email = "email@mail.com";
-        Account blockingAccount = new Account(1, username, hash,
-                email, AccountType.ADMIN, 0, true, false, "salt", null);
-        String username2 = "username2";
-        String hash2 = "hash2";
-        String email2 = "email2@mail.com";
-        Account account = new Account(2, username2, hash2,
-                email2, AccountType.USER, 0, true, false, "salt", null);
+        long accountId = 2;
+        String username = "username2";
+        String hash = "hash2";
+        String email = "email2@mail.com";
+        Account account = new Account(accountId, username, hash,
+                email, AccountType.USER, 0, true, false, "salt", null);
         try {
-            when(accountDao.findEntityById(2)).thenReturn(account);
+            when(accountDao.findEntityById(accountId)).thenReturn(account);
             AccountDao updater = mock(AccountDao.class);
             when(updater.update(account)).thenThrow(new PersistenceException());
             when(daoFactory.createAccountDao(connectionManager)).thenReturn(accountDao, updater);
         } catch (PersistenceException e) {
             fail("Unexpected PersistenceException", e);
         }
-        accountService.changeAccountBlockState(blockingAccount, 2, true);
+        accountService.changeAccountBlockState(accountId, true);
     }
 
     @Test(expectedExceptions = ServiceException.class)
     public void changeAccountBlockStateTestPersistenceExceptionThrownWhenCreatingConnectionManager() throws ServiceException {
-        String username = "username";
-        String hash = "hash";
-        String email = "email@mail.com";
-        Account blockingAccount = new Account(1, username, hash,
-                email, AccountType.ADMIN, 0, true, false, "salt", null);
         try {
             doThrow(new PersistenceException()).when(connectionManagerFactory).createConnectionManager();
         } catch (PersistenceException e) {
             fail("Unexpected PersistenceException", e);
         }
-        accountService.changeAccountBlockState(blockingAccount, 2, true);
+        accountService.changeAccountBlockState(2, true);
     }
 
     @Test
@@ -493,9 +399,10 @@ public class AccountServiceTest {
     public void findRatingPageAccountsTestNoPersistenceExceptionThrown() {
         int page = 1;
         int numberOfAccountsPerPage = 3;
+        long accountId = 1;
         try {
             List<Account> expected = new ArrayList<>();
-            expected.add(new Account(1, "username", "hash",
+            expected.add(new Account(accountId, "username", "hash",
                     "email", AccountType.ADMIN, 0, true, false, "salt", null));
             when(accountDao.findPageAccountsSortByRating(page, numberOfAccountsPerPage)).thenReturn(new ArrayList<>(expected));
             
@@ -524,19 +431,14 @@ public class AccountServiceTest {
 
     @Test
     public void promoteUserToAdminTestValidParameters() {
-        String username = "username";
-        String hash = "hash";
-        String email = "email@mail.com";
-        String username2 = "username2";
-        String hash2 = "hash2";
-        String email2 = "email2@gmail.com";
+        String username = "username2";
+        String hash = "hash2";
+        String email = "email2@gmail.com";
         long accountId = 2;
-        Account account = new Account(1, username, hash,
-                email, AccountType.ADMIN, 0, true, false, "salt", null);
         try {
             try {
-                Account userAccount = new Account(2, username2, hash2,
-                        email2, AccountType.USER, 0, true, false, "salt", null);
+                Account userAccount = new Account(accountId, username, hash,
+                        email, AccountType.USER, 0, true, false, "salt", null);
                 AccountDao accountDao2 = mock(AccountDao.class);
                 when(daoFactory.createAccountDao(connectionManager)).thenReturn(accountDao2, accountDao);
                 when(accountDao2.findEntityById(accountId)).thenReturn(userAccount);
@@ -544,7 +446,7 @@ public class AccountServiceTest {
             } catch (PersistenceException e) {
                 fail("Unexpected PersistenceException", e);
             }
-            boolean result = accountService.promoteUserToAdmin(account, accountId);
+            boolean result = accountService.promoteUserToAdmin(accountId);
 
             Assert.assertTrue(result);
         } catch (ServiceException e) {
@@ -554,19 +456,14 @@ public class AccountServiceTest {
 
     @Test
     public void promoteUserToAdminTestNoUpdate() {
-        String username = "username";
-        String hash = "hash";
-        String email = "email@mail.com";
-        String username2 = "username2";
-        String hash2 = "hash2";
-        String email2 = "email2@gmail.com";
+        String username = "username2";
+        String hash = "hash2";
+        String email = "email2@gmail.com";
         long accountId = 2;
-        Account account = new Account(1, username, hash,
-                email, AccountType.ADMIN, 0, true, false, "salt", null);
         try {
             try {
-                Account userAccount = new Account(2, username2, hash2,
-                        email2, AccountType.USER, 0, true, false, "salt", null);
+                Account userAccount = new Account(accountId, username, hash,
+                        email, AccountType.USER, 0, true, false, "salt", null);
                 AccountDao accountDao2 = mock(AccountDao.class);
                 when(daoFactory.createAccountDao(connectionManager)).thenReturn(accountDao2, accountDao);
                 when(accountDao2.findEntityById(accountId)).thenReturn(userAccount);
@@ -574,7 +471,7 @@ public class AccountServiceTest {
             } catch (PersistenceException e) {
                 fail("Unexpected PersistenceException", e);
             }
-            boolean result = accountService.promoteUserToAdmin(account, accountId);
+            boolean result = accountService.promoteUserToAdmin(accountId);
 
             Assert.assertFalse(result);
         } catch (ServiceException e) {
@@ -584,12 +481,7 @@ public class AccountServiceTest {
 
     @Test
     public void promoteUserToAdminTestAccountNotFoundInDatabase() {
-        String username = "username";
-        String hash = "hash";
-        String email = "email@mail.com";
         long accountId = 2;
-        Account account = new Account(1, username, hash,
-                email, AccountType.ADMIN, 0, true, false, "salt", null);
         try {
             try {
                 AccountDao accountDao2 = mock(AccountDao.class);
@@ -598,37 +490,7 @@ public class AccountServiceTest {
             } catch (PersistenceException e) {
                 fail("Unexpected PersistenceException", e);
             }
-            boolean result = accountService.promoteUserToAdmin(account, accountId);
-
-            Assert.assertFalse(result);
-        } catch (ServiceException e) {
-            fail("Unexpected ServiceException", e);
-        }
-    }
-
-    @Test
-    public void promoteUserToAdminTestSessionAccountNotAdmin() {
-        String username = "username";
-        String hash = "hash";
-        String email = "email@mail.com";
-        long accountId = 2;
-        Account account = new Account(1, username, hash,
-                email, AccountType.USER, 0, true, false, "salt", null);
-        try {
-            boolean result = accountService.promoteUserToAdmin(account, accountId);
-
-            Assert.assertFalse(result);
-        } catch (ServiceException e) {
-            fail("Unexpected ServiceException", e);
-        }
-    }
-
-    @Test
-    public void promoteUserToAdminTestSessionAccountNull() {
-        long accountId = 2;
-        Account account = null;
-        try {
-            boolean result = accountService.promoteUserToAdmin(account, accountId);
+            boolean result = accountService.promoteUserToAdmin(accountId);
 
             Assert.assertFalse(result);
         } catch (ServiceException e) {
@@ -638,18 +500,13 @@ public class AccountServiceTest {
 
     @Test(expectedExceptions = ServiceException.class)
     public void promoteUserToAdminTestPersistenceExceptionThrown() throws ServiceException {
-        String username = "username";
-        String hash = "hash";
-        String email = "email@mail.com";
-        String username2 = "username2";
-        String hash2 = "hash2";
-        String email2 = "email2@gmail.com";
+        String username = "username2";
+        String hash = "hash2";
+        String email = "email2@gmail.com";
         long accountId = 2;
-        Account account = new Account(1, username, hash,
-                email, AccountType.ADMIN, 0, true, false, "salt", null);
         try {
-            Account userAccount = new Account(2, username2, hash2,
-                    email2, AccountType.USER, 0, true, false, "salt", null);
+            Account userAccount = new Account(accountId, username, hash,
+                    email, AccountType.USER, 0, true, false, "salt", null);
             AccountDao accountDao2 = mock(AccountDao.class);
             when(daoFactory.createAccountDao(connectionManager)).thenReturn(accountDao2, accountDao);
             when(accountDao2.findEntityById(accountId)).thenReturn(userAccount);
@@ -657,22 +514,17 @@ public class AccountServiceTest {
         } catch (PersistenceException e) {
             fail("Unexpected PersistenceException", e);
         }
-        accountService.promoteUserToAdmin(account, accountId);
+        accountService.promoteUserToAdmin(accountId);
     }
 
     @Test(expectedExceptions = ServiceException.class)
     public void promoteUserToAdminTestPersistenceExceptionThrownWhileCreatingConnectionManager() throws ServiceException {
-        String username = "username";
-        String hash = "hash";
-        String email = "email@mail.com";
         long accountId = 2;
-        Account account = new Account(1, username, hash,
-                email, AccountType.ADMIN, 0, true, false, "salt", null);
         try {
             doThrow(new PersistenceException()).when(connectionManagerFactory).createConnectionManager();
         } catch (PersistenceException e) {
             fail("Unexpected PersistenceException", e);
         }
-        accountService.promoteUserToAdmin(account, accountId);
+        accountService.promoteUserToAdmin(accountId);
     }
 }

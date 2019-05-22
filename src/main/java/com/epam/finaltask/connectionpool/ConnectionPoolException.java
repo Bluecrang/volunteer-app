@@ -1,5 +1,8 @@
 package com.epam.finaltask.connectionpool;
 
+/**
+ * Exception which is thrown when connection pool encounter a problem from which it can be recovered.
+ */
 public class ConnectionPoolException extends Exception {
     public ConnectionPoolException() {
     }

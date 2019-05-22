@@ -2,7 +2,10 @@ package com.epam.finaltask.command.impl;
 
 import com.epam.finaltask.command.Command;
 
-public enum CommandType { //todo restrictions
+/**
+ * Enum which contains all command types.
+ */
+public enum CommandType {
     AUTHENTICATION(new AuthenticationCommand()),
     USER_REGISTRATION(new RegistrationCommand()),
     LOGOUT(new LogoutCommand()),

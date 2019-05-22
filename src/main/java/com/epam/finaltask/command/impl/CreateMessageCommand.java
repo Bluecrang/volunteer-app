@@ -13,6 +13,9 @@ import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+/**
+ * Command which is used to create message and add it to the database.
+ */
 public class CreateMessageCommand implements Command {
 
     private static final Logger logger = LogManager.getLogger();
@@ -40,7 +43,7 @@ public class CreateMessageCommand implements Command {
                                 + topicId + ")");
                     } else {
                         logger.log(Level.WARN, "could not create message using given parameters");
-                        data.putRequestAttribute(ApplicationConstants.TOPIC_ACTION_NOTIFICATION,
+                        data.putRequestAttribute(ApplicationConstants.TOPIC_ACTION_NOTIFICATION_ATTRIBUTE,
                                 MESSAGE_CREATION_ERROR_PROPERTY);
                     }
                 } catch (ServiceException e) {
@@ -48,7 +51,7 @@ public class CreateMessageCommand implements Command {
                 }
             } else {
                 logger.log(Level.WARN, "user id=" + account.getAccountId() + " could not create message: illegal text length");
-                data.putRequestAttribute(ApplicationConstants.TOPIC_ACTION_NOTIFICATION,
+                data.putRequestAttribute(ApplicationConstants.TOPIC_ACTION_NOTIFICATION_ATTRIBUTE,
                         MESSAGE_CREATION_ILLEGAL_LENGTH_PROPERTY);
             }
         }

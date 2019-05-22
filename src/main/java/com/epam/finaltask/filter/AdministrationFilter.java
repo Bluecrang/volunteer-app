@@ -13,7 +13,11 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
-@WebFilter(dispatcherTypes = {DispatcherType.FORWARD, DispatcherType.REQUEST}, urlPatterns = "/jsp/admin/*")
+/**
+ * Filter which forbids access to the pages that only administrators should see for simple users.
+ */
+@WebFilter(dispatcherTypes = {DispatcherType.FORWARD, DispatcherType.REQUEST},
+        filterName = "AdministrationFilter")
 public class AdministrationFilter implements Filter {
 
     private static final Logger logger = LogManager.getLogger();

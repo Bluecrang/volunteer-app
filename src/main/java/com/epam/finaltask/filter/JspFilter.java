@@ -13,7 +13,10 @@ import java.io.IOException;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-@WebFilter(dispatcherTypes = {DispatcherType.REQUEST}, urlPatterns = "/*")
+/**
+ * Filter which forbids access to jsp files.
+ */
+@WebFilter(dispatcherTypes = {DispatcherType.REQUEST}, filterName = "JspFilter")
 public class JspFilter implements Filter{
 
     private static final Logger logger = LogManager.getLogger();
