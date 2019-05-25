@@ -1,4 +1,4 @@
-package com.epam.finaltask.command;
+package com.epam.finaltask.command.impl;
 
 /**
  * Enum which is used to determine transition type.

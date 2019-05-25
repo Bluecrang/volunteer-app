@@ -1,4 +1,7 @@
-package com.epam.finaltask.command;
+package com.epam.finaltask.command.impl;
+
+import com.epam.finaltask.entity.Account;
+import com.epam.finaltask.util.ApplicationConstants;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
@@ -26,10 +29,20 @@ public class CommandData {
     private Map<String, Object> sessionAttributes = new HashMap<>();
 
     /**
+     * Http method which was used to execute command.
+     */
+    private HttpMethodType method;
+
+    /**
+     * Account of the authorised
+     */
+    private Account sessionAccount;
+
+    /**
      * Creates CommandData, fetching data from the chosen request.
      * @param request HttpServletRequest to retrieve data from
      */
-    public CommandData(HttpServletRequest request) {
+    public CommandData(HttpServletRequest request) { //todo null check
         request.getParameterMap().forEach((key, value) -> requestParameters.put(key, value[FIRST_ELEMENT_INDEX]));
 
         Enumeration<String> requestAttributesNamesEnumeration = request.getAttributeNames();
@@ -42,6 +55,12 @@ public class CommandData {
         while (sessionAttributesNamesEnumeration.hasMoreElements()) {
             String attributeName = sessionAttributesNamesEnumeration.nextElement();
             sessionAttributes.put(attributeName, request.getSession().getAttribute(attributeName));
+        }
+
+        method = HttpMethodType.valueOf(request.getMethod());
+        Object sessionAccountObject = sessionAttributes.get(ApplicationConstants.ACCOUNT_ATTRIBUTE);
+        if (sessionAccountObject instanceof Account) {
+            sessionAccount = (Account) sessionAccountObject;
         }
     }
 
@@ -104,5 +123,13 @@ public class CommandData {
      */
     public Object getSessionAttribute(String key) {
         return sessionAttributes.get(key);
+    }
+
+    public HttpMethodType getMethod() {
+        return method;
+    }
+
+    public Account getSessionAccount() {
+        return sessionAccount;
     }
 }

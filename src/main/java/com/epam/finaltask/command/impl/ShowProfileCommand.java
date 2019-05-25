@@ -1,9 +1,6 @@
 package com.epam.finaltask.command.impl;
 
-import com.epam.finaltask.command.Command;
-import com.epam.finaltask.command.CommandData;
-import com.epam.finaltask.command.CommandException;
-import com.epam.finaltask.command.CommandResult;
+import com.epam.finaltask.command.*;
 import com.epam.finaltask.entity.Account;
 import com.epam.finaltask.service.AccountService;
 import com.epam.finaltask.service.ServiceException;
@@ -16,13 +13,17 @@ import org.apache.logging.log4j.Logger;
 /**
  * Command which is used to initialize data for the profile page.
  */
-public class ShowProfileCommand implements Command {
+public class ShowProfileCommand extends Command {
 
     private static final Logger logger = LogManager.getLogger();
     private static final String PROFILE_ATTRIBUTE = "profile";
 
+    public ShowProfileCommand(CommandConstraints constraints) {
+        super(constraints);
+    }
+
     @Override
-    public CommandResult execute(CommandData data) throws CommandException {
+    public CommandResult performAction(CommandData data) throws CommandException {
         CommandResult commandResult = new CommandResult();
         commandResult.assignTransitionTypeForward();
         commandResult.setPage(PageConstants.INDEX_PAGE);

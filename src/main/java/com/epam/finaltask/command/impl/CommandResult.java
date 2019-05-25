@@ -1,4 +1,4 @@
-package com.epam.finaltask.command;
+package com.epam.finaltask.command.impl;
 
 import com.epam.finaltask.util.ApplicationConstants;
 

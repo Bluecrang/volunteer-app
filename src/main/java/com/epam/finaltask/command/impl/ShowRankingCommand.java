@@ -1,9 +1,6 @@
 package com.epam.finaltask.command.impl;
 
-import com.epam.finaltask.command.Command;
-import com.epam.finaltask.command.CommandData;
-import com.epam.finaltask.command.CommandException;
-import com.epam.finaltask.command.CommandResult;
+import com.epam.finaltask.command.*;
 import com.epam.finaltask.entity.Account;
 import com.epam.finaltask.service.AccountService;
 import com.epam.finaltask.service.ServiceException;
@@ -18,7 +15,7 @@ import java.util.List;
 /**
  * Command which is used to initialize data for the ranking page.
  */
-public class ShowRankingCommand implements Command {
+public class ShowRankingCommand extends Command {
 
     private static final Logger logger = LogManager.getLogger();
 
@@ -26,8 +23,12 @@ public class ShowRankingCommand implements Command {
     private static final String NUMBER_OF_ACCOUNTS_PER_PAGE_ATTRIBUTE = "accounts_per_page";
     private static final String ACCOUNT_LIST_ATTRIBUTE = "account_list";
 
+    public ShowRankingCommand(CommandConstraints constraints) {
+        super(constraints);
+    }
+
     @Override
-    public CommandResult execute(CommandData data) throws CommandException {
+    public CommandResult performAction(CommandData data) throws CommandException {
         CommandResult commandResult = new CommandResult();
         commandResult.assignTransitionTypeForward();
         try {

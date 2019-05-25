@@ -1,9 +1,6 @@
 package com.epam.finaltask.command.impl;
 
-import com.epam.finaltask.command.Command;
-import com.epam.finaltask.command.CommandData;
-import com.epam.finaltask.command.CommandException;
-import com.epam.finaltask.command.CommandResult;
+import com.epam.finaltask.command.*;
 import com.epam.finaltask.entity.Account;
 import com.epam.finaltask.entity.AccountType;
 import com.epam.finaltask.entity.Message;
@@ -22,7 +19,7 @@ import java.util.List;
 /**
  * Command which is used to show topic page.
  */
-public class ShowTopicPageCommand implements Command {
+public class ShowTopicPageCommand extends Command {
 
     private static final Logger logger = LogManager.getLogger();
 
@@ -32,8 +29,12 @@ public class ShowTopicPageCommand implements Command {
     private static final String NUMBER_OF_MESSAGES_PER_PAGE_ATTRIBUTE = "messages_per_page";
     private static final String LAST_PAGE = "last";
 
+    public ShowTopicPageCommand(CommandConstraints constraints) {
+        super(constraints);
+    }
+
     @Override
-    public CommandResult execute(CommandData data) throws CommandException {
+    public CommandResult performAction(CommandData data) throws CommandException {
         CommandResult commandResult = new CommandResult();
         try {
             long topicId = Long.parseLong(data.getRequestParameter(ApplicationConstants.TOPIC_ID_PARAMETER));
@@ -42,18 +43,11 @@ public class ShowTopicPageCommand implements Command {
                 Topic topic = topicService.findTopicById(topicId);
                 data.putRequestAttribute(TOPIC_ATTRIBUTE, topic);
                 if (topic.isHidden()) {
-                    Object sessionAccountObject = data.getSessionAttribute(ApplicationConstants.ACCOUNT_ATTRIBUTE);
-                    if (!(sessionAccountObject instanceof Account)) {
+                    Account sessionAccount = data.getSessionAccount();
+                    if (sessionAccount == null || sessionAccount.getAccountType() != AccountType.ADMIN) {
                         commandResult.assignTransitionTypeError();
                         commandResult.setCode(ApplicationConstants.PAGE_NOT_FOUND_ERROR_CODE);
                         return commandResult;
-                    } else {
-                        Account sessionAccount = (Account) sessionAccountObject;
-                        if (sessionAccount.getAccountType() != AccountType.ADMIN) {
-                            commandResult.assignTransitionTypeError();
-                            commandResult.setCode(ApplicationConstants.PAGE_NOT_FOUND_ERROR_CODE);
-                            return commandResult;
-                        }
                     }
                 }
                 commandResult.assignTransitionTypeForward();

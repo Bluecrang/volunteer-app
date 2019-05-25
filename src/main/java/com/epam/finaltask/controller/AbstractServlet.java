@@ -1,7 +1,7 @@
 package com.epam.finaltask.controller;
 
-import com.epam.finaltask.command.CommandData;
-import com.epam.finaltask.command.CommandResult;
+import com.epam.finaltask.command.impl.CommandData;
+import com.epam.finaltask.command.impl.CommandResult;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;

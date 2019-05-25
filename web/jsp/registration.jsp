@@ -10,7 +10,7 @@
 <body>
     <div class="container mt-3 col-sm-6 offset-sm-3">
         <h2 class="display-4 text-center"><fmt:message key="registration.form_header"/></h2>
-        <form class="justify-content-center" method="post" name="registration" onsubmit="return validateRegistrationForm();" action="${pageContext.request.contextPath}/servlet">
+        <form class="justify-content-center" method="post" name="registration" onsubmit="return validateRegistrationForm();" action="${pageContext.request.contextPath}/controller">
             <div class="form-group">
                 <label for="inputEmail"><fmt:message key="registration.email"/></label>
                 <input class="form-control" type="email" id="inputEmail" name="email" placeholder="<fmt:message key="registration.email_placeholder"/>"/>
@@ -25,7 +25,7 @@
                 <input class="form-control" type="password" id="inputPassword" name="password" aria-describedby="passwordDescription" placeholder="<fmt:message key="registration.password_placeholder"/>"/>
                 <small id="passwordDescription" class="form-text text-muted"><fmt:message key="registration.password_description"/></small>
             </div>
-            <input type="hidden" name="command" value="user_registration">
+            <input type="hidden" name="command" value="registration">
             <div class="form-group text-center">
                 <input class="btn btn-primary" type="submit" value="<fmt:message key="registration.submit"/>"/>
             </div>

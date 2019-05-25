@@ -18,7 +18,7 @@
                 <label for="inputPassword"><fmt:message key="login.password"/></label>
                 <input class="form-control" type="password" id="inputPassword" name="password" placeholder="<fmt:message key="login.password_placeholder"/>"/>
             </div>
-            <input type="hidden" name="command" value="authentication"/>
+            <input type="hidden" name="command" value="authorization"/>
             <div class="form-group text-center">
                 <input class="btn btn-primary" type="submit" value="<fmt:message key="login.submit"/>"/>
             </div>

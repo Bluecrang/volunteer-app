@@ -1,9 +1,6 @@
 package com.epam.finaltask.command.impl;
 
-import com.epam.finaltask.command.Command;
-import com.epam.finaltask.command.CommandData;
-import com.epam.finaltask.command.CommandException;
-import com.epam.finaltask.command.CommandResult;
+import com.epam.finaltask.command.*;
 import com.epam.finaltask.service.RegistrationService;
 import com.epam.finaltask.service.ServiceException;
 import com.epam.finaltask.util.ApplicationConstants;
@@ -17,7 +14,7 @@ import org.apache.logging.log4j.Logger;
 /**
  * Command which is used to register user.
  */
-public class RegistrationCommand implements Command {
+public class RegistrationCommand extends Command {
 
     private static final Logger logger = LogManager.getLogger();
 
@@ -27,8 +24,12 @@ public class RegistrationCommand implements Command {
     private static final String ACCOUNT_EXISTS = "registration.account_exists";
     private static final String ACCOUNT_SUCCESSFULLY_REGISTERED = "login.account_successfully_registered";
 
+    public RegistrationCommand(CommandConstraints constraints) {
+        super(constraints);
+    }
+
     @Override
-    public CommandResult execute(CommandData data) throws CommandException {
+    public CommandResult performAction(CommandData data) throws CommandException {
         String username = data.getRequestParameter(ApplicationConstants.USERNAME_PARAMETER);
         String password = data.getRequestParameter(ApplicationConstants.PASSWORD_PARAMETER);
         String email = data.getRequestParameter(ApplicationConstants.EMAIL_PARAMETER);

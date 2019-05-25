@@ -1,9 +1,6 @@
 package com.epam.finaltask.command.impl;
 
-import com.epam.finaltask.command.CommandData;
-import com.epam.finaltask.command.CommandException;
-import com.epam.finaltask.command.CommandResult;
-import com.epam.finaltask.command.UploadCommand;
+import com.epam.finaltask.command.*;
 import com.epam.finaltask.entity.Account;
 import com.epam.finaltask.service.AccountService;
 import com.epam.finaltask.service.ServiceException;
@@ -18,32 +15,35 @@ import java.util.Collection;
 /**
  * Command which is used to upload avatar.
  */
-public class UploadAvatarCommand implements UploadCommand {
+public class UploadAvatarCommand extends UploadCommand {
 
     private static final Logger logger = LogManager.getLogger();
     private static final String PROFILE_MESSAGE_ATTRIBUTE = "action_message";
     private static final String UNABLE_TO_UPLOAD_AVATAR_PROPERTY = "profile.action_message.unable_to_upload_avatar";
 
+    public UploadAvatarCommand(CommandConstraints constraints) {
+        super(constraints);
+    }
+
     @Override
-    public CommandResult execute(CommandData commandData, Collection<Part> parts) throws CommandException {
+    public CommandResult performAction(CommandData commandData, Collection<Part> parts) throws CommandException { //todo add id
         CommandResult result = new CommandResult();
-        Object accountObject = commandData.getSessionAttribute(ApplicationConstants.ACCOUNT_ATTRIBUTE);
-        if (accountObject instanceof Account) {
-            Account account = (Account) accountObject;
-            result.setPage(ApplicationConstants.SHOW_PROFILE + account.getAccountId());
+        Account sessionAccount = commandData.getSessionAccount();
+        if (sessionAccount != null) {
+            result.setPage(ApplicationConstants.SHOW_PROFILE + sessionAccount.getAccountId());
             AccountService accountService = new AccountService();
             try {
-                if (accountService.updateAvatar(account, parts.stream().findFirst().get())) {
-                    logger.log(Level.INFO, "account id=" + account.getAccountId() + " avatar was successfully updated");
+                if (accountService.updateAvatar(sessionAccount, parts.stream().findFirst().get())) {
+                    logger.log(Level.INFO, "sessionAccount id=" + sessionAccount.getAccountId() + " avatar was successfully updated");
                 } else {
-                    logger.log(Level.WARN, "could not update account id=" + account.getAccountId() + " avatar");
+                    logger.log(Level.WARN, "could not update sessionAccount id=" + sessionAccount.getAccountId() + " avatar");
                     commandData.putRequestAttribute(PROFILE_MESSAGE_ATTRIBUTE, UNABLE_TO_UPLOAD_AVATAR_PROPERTY);
                 }
             } catch (ServiceException e) {
-                throw new CommandException("could not update account avatar", e);
+                throw new CommandException("could not update sessionAccount avatar", e);
             }
         } else {
-            throw new CommandException("account attribute is not an object of type Account");
+            throw new CommandException("Could not perform action: session account is null");
         }
         return result;
     }

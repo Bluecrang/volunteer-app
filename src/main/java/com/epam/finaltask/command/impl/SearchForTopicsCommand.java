@@ -1,9 +1,6 @@
 package com.epam.finaltask.command.impl;
 
-import com.epam.finaltask.command.Command;
-import com.epam.finaltask.command.CommandData;
-import com.epam.finaltask.command.CommandException;
-import com.epam.finaltask.command.CommandResult;
+import com.epam.finaltask.command.*;
 import com.epam.finaltask.entity.Topic;
 import com.epam.finaltask.service.ServiceException;
 import com.epam.finaltask.service.TopicService;
@@ -18,15 +15,19 @@ import java.util.List;
 /**
  * Command which is used to search for topics using title substring.
  */
-public class SearchForTopicsCommand implements Command {
+public class SearchForTopicsCommand extends Command {
 
     private static final Logger logger = LogManager.getLogger();
     private static final String TOPIC_LIST_ATTRIBUTE = "topic_list";
     private static final String SEARCH_STRING_PARAMETER = "text";
     private static final String NO_TOPICS_FOUND = "topics.no_topics_found";
 
+    public SearchForTopicsCommand(CommandConstraints constraints) {
+        super(constraints);
+    }
+
     @Override
-    public CommandResult execute(CommandData data) throws CommandException {
+    public CommandResult performAction(CommandData data) throws CommandException {
         CommandResult commandResult = new CommandResult();
         commandResult.assignTransitionTypeForward();
         try {

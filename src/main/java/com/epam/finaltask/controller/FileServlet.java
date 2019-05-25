@@ -1,8 +1,8 @@
 package com.epam.finaltask.controller;
 
-import com.epam.finaltask.command.CommandData;
+import com.epam.finaltask.command.impl.CommandData;
 import com.epam.finaltask.command.CommandException;
-import com.epam.finaltask.command.CommandResult;
+import com.epam.finaltask.command.impl.CommandResult;
 import com.epam.finaltask.command.UploadCommand;
 import com.epam.finaltask.command.impl.UploadCommandFactory;
 import org.apache.logging.log4j.Level;
