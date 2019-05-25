@@ -8,7 +8,7 @@ import com.epam.finaltask.entity.AccountType;
 /**
  * Class which is used to check if command is allowed to be executed by user and with chosen http method.
  */
-public class CommandDataValidator { //todo add tests
+public class CommandDataValidator {
 
     /**
      * Checks if account type and http method are allowed by constraints.
@@ -22,6 +22,9 @@ public class CommandDataValidator { //todo add tests
             AccountType accountType;
             if (sessionAccount != null) {
                 accountType = sessionAccount.getAccountType();
+                if (accountType == null) {
+                    accountType = AccountType.GUEST;
+                }
             } else {
                 accountType = AccountType.GUEST;
             }

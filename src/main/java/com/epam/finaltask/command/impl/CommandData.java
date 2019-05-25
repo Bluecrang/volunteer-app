@@ -42,7 +42,11 @@ public class CommandData {
      * Creates CommandData, fetching data from the chosen request.
      * @param request HttpServletRequest to retrieve data from
      */
-    public CommandData(HttpServletRequest request) { //todo null check
+    public CommandData(HttpServletRequest request) {
+        if (request == null) {
+            method = HttpMethodType.UNDEFINED;
+            return;
+        }
         request.getParameterMap().forEach((key, value) -> requestParameters.put(key, value[FIRST_ELEMENT_INDEX]));
 
         Enumeration<String> requestAttributesNamesEnumeration = request.getAttributeNames();

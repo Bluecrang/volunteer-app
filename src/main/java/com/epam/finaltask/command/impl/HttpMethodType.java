@@ -11,5 +11,6 @@ public enum HttpMethodType {
     DELETE,
     CONNECT,
     OPTIONS,
-    TRACE
+    TRACE,
+    UNDEFINED
 }
