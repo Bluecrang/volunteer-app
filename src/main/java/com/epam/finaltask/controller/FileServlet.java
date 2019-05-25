@@ -20,7 +20,7 @@ import java.io.IOException;
  *  Servlet for file uploading.
  */
 @WebServlet(urlPatterns = "/upload")
-@MultipartConfig(fileSizeThreshold = 1024 * 50, maxFileSize = 1024 * 64, maxRequestSize = 1024 * 1024 * 5) //todo change blob to longblob, adjust settings
+@MultipartConfig(fileSizeThreshold = 1024 * 50, maxFileSize = 1024 * 64, maxRequestSize = 1024 * 1024 * 5) //todo change blob to mediumblob, adjust settings
 public class FileServlet extends AbstractServlet {
 
     private static final Logger logger = LogManager.getLogger();

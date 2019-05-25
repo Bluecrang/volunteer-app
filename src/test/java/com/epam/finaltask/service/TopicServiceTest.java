@@ -67,16 +67,17 @@ public class TopicServiceTest {
 
     @Test
     public void createTopicTestValidParameters() {
-        String login = "login";
+        String username = "username";
         String hash = "hash";
         String email = "email@mail.com";
-        Account account = new Account(1, login, hash,
+        Account account = new Account(1, username, hash,
                 email, AccountType.USER, 0, true, false, "salt", null);
         try {
             when(topicDao.createWithGeneratedDate(anyObject())).thenReturn(true);
 
             boolean result = topicService.createTopic(account, "title", "text");
 
+            verify(topicDao).createWithGeneratedDate(anyObject());
             Assert.assertTrue(result);
         } catch (ServiceException e) {
             fail("Unexpected ServiceException", e);
@@ -88,10 +89,28 @@ public class TopicServiceTest {
     @Test(dataProvider = "CreateTopicInvalidParametersProvider")
     public void createTopicTestInvalidParameters(Account account, String title, String text) {
         try {
-            when(topicDao.createWithGeneratedDate(anyObject())).thenReturn(true);
 
             boolean result = topicService.createTopic(account, title, text);
 
+            Assert.assertFalse(result);
+        } catch (ServiceException e) {
+            fail("Unexpected ServiceException", e);
+        }
+    }
+
+    @Test
+    public void createTopicTestCouldNotCreateMessageInDatabase() {
+        String username = "username";
+        String hash = "hash";
+        String email = "email@mail.com";
+        Account account = new Account(1, username, hash,
+                email, AccountType.USER, 0, true, false, "salt", null);
+        try {
+            when(topicDao.createWithGeneratedDate(anyObject())).thenReturn(false);
+
+            boolean result = topicService.createTopic(account, "title","text");
+
+            verify(topicDao).createWithGeneratedDate(anyObject());
             Assert.assertFalse(result);
         } catch (ServiceException e) {
             fail("Unexpected ServiceException", e);
@@ -100,21 +119,17 @@ public class TopicServiceTest {
         }
     }
 
-    @Test
-    public void createTopicTestCouldNotCreateMessageInDatabase() {
-        String login = "login";
+    @Test(expectedExceptions = ServiceException.class)
+    public void createTopicTestPersistenceExceptionThrown() throws ServiceException {
+        String username = "username";
         String hash = "hash";
         String email = "email@mail.com";
-        Account account = new Account(1, login, hash,
+        Account account = new Account(1, username, hash,
                 email, AccountType.USER, 0, true, false, "salt", null);
         try {
-            when(topicDao.createWithGeneratedDate(anyObject())).thenReturn(false);
+            when(topicDao.createWithGeneratedDate(anyObject())).thenThrow(new PersistenceException());
 
-            boolean result = topicService.createTopic(account, "title","text");
-
-            Assert.assertFalse(result);
-        } catch (ServiceException e) {
-            fail("Unexpected ServiceException", e);
+            topicService.createTopic(account, "title","text");
         } catch (PersistenceException e) {
             fail("Unexpected PersistenceException", e);
         }
@@ -133,6 +148,7 @@ public class TopicServiceTest {
             when(topicDao.update(topic)).thenReturn(1);
             boolean result = topicService.changeTopicHiddenState(topicId, true);
 
+            verify(topicDao).update(topic);
             Assert.assertTrue(result);
         } catch (ServiceException e) {
             fail("Unexpected ServiceException", e);
@@ -146,9 +162,9 @@ public class TopicServiceTest {
         long topicId = 1;
         try {
             when(topicDao.findEntityById(topicId)).thenReturn(null);
-            when(topicDao.update(null)).thenReturn(0);
             boolean result = topicService.changeTopicHiddenState(1,true);
 
+            verify(topicDao).findEntityById(topicId);
             Assert.assertFalse(result);
         } catch (ServiceException e) {
             fail("Unexpected ServiceException", e);
@@ -170,6 +186,7 @@ public class TopicServiceTest {
             when(topicDao.update(topic)).thenReturn(1);
             boolean result = topicService.closeTopic(1);
 
+            verify(topicDao).update(topic);
             Assert.assertTrue(result);
         } catch (ServiceException e) {
             fail("Unexpected ServiceException", e);
@@ -183,72 +200,14 @@ public class TopicServiceTest {
         long topicId = 1;
         try {
             when(topicDao.findEntityById(topicId)).thenReturn(null);
-            when(topicDao.update(null)).thenReturn(0);
             boolean result = topicService.closeTopic(topicId);
 
+            verify(topicDao).findEntityById(topicId);
             Assert.assertFalse(result);
         } catch (ServiceException e) {
             fail("Unexpected ServiceException", e);
         } catch (PersistenceException e) {
             fail("Unexpected PersistenceException", e);
-        }
-    }
-
-    @Test
-    public void findTopicByTitleTestValidTitle() {
-        String title = "title";
-        long topicId = 1;
-        try {
-            Account account = new Account(1);
-            Topic expected = new Topic(topicId, "title", "text",
-                    LocalDateTime.of(2013, 3, 5, 1, 12),
-                    account,
-                    false,
-                    false);
-            when(topicDao.findTopicByTitle(title)).thenReturn(expected);
-            AccountDao accountDao = mock(AccountDao.class);
-            when(daoFactory.createAccountDao(connectionManager)).thenReturn(accountDao);
-            when(accountDao.findEntityById(account.getAccountId())).thenReturn(new Account(1));
-
-            Topic actual = topicService.findTopicByTitle(title);
-
-            Assert.assertEquals(actual, expected);
-        } catch (PersistenceException e) {
-            fail("Unexpected PersistenceException", e);
-        } catch (ServiceException e) {
-            fail("Unexpected ServiceException", e);
-        }
-    }
-
-    @Test
-    public void findTopicByTitleTestTitleNull() {
-        String title = null;
-        try {
-            when(topicDao.findTopicByTitle(title)).thenReturn(null);
-
-            Topic actual = topicService.findTopicByTitle(title);
-
-            Assert.assertNull(actual);
-        } catch (PersistenceException e) {
-            fail("Unexpected PersistenceException", e);
-        } catch (ServiceException e) {
-            fail("Unexpected ServiceException", e);
-        }
-    }
-
-    @Test
-    public void findTopicByTitleTestTitleBlank() {
-        String title = "";
-        try {
-            when(topicDao.findTopicByTitle(title)).thenReturn(null);
-
-            Topic actual = topicService.findTopicByTitle(title);
-
-            Assert.assertNull(actual);
-        } catch (PersistenceException e) {
-            fail("Unexpected PersistenceException", e);
-        } catch (ServiceException e) {
-            fail("Unexpected ServiceException", e);
         }
     }
 
@@ -268,6 +227,7 @@ public class TopicServiceTest {
             when(topicDao.findEntityById(topicId)).thenReturn(expected);
             Topic result = topicService.findTopicById(topicId);
 
+            verify(topicDao).findEntityById(accountId);
             Assert.assertEquals(result, expected);
         } catch (ServiceException e) {
             fail("Unexpected ServiceException", e);
@@ -332,6 +292,7 @@ public class TopicServiceTest {
 
             List<Topic> actual = topicService.findAllTopics();
 
+            verify(topicDao).findAll();
             Assert.assertEquals(actual.size(), 3);
         } catch (PersistenceException e) {
             fail("Unexpected PersistenceException", e);
@@ -387,19 +348,30 @@ public class TopicServiceTest {
         }
     }
 
+    @Test(expectedExceptions = ServiceException.class)
+    public void findAllTopicsTestPersistenceExceptionBeforeTransaction() throws ServiceException {
+        try {
+            doThrow(new PersistenceException()).when(connectionManager).disableAutoCommit();
+            topicService.findAllTopics();
+
+            verify(connectionManager).disableAutoCommit();
+        } catch (PersistenceException e) {
+            fail("Unexpected PersistenceException", e);
+        }
+    }
+
     @DataProvider(name = "SearchStringProvider")
     public Object[][] provideSearchStrings() {
         return new Object[][] {
                 {"title", 3},
                 {"2", 1},
                 {"title1", 1},
-                {"abc", 0},
-                {null, 0}
+                {"abc", 0}
         };
     }
 
     @Test(dataProvider = "SearchStringProvider")
-    public void findTopicsByTitleRegexTestNoPersistenceException(String searchString, int expectedSize) {
+    public void findTopicsByTitleSubstringRegexTestNoPersistenceException(String searchString, int expectedSize) {
         try {
             Account account1 = new Account(1);
             Topic expected1 = new Topic(1, "title1", "text2",
@@ -432,6 +404,7 @@ public class TopicServiceTest {
 
             List<Topic> actual = topicService.findTopicsByTitleSubstring(searchString);
 
+            verify(topicDao).findAll();
             Assert.assertEquals(actual.size(), expectedSize);
         } catch (PersistenceException e) {
             fail("Unexpected PersistenceException", e);
@@ -440,8 +413,20 @@ public class TopicServiceTest {
         }
     }
 
+    @Test
+    public void findTopicsByTitleSubstringTestSubstringNull() {
+        int expectedSize = 0;
+        try {
+            List<Topic> actual = topicService.findTopicsByTitleSubstring(null);
+
+            Assert.assertEquals(actual.size(), expectedSize);
+        } catch (ServiceException e) {
+            fail("Unexpected ServiceException", e);
+        }
+    }
+
     @Test(expectedExceptions = ServiceException.class)
-    public void findTopicsByTitleRegexTestPersistenceExceptionThrownByTopicDao() throws ServiceException {
+    public void findTopicsByTitleSubstringRegexTestPersistenceExceptionThrownByTopicDao() throws ServiceException {
         try {
             when(topicDao.findAll()).thenThrow(new PersistenceException());
             AccountDao accountDao = mock(AccountDao.class);
@@ -454,7 +439,7 @@ public class TopicServiceTest {
     }
 
     @Test(expectedExceptions = ServiceException.class)
-    public void findTopicsByTitleRegexTestPersistenceExceptionThrownByAccountDao() throws ServiceException {
+    public void findTopicsByTitleSubstringRegexTestPersistenceExceptionThrownByAccountDao() throws ServiceException {
         try {
             Account account1 = new Account(1);
             Topic expected1 = new Topic(1, "title1", "text2",

@@ -19,7 +19,6 @@ public class CreateTopicCommand extends Command {
     private static final String TOPIC_TITLE_PARAMETER = "title";
     private static final String TOPIC_TEXT_PARAMETER = "text";
     private static final String TOPIC_CREATION_MESSAGE = "topic_creation_message";
-    private static final String TOPIC_EXISTS_PROPERTY = "topics.topic_exists";
     private static final String TOPIC_CREATED_PROPERTY = "topics.topic_created";
     private static final String TOPIC_CREATION_ILLEGAL_PARAMETERS_PROPERTY = "topics.illegal_topic_creation_parameters";
     private static final int MAX_TOPIC_TITLE_LENGTH = 100;
@@ -40,25 +39,15 @@ public class CreateTopicCommand extends Command {
         if (validateTopicData(title, text)) {
             TopicService topicService = new TopicService();
             try {
-                if (topicService.findTopicByTitle(title) == null) {
-                    try {
-                        if (topicService.createTopic(sessionAccount, title, text)) {
-                            logger.log(Level.INFO, "user (id=" + sessionAccount.getAccountId() + ") created topic (title=" + title +
-                                    ")");
-                            data.putRequestAttribute(TOPIC_CREATION_MESSAGE, TOPIC_CREATED_PROPERTY);
-                        } else {
-                            data.putRequestAttribute(TOPIC_CREATION_MESSAGE, TOPIC_CREATION_ILLEGAL_PARAMETERS_PROPERTY);
-                        }
-                    } catch (ServiceException e) {
-                        throw new CommandException("could not create new topic", e);
-                    }
+                if (topicService.createTopic(sessionAccount, title, text)) {
+                    logger.log(Level.INFO, "user (id=" + sessionAccount.getAccountId() + ") created topic (title=" + title +
+                            ")");
+                    data.putRequestAttribute(TOPIC_CREATION_MESSAGE, TOPIC_CREATED_PROPERTY);
                 } else {
-                    logger.log(Level.INFO, "user (id=" + sessionAccount.getAccountId() + ") could not create topic (title=" + title +
-                            "), topic title already taken");
-                    data.putRequestAttribute(TOPIC_CREATION_MESSAGE, TOPIC_EXISTS_PROPERTY);
+                    data.putRequestAttribute(TOPIC_CREATION_MESSAGE, TOPIC_CREATION_ILLEGAL_PARAMETERS_PROPERTY);
                 }
             } catch (ServiceException e) {
-                throw new CommandException("could not find topic", e);
+                throw new CommandException("could not create new topic", e);
             }
         } else {
             logger.log(Level.WARN, "user id=" + sessionAccount.getAccountId() + " could not create topic: title or text length is illegal");

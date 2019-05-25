@@ -11,6 +11,7 @@ import org.testng.Assert;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 public class CommandDataValidatorTest {
@@ -38,6 +39,7 @@ public class CommandDataValidatorTest {
 
         boolean result = validator.validate(commandData, commandConstraints);
 
+        verify(commandData).getSessionAccount();
         Assert.assertTrue(result);
     }
 
@@ -51,10 +53,10 @@ public class CommandDataValidatorTest {
         when(commandData.getMethod()).thenReturn(HttpMethodType.GET);
         Account account = new Account(1);
         account.setAccountType(AccountType.ADMIN);
-        when(commandData.getSessionAccount()).thenReturn(account);
 
         boolean result = validator.validate(commandData, commandConstraints);
 
+        verify(commandData).getMethod();
         Assert.assertFalse(result);
     }
 
@@ -72,6 +74,7 @@ public class CommandDataValidatorTest {
 
         boolean result = validator.validate(commandData, commandConstraints);
 
+        verify(commandData).getSessionAccount();
         Assert.assertFalse(result);
     }
 
@@ -88,6 +91,8 @@ public class CommandDataValidatorTest {
 
         boolean result = validator.validate(commandData, commandConstraints);
 
+        verify(commandData).getMethod();
+        verify(commandData).getSessionAccount();
         Assert.assertFalse(result);
     }
 
@@ -104,6 +109,8 @@ public class CommandDataValidatorTest {
 
         boolean result = validator.validate(commandData, commandConstraints);
 
+        verify(commandData).getMethod();
+        verify(commandData).getSessionAccount();
         Assert.assertTrue(result);
     }
 
@@ -120,6 +127,8 @@ public class CommandDataValidatorTest {
 
         boolean result = validator.validate(commandData, commandConstraints);
 
+        verify(commandData).getMethod();
+        verify(commandData).getSessionAccount();
         Assert.assertFalse(result);
     }
 
@@ -136,6 +145,8 @@ public class CommandDataValidatorTest {
 
         boolean result = validator.validate(commandData, commandConstraints);
 
+        verify(commandData).getMethod();
+        verify(commandData).getSessionAccount();
         Assert.assertTrue(result);
     }
 }

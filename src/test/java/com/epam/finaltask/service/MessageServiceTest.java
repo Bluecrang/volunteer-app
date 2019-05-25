@@ -52,10 +52,10 @@ public class MessageServiceTest {
 
     @DataProvider(name = "CreateMessageInvalidParametersProvider")
     public Object[][] provideInvalidCreateMessageMethodParameters() {
-        String login = "login";
+        String username = "username";
         String hash = "hash";
         String email = "email@mail.com";
-        Account account = new Account(1, login, hash,
+        Account account = new Account(1, username, hash,
                 email, AccountType.USER, 0, true, false, "salt", null);
         StringBuilder tooLongStringBuilder = new StringBuilder();
         for (int i = 0; i < 257; i++) {
@@ -71,16 +71,17 @@ public class MessageServiceTest {
 
     @Test
     public void createMessageTestValidParameters() {
-        String login = "login";
+        String username = "username";
         String hash = "hash";
         String email = "email@mail.com";
-        Account account = new Account(1, login, hash,
+        Account account = new Account(1, username, hash,
                 email, AccountType.USER, 0, true, false, "salt", null);
         try {
             when(messageDao.createWithGeneratedDate(anyObject())).thenReturn(true);
 
             boolean result = messageService.createMessage(account, 1, "text");
 
+            verify(messageDao).createWithGeneratedDate(anyObject());
             Assert.assertTrue(result);
         } catch (ServiceException e) {
             fail("Unexpected ServiceException", e);
@@ -92,30 +93,27 @@ public class MessageServiceTest {
     @Test(dataProvider = "CreateMessageInvalidParametersProvider")
     public void createMessageTestInvalidParameters(Account account, long topicId, String text) {
         try {
-            when(messageDao.createWithGeneratedDate(anyObject())).thenReturn(true);
-
             boolean result = messageService.createMessage(account, topicId, text);
 
             Assert.assertFalse(result);
         } catch (ServiceException e) {
             fail("Unexpected ServiceException", e);
-        } catch (PersistenceException e) {
-            fail("Unexpected PersistenceException", e);
         }
     }
 
     @Test
     public void createMessageTestCouldNotCreateMessageInDatabase() {
-        String login = "login";
+        String username = "username";
         String hash = "hash";
         String email = "email@mail.com";
-        Account account = new Account(1, login, hash,
+        Account account = new Account(1, username, hash,
                 email, AccountType.USER, 0, true, false, "salt", null);
         try {
             when(messageDao.createWithGeneratedDate(anyObject())).thenReturn(false);
 
             boolean result = messageService.createMessage(account, 1, "text");
 
+            verify(messageDao).createWithGeneratedDate(anyObject());
             Assert.assertFalse(result);
         } catch (ServiceException e) {
             fail("Unexpected ServiceException", e);
@@ -135,8 +133,8 @@ public class MessageServiceTest {
                 email, AccountType.ADMIN, 0, true, false, "salt", null);
         try {
             doThrow(new PersistenceException()).when(connectionManagerFactory).createConnectionManager();
-            messageService.createMessage(account, topicId, text);
 
+            messageService.createMessage(account, topicId, text);
         } catch (PersistenceException e) {
             fail("Unexpected PersistenceException", e);
         }
@@ -157,6 +155,7 @@ public class MessageServiceTest {
 
             boolean result = messageService.deleteMessage(messageId);
 
+            verify(messageDao).findEntityById(messageId);
             Assert.assertTrue(result);
         } catch (ServiceException e) {
             fail("Unexpected ServiceException", e);
@@ -167,11 +166,13 @@ public class MessageServiceTest {
 
     @Test
     public void deleteMessageTestMessageNotFound() {
+        long mesageId = 1;
         try {
-            when(messageDao.findEntityById(1)).thenReturn(null);
+            when(messageDao.findEntityById(mesageId)).thenReturn(null);
 
-            boolean result = messageService.deleteMessage(1);
+            boolean result = messageService.deleteMessage(mesageId);
 
+            verify(messageDao).findEntityById(mesageId);
             Assert.assertFalse(result);
         } catch (ServiceException e) {
             fail("Unexpected ServiceException", e);
@@ -188,6 +189,7 @@ public class MessageServiceTest {
 
             messageService.deleteMessage(messageId);
 
+            verify(messageDao).findEntityById(messageId);
         } catch (PersistenceException e) {
             fail("Unexpected PersistenceException", e);
         }
@@ -241,6 +243,7 @@ public class MessageServiceTest {
             when(accountDao.findEntityById(accountId)).thenReturn(account);
             List<Message> messageList = messageService.findTopicPageMessages(topicId, currentPage, numberOfMessagesPerPage);
 
+            verify(messageDao).findPageMessages(topicId, currentPage, numberOfMessagesPerPage);
             Assert.assertEquals(messageList.size(), 3);
         } catch (ServiceException e) {
             fail("Unexpected ServiceException", e);
@@ -259,6 +262,7 @@ public class MessageServiceTest {
                     .thenThrow(new PersistenceException());
             messageService.findTopicPageMessages(topicId, currentPage, numberOfMessagesPerPage);
 
+            verify(messageDao).findPageMessages(topicId, currentPage, numberOfMessagesPerPage);
         } catch (PersistenceException e) {
             fail("Unexpected PersistenceException", e);
         }
@@ -285,7 +289,10 @@ public class MessageServiceTest {
         try {
             when(messageDao.countMessagesByTopicId(topicId)).thenReturn(messageCount);
 
-            messageService.countMessages(topicId);
+            int result = messageService.countMessages(topicId);
+
+            verify(messageDao).countMessagesByTopicId(topicId);
+            Assert.assertEquals(result, messageCount);
         } catch (PersistenceException e) {
             fail("Unexpected PersistenceException", e);
         } catch (ServiceException e) {
@@ -311,11 +318,14 @@ public class MessageServiceTest {
         try {
             when(messageDao.findEntityById(id)).thenReturn(new Message(id,
                     "message",
-                    new Account(1),
+                    new Account(id),
                     LocalDateTime.of(2000, 1, 3, 4, 5),
                     new Topic(1)));
 
-            messageService. findMessageById(id);
+            Message actual = messageService.findMessageById(id);
+
+            verify(messageDao).findEntityById(id);
+            Assert.assertEquals(actual.getMessageId(), id);
         } catch (PersistenceException e) {
             fail("Unexpected PersistenceException", e);
         } catch (ServiceException e) {

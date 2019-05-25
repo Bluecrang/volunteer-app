@@ -29,10 +29,10 @@ public class TopicDaoImplTest {
     @BeforeClass
     public void init() {
         try {
+            MockitoAnnotations.initMocks(this);
             DatabaseTestUtil.registerDrivers();
             DatabaseTestUtil.initializeDatabase();
             Connection connection = DatabaseTestUtil.getConnection();
-            MockitoAnnotations.initMocks(this);
             when(connectionManager.getConnection()).thenReturn(connection);
             topicDao = new TopicDaoImpl(connectionManager);
         } catch (SQLException | IOException e) {

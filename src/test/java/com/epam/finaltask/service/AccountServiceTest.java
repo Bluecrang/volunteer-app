@@ -62,15 +62,15 @@ public class AccountServiceTest {
             AccountDao updater = mock(AccountDao.class);
             when(updater.update(account)).thenReturn(1);
             when(daoFactory.createAccountDao(connectionManager)).thenReturn(accountDao, updater);
-        } catch (PersistenceException e) {
-            fail("Unexpected PersistenceException", e);
-        }
-        try {
+
             boolean result = accountService.addValueToRating(accountId, 2);
 
+            verify(accountDao).findEntityById(accountId);
             Assert.assertTrue(result);
         } catch (ServiceException e) {
             fail("Unexpected ServiceException", e);
+        } catch (PersistenceException e) {
+            fail("Unexpected PersistenceException", e);
         }
     }
 
@@ -79,15 +79,15 @@ public class AccountServiceTest {
         long accountId = 2;
         try {
             when(accountDao.findEntityById(accountId)).thenReturn(null);
-        } catch (PersistenceException e) {
-            fail("Unexpected PersistenceException", e);
-        }
-        try {
+
             boolean result = accountService.addValueToRating(accountId, 2);
 
+            verify(accountDao).findEntityById(accountId);
             Assert.assertFalse(result);
         } catch (ServiceException e) {
             fail("Unexpected ServiceException", e);
+        } catch (PersistenceException e) {
+            fail("Unexpected PersistenceException", e);
         }
     }
 
@@ -155,15 +155,15 @@ public class AccountServiceTest {
         try {
             when(accountDao.findEntityById(1)).thenReturn(account);
             when(accountDao.update(account)).thenReturn(1);
-        } catch (PersistenceException e) {
-            fail("Unexpected PersistenceException", e);
-        }
-        try {
+
             boolean result = accountService.updateAvatar(account, part);
 
+            verify(accountDao).update(account);
             Assert.assertTrue(result);
         } catch (ServiceException e) {
             fail("Unexpected ServiceException", e);
+        } catch (PersistenceException e) {
+            fail("Unexpected PersistenceException", e);
         }
     }
 
@@ -278,6 +278,7 @@ public class AccountServiceTest {
         try {
             boolean result = accountService.updateAvatar(account, part);
 
+            verify(part).getSubmittedFileName();
             Assert.assertFalse(result);
         } catch (ServiceException e) {
             fail("Unexpected ServiceException", e);
@@ -297,15 +298,15 @@ public class AccountServiceTest {
             AccountDao updater = mock(AccountDao.class);
             when(updater.update(account)).thenReturn(1);
             when(daoFactory.createAccountDao(connectionManager)).thenReturn(accountDao, updater);
-        } catch (PersistenceException e) {
-            fail("Unexpected PersistenceException", e);
-        }
-        try {
+
             boolean result = accountService.changeAccountBlockState(accountId, true);
 
+            verify(updater).update(account);
             Assert.assertTrue(result);
         } catch (ServiceException e) {
             fail("Unexpected ServiceException", e);
+        } catch (PersistenceException e) {
+            fail("Unexpected PersistenceException", e);
         }
     }
 
@@ -315,15 +316,15 @@ public class AccountServiceTest {
         Account account = null;
         try {
             when(accountDao.findEntityById(accountId)).thenReturn(account);
-        } catch (PersistenceException e) {
-            fail("Unexpected PersistenceException", e);
-        }
-        try {
+
             boolean result = accountService.changeAccountBlockState(accountId, true);
 
+            verify(accountDao).findEntityById(accountId);
             Assert.assertFalse(result);
         } catch (ServiceException e) {
             fail("Unexpected ServiceException", e);
+        } catch (PersistenceException e) {
+            fail("Unexpected PersistenceException", e);
         }
     }
 
@@ -408,6 +409,7 @@ public class AccountServiceTest {
             
             List<Account> accountList = accountService.findRatingPageAccounts(page, numberOfAccountsPerPage);
 
+            verify(accountDao).findPageAccountsSortByRating(page, numberOfAccountsPerPage);
             Assert.assertEquals(accountList, expected);
         } catch (PersistenceException e) {
             fail("Unexpected PersistenceException", e);
@@ -436,21 +438,21 @@ public class AccountServiceTest {
         String email = "email2@gmail.com";
         long accountId = 2;
         try {
-            try {
-                Account userAccount = new Account(accountId, username, hash,
-                        email, AccountType.USER, 0, true, false, "salt", null);
-                AccountDao accountDao2 = mock(AccountDao.class);
-                when(daoFactory.createAccountDao(connectionManager)).thenReturn(accountDao2, accountDao);
-                when(accountDao2.findEntityById(accountId)).thenReturn(userAccount);
-                when(accountDao.update(userAccount)).thenReturn(1);
-            } catch (PersistenceException e) {
-                fail("Unexpected PersistenceException", e);
-            }
+            Account userAccount = new Account(accountId, username, hash,
+                    email, AccountType.USER, 0, true, false, "salt", null);
+            AccountDao accountDao2 = mock(AccountDao.class);
+            when(daoFactory.createAccountDao(connectionManager)).thenReturn(accountDao2, accountDao);
+            when(accountDao2.findEntityById(accountId)).thenReturn(userAccount);
+            when(accountDao.update(userAccount)).thenReturn(1);
+
             boolean result = accountService.promoteUserToAdmin(accountId);
 
+            verify((accountDao)).update(userAccount);
             Assert.assertTrue(result);
         } catch (ServiceException e) {
             fail("Unexpected ServiceException", e);
+        } catch (PersistenceException e) {
+            fail("Unexpected PersistenceException", e);
         }
     }
 
@@ -461,40 +463,40 @@ public class AccountServiceTest {
         String email = "email2@gmail.com";
         long accountId = 2;
         try {
-            try {
-                Account userAccount = new Account(accountId, username, hash,
-                        email, AccountType.USER, 0, true, false, "salt", null);
-                AccountDao accountDao2 = mock(AccountDao.class);
-                when(daoFactory.createAccountDao(connectionManager)).thenReturn(accountDao2, accountDao);
-                when(accountDao2.findEntityById(accountId)).thenReturn(userAccount);
-                when(accountDao.update(userAccount)).thenReturn(0);
-            } catch (PersistenceException e) {
-                fail("Unexpected PersistenceException", e);
-            }
+            Account userAccount = new Account(accountId, username, hash,
+                    email, AccountType.USER, 0, true, false, "salt", null);
+            AccountDao accountDao2 = mock(AccountDao.class);
+            when(daoFactory.createAccountDao(connectionManager)).thenReturn(accountDao2, accountDao);
+            when(accountDao2.findEntityById(accountId)).thenReturn(userAccount);
+            when(accountDao.update(userAccount)).thenReturn(0);
+
             boolean result = accountService.promoteUserToAdmin(accountId);
 
+            verify(accountDao).update(userAccount);
             Assert.assertFalse(result);
         } catch (ServiceException e) {
             fail("Unexpected ServiceException", e);
-        }
+            } catch (PersistenceException e) {
+                fail("Unexpected PersistenceException", e);
+            }
     }
 
     @Test
     public void promoteUserToAdminTestAccountNotFoundInDatabase() {
         long accountId = 2;
         try {
-            try {
-                AccountDao accountDao2 = mock(AccountDao.class);
-                when(daoFactory.createAccountDao(connectionManager)).thenReturn(accountDao2, accountDao);
-                when(accountDao2.findEntityById(accountId)).thenReturn(null);
-            } catch (PersistenceException e) {
-                fail("Unexpected PersistenceException", e);
-            }
+            AccountDao accountDao2 = mock(AccountDao.class);
+            when(daoFactory.createAccountDao(connectionManager)).thenReturn(accountDao2, accountDao);
+            when(accountDao2.findEntityById(accountId)).thenReturn(null);
+
             boolean result = accountService.promoteUserToAdmin(accountId);
 
+            verify(accountDao2).findEntityById(accountId);
             Assert.assertFalse(result);
         } catch (ServiceException e) {
             fail("Unexpected ServiceException", e);
+        } catch (PersistenceException e) {
+            fail("Unexpected PersistenceException", e);
         }
     }
 

@@ -21,7 +21,8 @@ public class RegistrationCommand extends Command {
     private static final String ILLEGAL_EMAIL = "registration.illegal_email";
     private static final String ILLEGAL_USERNAME = "registration.illegal_username";
     private static final String ILLEGAL_PASSWORD = "registration.illegal_password";
-    private static final String ACCOUNT_EXISTS = "registration.account_exists";
+    private static final String EMAIL_EXISTS = "registration.email_exists";
+    private static final String USERNAME_EXISTS = "registration.username_exists";
     private static final String ACCOUNT_SUCCESSFULLY_REGISTERED = "login.account_successfully_registered";
 
     public RegistrationCommand(CommandConstraints constraints) {
@@ -55,13 +56,33 @@ public class RegistrationCommand extends Command {
 
         RegistrationService registrationService = new RegistrationService();
         try {
-            if (registrationService.registerAccount(username, password, email)) {
-                logger.log(Level.INFO, "user with username=" + username + " successfully registered");
-                data.putRequestAttribute(ApplicationConstants.AUTHORIZATION_MESSAGE_ATTRIBUTE, ACCOUNT_SUCCESSFULLY_REGISTERED);
-                commandResult.setPage(ApplicationConstants.SHOW_LOGIN_PAGE);
-            } else {
-                logger.log(Level.INFO, "could not register user with username=" + username);
-                data.putRequestAttribute(ApplicationConstants.REGISTRATION_MESSAGE_ATTRIBUTE, ACCOUNT_EXISTS);
+            RegistrationService.RegistrationResult registrationResult = registrationService.registerAccount(username, password, email);
+            switch (registrationResult) {
+                case SUCCESS: {
+                    logger.log(Level.INFO, "user with username=" + username + " successfully registered");
+                    data.putRequestAttribute(ApplicationConstants.AUTHORIZATION_MESSAGE_ATTRIBUTE, ACCOUNT_SUCCESSFULLY_REGISTERED);
+                    commandResult.setPage(ApplicationConstants.SHOW_LOGIN_PAGE);
+                    break;
+                }
+                case EMAIL_EXISTS: {
+                    logger.log(Level.INFO, "could not register user with username=" + username + ", email=" + email +
+                            "; email is already in use");
+                    data.putRequestAttribute(ApplicationConstants.REGISTRATION_MESSAGE_ATTRIBUTE, EMAIL_EXISTS);
+                    break;
+                }
+                case USERNAME_EXISTS: {
+                    logger.log(Level.INFO, "could not register user with username=" + username + ", email=" + email +
+                            "; username is already in use");
+                    data.putRequestAttribute(ApplicationConstants.REGISTRATION_MESSAGE_ATTRIBUTE, USERNAME_EXISTS);
+                    break;
+                }
+                case CANNOT_CREATE_ACCOUNT_IN_DATABASE: {
+                    throw new CommandException("Could not create account");
+                }
+                default: {
+                    throw new EnumConstantNotPresentException(RegistrationService.RegistrationResult.class,
+                            registrationResult.name());
+                }
             }
         } catch (ServiceException e) {
             throw new CommandException("unable to create new account email=" + email, e);

@@ -53,54 +53,85 @@ public class RegistrationService extends AbstractService {
     }
 
     /**
+     * Enum which contains constants for {@link RegistrationService#registerAccount(String, String, String)} to return.
+     */
+    public enum RegistrationResult {
+        SUCCESS,
+        EMAIL_EXISTS,
+        USERNAME_EXISTS,
+        CANNOT_CREATE_ACCOUNT_IN_DATABASE,
+        ARGUMENT_IS_NULL
+    }
+
+    /**
      * Register account, storing it's data in the database.
-     * If account with chosen email or username already exists, returns {@code false}.
+     * If account with chosen email or username already exists, returns {@link RegistrationResult#EMAIL_EXISTS} or
+     * {@link RegistrationResult#USERNAME_EXISTS} respectively.
      * @param username Accounts username
      * @param password Accounts password
      * @param email Accounts email. Registration of the account with email which is already used by another account is not permitted
-     * @return {@code true} if account successfully registered, else returns {@code false}
+     * @return {@link RegistrationResult} constant based on the registration result.
      * @throws ServiceException If PersistenceException thrown
      */
-    public boolean registerAccount(String username, String password, String email) throws ServiceException { //todo unique username
+    public RegistrationResult registerAccount(String username, String password, String email) throws ServiceException {
         if (username == null) {
             logger.log(Level.WARN, "cannot register account, username is null");
-            return false;
+            return RegistrationResult.ARGUMENT_IS_NULL;
         }
         if (password == null) {
             logger.log(Level.WARN, "cannot register account, password is null");
-            return false;
+            return RegistrationResult.ARGUMENT_IS_NULL;
         }
         if (email == null) {
             logger.log(Level.WARN, "cannot register account, email is null");
-            return false;
+            return RegistrationResult.ARGUMENT_IS_NULL;
         }
+        RegistrationResult result;
         try (AbstractConnectionManager connectionManager = connectionManagerFactory.createConnectionManager()) {
             connectionManager.disableAutoCommit();
             logger.log(Level.TRACE, "autocommit disabled");
             try {
                 AccountDao accountDao = daoFactory.createAccountDao(connectionManager);
-                Account accountInDatabase = accountDao.findAccountByEmail(email);
-                if (accountInDatabase == null) {
-                    HashGenerator hashGenerator = hashGeneratorFactory.createHashGenerator();
-                    SaltGenerator saltGenerator = new SaltGenerator();
-                    String salt = saltGenerator.generateSalt();
-                    String passwordHash = hashGenerator.hash(password, salt, ApplicationConstants.HASHING_ALGORITHM);
-                    Account account = new Account(username, passwordHash, email, AccountType.USER, DEFAULT_RATING,
-                            DEFAULT_VERIFIED, DEFAULT_BLOCKED, salt, null); //todo
-                    accountDao.create(account);
-                    logger.log(Level.INFO, "account with email=" + email + " added to database");
-                    connectionManager.commit();
-                    return true;
+                Account accountInDatabaseByEmail = accountDao.findAccountByEmail(email);
+
+                if (accountInDatabaseByEmail == null) {
+                    Account accountInDatabaseByUsername = accountDao.findAccountByUsername(username);
+                    if (accountInDatabaseByUsername == null) {
+                        HashGenerator hashGenerator = hashGeneratorFactory.createHashGenerator();
+                        SaltGenerator saltGenerator = new SaltGenerator();
+                        String salt = saltGenerator.generateSalt();
+                        String passwordHash = hashGenerator.hash(password, salt, ApplicationConstants.HASHING_ALGORITHM);
+                        Account account = new Account(username, passwordHash, email, AccountType.USER, DEFAULT_RATING,
+                                DEFAULT_VERIFIED, DEFAULT_BLOCKED, salt, null);
+                        if (accountDao.create(account)) {
+                            logger.log(Level.INFO, "account with email=" + email + " added to database");
+                            connectionManager.commit();
+                            result = RegistrationResult.SUCCESS;
+                        } else {
+                            logger.log(Level.INFO, "could not create new account with email=" + email +
+                                    " and username= " + username + ". Account cannot be added to the database");
+                            connectionManager.rollback();
+                            result = RegistrationResult.CANNOT_CREATE_ACCOUNT_IN_DATABASE;
+                        }
+                    } else {
+                        logger.log(Level.INFO, "cannot create new account with email=" + email +
+                                " and username= " + username + " because username is already in use");
+                        connectionManager.rollback();
+                        result = RegistrationResult.USERNAME_EXISTS;
+                    }
+                } else {
+                    logger.log(Level.INFO, "cannot create new account with email=" + email +
+                            " and username= " + username + " because email is already in use");
+                    connectionManager.rollback();
+                    result = RegistrationResult.EMAIL_EXISTS;
                 }
-                connectionManager.rollback();
-                logger.log(Level.INFO, "cannot create new account with email=" + email + " because it already exists");
             } catch (PersistenceException e) {
                 connectionManager.rollback();
-                logger.log(Level.ERROR, "Unable to execute transaction. Transaction rolled back", e);
+                throw new ServiceException("Unable to execute transaction. Transaction rolled back", e);
             }
         } catch (PersistenceException e) {
             throw new ServiceException(e);
         }
-        return false;
+        return result;
     }
 }

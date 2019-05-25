@@ -98,44 +98,7 @@ public class TopicService extends AbstractService {
                 return true;
             } catch (PersistenceException e) {
                 connectionManager.rollback();
-                throw new ServiceException(e);
-            }
-        } catch (PersistenceException e) {
-            throw new ServiceException(e);
-        }
-    }
-
-    /**
-     * Looks for topic in the database by title.
-     * @param title Title of the topic to look for
-     * @return Topic with chosen title, if it exists in the database. Esle returns null
-     * @throws ServiceException if PersistenceException is thrown while working with database
-     */
-    public Topic findTopicByTitle(String title) throws ServiceException {
-        if (title == null || StringUtils.isBlank(title)) {
-            logger.log(Level.WARN, "cannot find topic by title: title is null or blank");
-            return null;
-        }
-        try (AbstractConnectionManager connectionManager = connectionManagerFactory.createConnectionManager()) {
-            connectionManager.disableAutoCommit();
-            try {
-                TopicDao topicDao = daoFactory.createTopicDao(connectionManager);
-                Topic topic = topicDao.findTopicByTitle(title);
-                if (topic == null) {
-                    logger.log(Level.WARN, "cannot find topic by title");
-                    return null;
-                }
-                AccountService accountService = new AccountService(daoFactory);
-                Account account = accountService.findAccountById(topic.getAccount().getAccountId(), connectionManager);
-                connectionManager.commit();
-                if (account == null) {
-                    throw new ServiceException("could not find topic creator's account");
-                }
-                topic.setAccount(account);
-                return topic;
-            } catch (PersistenceException e) {
-                connectionManager.rollback();
-                throw new ServiceException(e);
+                throw new ServiceException("Could not finish transaction. Transaction rolled back", e);
             }
         } catch (PersistenceException e) {
             throw new ServiceException(e);

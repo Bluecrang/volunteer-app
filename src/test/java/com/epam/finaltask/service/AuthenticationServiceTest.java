@@ -17,8 +17,7 @@ import org.testng.annotations.Test;
 
 import static org.mockito.Matchers.anyString;
 import static org.mockito.Matchers.eq;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 import static org.testng.Assert.fail;
 
 public class AuthenticationServiceTest {
@@ -60,15 +59,14 @@ public class AuthenticationServiceTest {
         try {
             when(accountDao.findAccountByEmail(email)).thenReturn(new Account(1, email, DEFAULT_HASH,
                     "email@mail.com", AccountType.USER, 0, true, false, DEFAULT_SALT, null));
-        } catch (PersistenceException e) {
-            fail("Unexpected PersistenceException", e);
-        }
-        try {
             Account result = authenticationService.authenticate(email, password);
 
+            verify(accountDao).findAccountByEmail(email);
             Assert.assertNotNull(result);
         } catch (ServiceException e) {
             fail("Unexpected ServiceException", e);
+        } catch (PersistenceException e) {
+            fail("Unexpected PersistenceException", e);
         }
     }
 
@@ -78,15 +76,15 @@ public class AuthenticationServiceTest {
         String password = "password";
         try {
             when(accountDao.findAccountByEmail(email)).thenReturn(null);
-        } catch (PersistenceException e) {
-            fail("Unexpected PersistenceException", e);
-        }
-        try {
+
             Account result = authenticationService.authenticate(email, password);
 
+            verify(accountDao).findAccountByEmail(email);
             Assert.assertNull(result);
         } catch (ServiceException e) {
             fail("Unexpected ServiceException", e);
+        } catch (PersistenceException e) {
+            fail("Unexpected PersistenceException", e);
         }
     }
 
@@ -96,15 +94,15 @@ public class AuthenticationServiceTest {
         String password = "password";
         try {
             when(accountDao.findAccountByEmail(email)).thenReturn(null);
-        } catch (PersistenceException e) {
-            fail("Unexpected PersistenceException", e);
-        }
-        try {
+
             Account result = authenticationService.authenticate(email, password);
 
+            verify(accountDao).findAccountByEmail(email);
             Assert.assertNull(result);
         } catch (ServiceException e) {
             fail("Unexpected ServiceException", e);
+        } catch (PersistenceException e) {
+            fail("Unexpected PersistenceException", e);
         }
     }
 
@@ -116,15 +114,15 @@ public class AuthenticationServiceTest {
         try {
             when(accountDao.findAccountByEmail(email)).thenReturn(new Account(1, email, DEFAULT_HASH,
                     "email@mail.com", AccountType.USER, 0, true, false, DEFAULT_SALT, null));
-        } catch (PersistenceException e) {
-            fail("Unexpected PersistenceException", e);
-        }
-        try {
+
             Account result = authenticationService.authenticate(email, password);
 
+            verify(accountDao).findAccountByEmail(email);
             Assert.assertNull(result);
         } catch (ServiceException e) {
             fail("Unexpected ServiceException", e);
+        } catch (PersistenceException e) {
+            fail("Unexpected PersistenceException", e);
         }
     }
 

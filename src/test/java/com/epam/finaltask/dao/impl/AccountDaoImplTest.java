@@ -28,10 +28,10 @@ public class AccountDaoImplTest {
     @BeforeClass
     public void init() {
         try {
+            MockitoAnnotations.initMocks(this);
             DatabaseTestUtil.registerDrivers();
             DatabaseTestUtil.initializeDatabase();
             Connection connection = DatabaseTestUtil.getConnection();
-            MockitoAnnotations.initMocks(this);
             when(connectionManager.getConnection()).thenReturn(connection);
             accountDao = new AccountDaoImpl(connectionManager);
         } catch (SQLException | IOException e) {

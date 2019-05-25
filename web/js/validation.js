@@ -22,7 +22,6 @@ function validateRegistrationForm() {
 
 function validateMessageForm() {
     let text = document.getElementById("message_text").value;
-    console.log(text);
     if (text.length === 0 || text.length > 256) {
         document.getElementById("topic_action_notification").innerHTML =
             "Message text length should be between 1 and 256 characters";

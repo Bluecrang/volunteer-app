@@ -52,101 +52,145 @@ public class RegistrationServiceTest {
     }
 
     @DataProvider(name = "InvalidParametersProvider")
-    public Object[][] provideInvalidParameters() {
+    public Object[][] provideNullParameters() {
         return new Object[][] {
                 {null, "password", "email@mail.com"},
                 {"login", null, "mail@mail.ru"},
-                {"log", "pass", null}
+                {"log", "pass", null},
+                {null, null, "email@mail.com"},
+                {null, "pass", null},
+                {"username", null, null},
+                {null, null, null},
         };
     }
 
     @Test(dataProvider = "InvalidParametersProvider")
-    public void registerUserTestValidParametersAndAccountDoesNotExist(String login, String password, String email) {
+    public void registerAccountTestNullParameters(String username, String password, String email) {
         try {
             when(accountDao.findAccountByEmail(email)).thenReturn(null);
-        } catch (PersistenceException e) {
-            fail("Unexpected PersistenceException", e);
-        }
-        try {
-            boolean result = registrationService.registerAccount(login, password, email);
+            when(accountDao.findAccountByUsername(username)).thenReturn(null);
 
-            Assert.assertFalse(result);
+            RegistrationService.RegistrationResult result = registrationService.registerAccount(username, password, email);
+
+            Assert.assertEquals(result, RegistrationService.RegistrationResult.ARGUMENT_IS_NULL);
         } catch (ServiceException e) {
             fail("Unexpected ServiceException", e);
+        } catch (PersistenceException e) {
+            fail("Unexpected PersistenceException", e);
         }
     }
 
     @Test
-    public void registerUserTestInvalidParameters() {
-        String login = "login";
+    public void registerAccountTestValidParametersAndEmailAndUsernameAreFree() {
+        String username = "username";
         String password = "password";
         String email = "mail@mail.com";
         try {
             when(accountDao.findAccountByEmail(email)).thenReturn(null);
-        } catch (PersistenceException e) {
-            fail("Unexpected PersistenceException", e);
-        }
-        try {
-            boolean result = registrationService.registerAccount(login, password, email);
+            when(accountDao.findAccountByUsername(username)).thenReturn(null);
+            when(accountDao.create(anyObject())).thenReturn(true);
 
-            Assert.assertTrue(result);
+            RegistrationService.RegistrationResult result = registrationService.registerAccount(username, password, email);
+
+            verify(accountDao).create(anyObject());
+            Assert.assertEquals(result, RegistrationService.RegistrationResult.SUCCESS);
         } catch (ServiceException e) {
             fail("Unexpected ServiceException", e);
+        } catch (PersistenceException e) {
+            fail("Unexpected PersistenceException", e);
         }
     }
 
     @Test
-    public void registerUserTestAccountAlreadyExists() {
-        String login = "login";
+    public void registerAccountTestEmailAlreadyExists() {
+        String username = "username";
         String password = "password";
         String email = "mail@mail.com";
-        Account account = new Account(1, login, DEFAULT_HASH, email, AccountType.USER,
+        Account account = new Account(1, username, DEFAULT_HASH, email, AccountType.USER,
                 0, true, false, "salt", null);
         try {
             when(accountDao.findAccountByEmail(email)).thenReturn(account);
-        } catch (PersistenceException e) {
-            fail("Unexpected PersistenceException", e);
-        }
-        try {
-            boolean result = registrationService.registerAccount(login, password, email);
+            when(accountDao.findAccountByUsername(username)).thenReturn(null);
 
-            Assert.assertFalse(result);
+            RegistrationService.RegistrationResult result = registrationService.registerAccount(username, password, email);
+
+            verify(accountDao).findAccountByEmail(email);
+            Assert.assertEquals(result, RegistrationService.RegistrationResult.EMAIL_EXISTS);
         } catch (ServiceException e) {
             fail("Unexpected ServiceException", e);
+        } catch (PersistenceException e) {
+            fail("Unexpected PersistenceException", e);
         }
     }
 
     @Test
-    public void registerUserTestPersistenceExceptionThrown() {
-        String login = "login";
+    public void registerAccountTestUsernameAlreadyExists() {
+        String username = "username";
         String password = "password";
         String email = "mail@mail.com";
-        Account account = new Account(1, login, DEFAULT_HASH, email, AccountType.USER,
+        Account account = new Account(1, username, DEFAULT_HASH, email, AccountType.USER,
                 0, true, false, "salt", null);
         try {
-            when(accountDao.findAccountByEmail(email)).thenThrow(new PersistenceException());
+            when(accountDao.findAccountByEmail(email)).thenReturn(null);
+            when(accountDao.findAccountByUsername(username)).thenReturn(account);
+
+            RegistrationService.RegistrationResult result = registrationService.registerAccount(username, password, email);
+
+            verify(accountDao).findAccountByUsername(username);
+            Assert.assertEquals(result, RegistrationService.RegistrationResult.USERNAME_EXISTS);
+        } catch (ServiceException e) {
+            fail("Unexpected ServiceException", e);
         } catch (PersistenceException e) {
             fail("Unexpected PersistenceException", e);
         }
-        try {
-            boolean result = registrationService.registerAccount(login, password, email);
+    }
 
-            Assert.assertFalse(result);
+    @Test
+    public void registerAccountTestCouldNotAddAccountToTheDatabase() {
+        String username = "username";
+        String password = "password";
+        String email = "mail@mail.com";
+        try {
+            when(accountDao.findAccountByEmail(email)).thenReturn(null);
+            when(accountDao.findAccountByUsername(username)).thenReturn(null);
+            when(accountDao.create(anyObject())).thenReturn(false);
+
+            RegistrationService.RegistrationResult result = registrationService.registerAccount(username, password, email);
+
+            verify((accountDao)).create(anyObject());
+            Assert.assertEquals(result, RegistrationService.RegistrationResult.CANNOT_CREATE_ACCOUNT_IN_DATABASE);
         } catch (ServiceException e) {
             fail("Unexpected ServiceException", e);
+        } catch (PersistenceException e) {
+            fail("Unexpected PersistenceException", e);
         }
     }
 
     @Test(expectedExceptions = ServiceException.class)
-    public void registerUserTestPersistenceExceptionThrownBeforeTransaction() throws ServiceException {
-        String login = "login";
+    public void registerAccountTestPersistenceExceptionThrown() throws ServiceException {
+        String username = "username";
+        String password = "password";
+        String email = "mail@mail.com";
+        try {
+            when(accountDao.findAccountByEmail(email)).thenThrow(new PersistenceException());
+            when(accountDao.findAccountByUsername(username)).thenReturn(null);
+            when(accountDao.create(anyObject())).thenReturn(true);
+        } catch (PersistenceException e) {
+            fail("Unexpected PersistenceException", e);
+        }
+        registrationService.registerAccount(username, password, email);
+    }
+
+    @Test(expectedExceptions = ServiceException.class)
+    public void registerAccountTestPersistenceExceptionThrownBeforeTransaction() throws ServiceException {
+        String username = "username";
         String password = "password";
         String email = "mail@mail.com";
         try {
             doThrow(new PersistenceException()).when(connectionManager).disableAutoCommit();
         } catch (PersistenceException e) {
-            e.printStackTrace();
+            fail("Unexpected PersistenceException while arranging");
         }
-        registrationService.registerAccount(login, password, email);
+        registrationService.registerAccount(username, password, email);
     }
 }

@@ -10,6 +10,7 @@ import com.epam.finaltask.entity.Account;
 import com.epam.finaltask.entity.AccountType;
 import com.epam.finaltask.entity.Message;
 import com.epam.finaltask.entity.Topic;
+import com.epam.finaltask.validation.TextValidator;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
@@ -153,7 +154,8 @@ public class MessageService extends AbstractService {
             logger.log(Level.WARN, "cannot create message in topic id=" + topicId + " because text is null or blank");
             return false;
         }
-        if (text.length() > 256) {
+        TextValidator textValidator = new TextValidator();
+        if (!textValidator.validate(text,256)) {
             logger.log(Level.WARN, "cannot create message in topic id=" + topicId + " because text more than 256 characters long");
             return false;
         }
