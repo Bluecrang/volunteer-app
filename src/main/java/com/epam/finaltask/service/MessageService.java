@@ -7,7 +7,6 @@ import com.epam.finaltask.dao.MessageDao;
 import com.epam.finaltask.dao.impl.AbstractConnectionManager;
 import com.epam.finaltask.dao.impl.PersistenceException;
 import com.epam.finaltask.entity.Account;
-import com.epam.finaltask.entity.AccountType;
 import com.epam.finaltask.entity.Message;
 import com.epam.finaltask.entity.Topic;
 import com.epam.finaltask.validation.TextValidator;
@@ -161,7 +160,7 @@ public class MessageService extends AbstractService {
         }
         try (AbstractConnectionManager connectionManager = connectionManagerFactory.createConnectionManager()) {
             Message message = new Message();
-            message.setMessage(text);
+            message.setText(text);
             message.setAccount(account);
             message.setTopic(new Topic(topicId));
             MessageDao messageDao = daoFactory.createMessageDao(connectionManager);

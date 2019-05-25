@@ -4,13 +4,40 @@ package com.epam.finaltask.entity;
  * Account entity.
  */
 public class Account extends Entity {
+
+    /**
+     * Id of the account.
+     */
     private long accountId;
+
+    /**
+     * Account's username.
+     */
     private String username;
+
+    /**
+     * Account's password hash.
+     */
     private String passwordHash;
+
+    /**
+     * Account's email.
+     */
     private String email;
+
+    /**
+     * Type of the account.
+     */
     private AccountType accountType;
+
+    /**
+     * Account's rating.
+     */
     private int rating;
-    private boolean verified;
+
+    /**
+     * Flag which tells if account is blocked.
+     */
     private boolean blocked;
     /**
      * Salt which is used for hashing.
@@ -29,27 +56,25 @@ public class Account extends Entity {
     }
 
     public Account(String username, String passwordHash, String email, AccountType accountType,
-                   int rating, boolean verified, boolean blocked, String salt, String avatarBase64) {
+                   int rating, boolean blocked, String salt, String avatarBase64) {
         this.username = username;
         this.passwordHash = passwordHash;
         this.email = email;
         this.accountType = accountType;
         this.rating = rating;
-        this.verified = verified;
         this.blocked = blocked;
         this.salt = salt;
         this.avatarBase64 = avatarBase64;
     }
 
     public Account(long accountId, String username, String passwordHash, String email, AccountType accountType,
-                   int rating, boolean verified, boolean blocked, String salt, String avatarBase64) {
+                   int rating, boolean blocked, String salt, String avatarBase64) {
         this.accountId = accountId;
         this.username = username;
         this.passwordHash = passwordHash;
         this.email = email;
         this.accountType = accountType;
         this.rating = rating;
-        this.verified = verified;
         this.blocked = blocked;
         this.salt = salt;
         this.avatarBase64 = avatarBase64;
@@ -103,14 +128,6 @@ public class Account extends Entity {
         this.rating = rating;
     }
 
-    public boolean isVerified() {
-        return verified;
-    }
-
-    public void setVerified(boolean verified) {
-        this.verified = verified;
-    }
-
     public boolean isBlocked() {
         return blocked;
     }
@@ -144,7 +161,6 @@ public class Account extends Entity {
 
         if (accountId != account.accountId) return false;
         if (rating != account.rating) return false;
-        if (verified != account.verified) return false;
         if (blocked != account.blocked) return false;
         if (username != null ? !username.equals(account.username) : account.username != null) return false;
         if (passwordHash != null ? !passwordHash.equals(account.passwordHash) : account.passwordHash != null)
@@ -163,7 +179,6 @@ public class Account extends Entity {
         result = 31 * result + (email != null ? email.hashCode() : 0);
         result = 31 * result + (accountType != null ? accountType.hashCode() : 0);
         result = 31 * result + rating;
-        result = 31 * result + (verified ? 1 : 0);
         result = 31 * result + (blocked ? 1 : 0);
         result = 31 * result + (salt != null ? salt.hashCode() : 0);
         result = 31 * result + (avatarBase64 != null ? avatarBase64.hashCode() : 0);
@@ -179,7 +194,6 @@ public class Account extends Entity {
         sb.append(", email='").append(email).append('\'');
         sb.append(", accountType=").append(accountType);
         sb.append(", rating=").append(rating);
-        sb.append(", verified=").append(verified);
         sb.append(", blocked=").append(blocked);
         sb.append(", salt='").append(salt).append('\'');
         sb.append(", avatarBase64='").append(avatarBase64).append('\'');

@@ -56,7 +56,7 @@ public class AccountServiceTest {
         String hash2 = "hash2";
         String email2 = "email2@mail.com";
         Account account = new Account(accountId, username2, hash2,
-                email2, AccountType.USER, 0, true, false, "salt", null);
+                email2, AccountType.USER, 0, false, "salt", null);
         try {
             when(accountDao.findEntityById(accountId)).thenReturn(account);
             AccountDao updater = mock(AccountDao.class);
@@ -112,7 +112,7 @@ public class AccountServiceTest {
         String hash2 = "hash2";
         String email2 = "email2@mail.com";
         Account account = new Account(accountId, username2, hash2,
-                email2, AccountType.USER, 0, true, false, "salt", null);
+                email2, AccountType.USER, 0, false, "salt", null);
         try {
             AccountDao accountDao2 = mock(AccountDao.class);
             when(accountDao2.findEntityById(accountId)).thenReturn(account);
@@ -151,7 +151,7 @@ public class AccountServiceTest {
         String hash = "hash";
         String email = "email@mail.com";
         Account account = new Account(1, username, hash,
-                email, AccountType.ADMIN, 0, true, false, "salt", null);
+                email, AccountType.ADMIN, 0, false, "salt", null);
         try {
             when(accountDao.findEntityById(1)).thenReturn(account);
             when(accountDao.update(account)).thenReturn(1);
@@ -180,7 +180,7 @@ public class AccountServiceTest {
         String hash = "hash";
         String email = "email@mail.com";
         Account account = new Account(1, username, hash,
-                email, AccountType.ADMIN, 0, true, false, "salt", null);
+                email, AccountType.ADMIN, 0, false, "salt", null);
         try {
             when(accountDao.findEntityById(1)).thenReturn(account);
             when(accountDao.update(account)).thenReturn(1);
@@ -203,7 +203,7 @@ public class AccountServiceTest {
         String hash = "hash";
         String email = "email@mail.com";
         Account account = new Account(1, username, hash,
-                email, AccountType.ADMIN, 0, true, false, "salt", null);
+                email, AccountType.ADMIN, 0, false, "salt", null);
         try {
             AccountDao accountDao2 = mock(AccountDao.class);
             when(daoFactory.createAccountDao(connectionManager)).thenReturn(accountDao2, accountDao);
@@ -227,7 +227,7 @@ public class AccountServiceTest {
         String hash = "hash";
         String email = "email@mail.com";
         Account account = new Account(1, username, hash,
-                email, AccountType.ADMIN, 0, true, false, "salt", null);
+                email, AccountType.ADMIN, 0, false, "salt", null);
         try {
             doThrow(new PersistenceException()).when(connectionManagerFactory).createConnectionManager();
         } catch (PersistenceException e) {
@@ -256,7 +256,7 @@ public class AccountServiceTest {
         String hash = "hash";
         String email = "email@mail.com";
         Account account = new Account(1, username, hash,
-                email, AccountType.ADMIN, 0, true, false, "salt", null);
+                email, AccountType.ADMIN, 0, false, "salt", null);
         try {
             boolean result = accountService.updateAvatar(account, part);
 
@@ -274,7 +274,7 @@ public class AccountServiceTest {
         String hash = "hash";
         String email = "email@mail.com";
         Account account = new Account(1, username, hash,
-                email, AccountType.ADMIN, 0, true, false, "salt", null);
+                email, AccountType.ADMIN, 0, false, "salt", null);
         try {
             boolean result = accountService.updateAvatar(account, part);
 
@@ -292,7 +292,7 @@ public class AccountServiceTest {
         String hash = "hash2";
         String email = "email2@mail.com";
         Account account = new Account(accountId, username, hash,
-                email, AccountType.USER, 0, true, false, "salt", null);
+                email, AccountType.USER, 0, false, "salt", null);
         try {
             when(accountDao.findEntityById(accountId)).thenReturn(account);
             AccountDao updater = mock(AccountDao.class);
@@ -348,7 +348,7 @@ public class AccountServiceTest {
         String hash = "hash2";
         String email = "email2@mail.com";
         Account account = new Account(accountId, username, hash,
-                email, AccountType.USER, 0, true, false, "salt", null);
+                email, AccountType.USER, 0, false, "salt", null);
         try {
             when(accountDao.findEntityById(accountId)).thenReturn(account);
             AccountDao updater = mock(AccountDao.class);
@@ -404,7 +404,7 @@ public class AccountServiceTest {
         try {
             List<Account> expected = new ArrayList<>();
             expected.add(new Account(accountId, "username", "hash",
-                    "email", AccountType.ADMIN, 0, true, false, "salt", null));
+                    "email", AccountType.ADMIN, 0, false, "salt", null));
             when(accountDao.findPageAccountsSortByRating(page, numberOfAccountsPerPage)).thenReturn(new ArrayList<>(expected));
             
             List<Account> accountList = accountService.findRatingPageAccounts(page, numberOfAccountsPerPage);
@@ -439,7 +439,7 @@ public class AccountServiceTest {
         long accountId = 2;
         try {
             Account userAccount = new Account(accountId, username, hash,
-                    email, AccountType.USER, 0, true, false, "salt", null);
+                    email, AccountType.USER, 0, false, "salt", null);
             AccountDao accountDao2 = mock(AccountDao.class);
             when(daoFactory.createAccountDao(connectionManager)).thenReturn(accountDao2, accountDao);
             when(accountDao2.findEntityById(accountId)).thenReturn(userAccount);
@@ -464,7 +464,7 @@ public class AccountServiceTest {
         long accountId = 2;
         try {
             Account userAccount = new Account(accountId, username, hash,
-                    email, AccountType.USER, 0, true, false, "salt", null);
+                    email, AccountType.USER, 0, false, "salt", null);
             AccountDao accountDao2 = mock(AccountDao.class);
             when(daoFactory.createAccountDao(connectionManager)).thenReturn(accountDao2, accountDao);
             when(accountDao2.findEntityById(accountId)).thenReturn(userAccount);
@@ -508,7 +508,7 @@ public class AccountServiceTest {
         long accountId = 2;
         try {
             Account userAccount = new Account(accountId, username, hash,
-                    email, AccountType.USER, 0, true, false, "salt", null);
+                    email, AccountType.USER, 0, false, "salt", null);
             AccountDao accountDao2 = mock(AccountDao.class);
             when(daoFactory.createAccountDao(connectionManager)).thenReturn(accountDao2, accountDao);
             when(accountDao2.findEntityById(accountId)).thenReturn(userAccount);

@@ -42,7 +42,7 @@ public class AccountDaoImplTest {
     @BeforeMethod
     public void initBeforeMethod() {
         account = new Account(BEFORE_METHOD_ACCOUNT_USERNAME, "PASS", BEFORE_METHOD_ACCOUNT_MAIL, AccountType.USER,
-        0, true, false, "salt", null);
+        0, false, "salt", null);
     }
 
     @AfterMethod
@@ -99,7 +99,7 @@ public class AccountDaoImplTest {
         try {
             accountDao.create(account);
             Account accountAdmin = new Account("name3", "PAS", "mail@ma.ru", AccountType.ADMIN,
-                    10, true, false, "s", null);
+                    10, false, "s", null);
             accountDao.create(accountAdmin);
 
             List<Account> actual = accountDao.findAllByAccountType(AccountType.ADMIN);

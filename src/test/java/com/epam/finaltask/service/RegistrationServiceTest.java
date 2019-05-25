@@ -107,7 +107,7 @@ public class RegistrationServiceTest {
         String password = "password";
         String email = "mail@mail.com";
         Account account = new Account(1, username, DEFAULT_HASH, email, AccountType.USER,
-                0, true, false, "salt", null);
+                0, false, "salt", null);
         try {
             when(accountDao.findAccountByEmail(email)).thenReturn(account);
             when(accountDao.findAccountByUsername(username)).thenReturn(null);
@@ -129,7 +129,7 @@ public class RegistrationServiceTest {
         String password = "password";
         String email = "mail@mail.com";
         Account account = new Account(1, username, DEFAULT_HASH, email, AccountType.USER,
-                0, true, false, "salt", null);
+                0, false, "salt", null);
         try {
             when(accountDao.findAccountByEmail(email)).thenReturn(null);
             when(accountDao.findAccountByUsername(username)).thenReturn(account);

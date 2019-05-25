@@ -138,7 +138,7 @@ public class MessageDaoImplTest {
 
             Message actual = messageDao.findEntityById(messageByTopicId.getMessageId());
 
-            Assert.assertEquals(actual.getMessage(), messageByTopicId.getMessage());
+            Assert.assertEquals(actual.getText(), messageByTopicId.getText());
         } catch (PersistenceException e) {
             fail("Unexpected PersistenceException", e);
         }
@@ -160,7 +160,7 @@ public class MessageDaoImplTest {
         try {
             messageDao.create(message);
             Message messageToUpdate = messageDao.findMessagesByTopicId(1).get(0);
-            messageToUpdate.setMessage("changed");
+            messageToUpdate.setText("changed");
             System.out.println(messageToUpdate);
             int actual = messageDao.update(messageToUpdate);
 

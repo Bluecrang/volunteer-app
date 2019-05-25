@@ -55,7 +55,7 @@ public class TopicServiceTest {
         String hash = "hash";
         String email = "email@mail.com";
         Account account = new Account(1, login, hash,
-                email, AccountType.USER, 0, true, false, "salt", null);
+                email, AccountType.USER, 0, false, "salt", null);
         return new Object[][] {
                 {null, "title", "text"},
                 {account, "title", ""},
@@ -71,7 +71,7 @@ public class TopicServiceTest {
         String hash = "hash";
         String email = "email@mail.com";
         Account account = new Account(1, username, hash,
-                email, AccountType.USER, 0, true, false, "salt", null);
+                email, AccountType.USER, 0, false, "salt", null);
         try {
             when(topicDao.createWithGeneratedDate(anyObject())).thenReturn(true);
 
@@ -104,7 +104,7 @@ public class TopicServiceTest {
         String hash = "hash";
         String email = "email@mail.com";
         Account account = new Account(1, username, hash,
-                email, AccountType.USER, 0, true, false, "salt", null);
+                email, AccountType.USER, 0, false, "salt", null);
         try {
             when(topicDao.createWithGeneratedDate(anyObject())).thenReturn(false);
 
@@ -125,7 +125,7 @@ public class TopicServiceTest {
         String hash = "hash";
         String email = "email@mail.com";
         Account account = new Account(1, username, hash,
-                email, AccountType.USER, 0, true, false, "salt", null);
+                email, AccountType.USER, 0, false, "salt", null);
         try {
             when(topicDao.createWithGeneratedDate(anyObject())).thenThrow(new PersistenceException());
 

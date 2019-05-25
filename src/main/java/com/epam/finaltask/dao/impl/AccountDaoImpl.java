@@ -19,36 +19,36 @@ import java.util.List;
 class AccountDaoImpl extends AbstractDao<Account> implements AccountDao {
 
     private static final String FIND_ALL_ACCOUNTS = "SELECT acc.account_id, acc.username, acc.password, acc.email, " +
-            "acc_type.type, acc.rating, acc.verified, acc.blocked, acc.salt, acc.avatar " +
+            "acc_type.type, acc.rating, acc.blocked, acc.salt, acc.avatar " +
             "FROM account acc INNER JOIN account_type acc_type on acc.account_type_id = acc_type.account_type_id";
     private static final String FIND_ACCOUNT_BY_ID = "SELECT acc.account_id, acc.username, acc.password, acc.email, " +
-            "acc_type.type, acc.rating, acc.verified, acc.blocked, acc.salt, acc.avatar " +
+            "acc_type.type, acc.rating, acc.blocked, acc.salt, acc.avatar " +
             "FROM account acc INNER JOIN account_type acc_type on acc.account_type_id = acc_type.account_type_id " +
             "WHERE acc.account_id = ?";
     private static final String FIND_ACCOUNT_BY_USERNAME = "SELECT acc.account_id, acc.username, acc.password, acc.email, " +
-            "acc_type.type, acc.rating, acc.verified, acc.blocked, acc.salt, acc.avatar " +
+            "acc_type.type, acc.rating, acc.blocked, acc.salt, acc.avatar " +
             "FROM account acc INNER JOIN account_type acc_type on acc.account_type_id = acc_type.account_type_id " +
             "WHERE acc.username = ?";
     private static final String FIND_ACCOUNT_BY_EMAIL = "SELECT acc.account_id, acc.username, acc.password, acc.email, " +
-            "acc_type.type, acc.rating, acc.verified, acc.blocked, acc.salt, acc.avatar " +
+            "acc_type.type, acc.rating, acc.blocked, acc.salt, acc.avatar " +
             "FROM account acc INNER JOIN account_type acc_type on acc.account_type_id = acc_type.account_type_id " +
             "WHERE acc.email = ?";
     private static final String INSERT_ACCOUNT = "INSERT INTO account(username, password, email, account_type_id, rating, " +
-            "verified, blocked, salt, avatar) " +
-            "VALUES(?,?,?,(SELECT account_type_id FROM account_type WHERE type = ?),?,?,?,?,?)";
+            "blocked, salt, avatar) " +
+            "VALUES(?,?,?,(SELECT account_type_id FROM account_type WHERE type = ?),?,?,?,?)";
     private static final String DELETE_ACCOUNT_BY_ID = "DELETE FROM account where account_id = ?";
     private static final String UPDATE_ACCOUNT_BY_ID = "UPDATE account " +
             "SET username = ?, password = ?, email = ?, account_type_id = (SELECT account_type_id FROM account_type WHERE type = ?), " +
-            "rating = ?, verified = ?, blocked = ?, salt = ?, avatar = ? " +
+            "rating = ?, blocked = ?, salt = ?, avatar = ? " +
             "WHERE account_id = ?";
     private static final String FIND_ACCOUNTS_IN_RANGE_SORT_BY_RATING = "SELECT acc.account_id, acc.username, acc.password, acc.email, " +
-            "acc_type.type, acc.rating, acc.verified, acc.blocked, acc.salt, acc.avatar " +
+            "acc_type.type, acc.rating, acc.blocked, acc.salt, acc.avatar " +
             "FROM account acc INNER JOIN account_type acc_type on acc.account_type_id = acc_type.account_type_id " +
             "ORDER BY acc.rating DESC " +
             "LIMIT ? OFFSET ?";
     private static final String FIND_ACCOUNT_COUNT = "SELECT COUNT(account_id) FROM account";
     private static final String FIND_ALL_BY_ACCOUNT_TYPE = "SELECT acc.account_id, acc.username, acc.password, acc.email, " +
-            "acc_type.type, acc.rating, acc.verified, acc.blocked, acc.salt, acc.avatar " +
+            "acc_type.type, acc.rating, acc.blocked, acc.salt, acc.avatar " +
             "FROM account acc INNER JOIN account_type acc_type on acc.account_type_id = acc_type.account_type_id " +
             "WHERE acc_type.type = ?";
 
@@ -237,14 +237,13 @@ class AccountDaoImpl extends AbstractDao<Account> implements AccountDao {
             statement.setString(3, entity.getEmail());
             statement.setString(4, entity.getAccountType().name());
             statement.setInt(5, entity.getRating());
-            statement.setBoolean(6, entity.isVerified());
-            statement.setBoolean(7, entity.isBlocked());
-            statement.setString(8, entity.getSalt());
+            statement.setBoolean(6, entity.isBlocked());
+            statement.setString(7, entity.getSalt());
             byte[] avatar = Base64.decodeBase64(entity.getAvatarBase64());
             if (avatar != null) {
-                statement.setBlob(9, new SerialBlob(avatar));
+                statement.setBlob(8, new SerialBlob(avatar));
             } else {
-                statement.setNull(9, Types.BLOB);
+                statement.setNull(8, Types.BLOB);
             }
             int result = statement.executeUpdate();
             return result == 1;
@@ -270,16 +269,15 @@ class AccountDaoImpl extends AbstractDao<Account> implements AccountDao {
             statement.setString(3, entity.getEmail());
             statement.setString(4, entity.getAccountType().name());
             statement.setInt(5,entity.getRating());
-            statement.setBoolean(6, entity.isVerified());
-            statement.setBoolean(7, entity.isBlocked());
-            statement.setString(8, entity.getSalt());
+            statement.setBoolean(6, entity.isBlocked());
+            statement.setString(7, entity.getSalt());
             byte[] avatar = Base64.decodeBase64(entity.getAvatarBase64());
             if (avatar != null) {
-                statement.setBlob(9, new SerialBlob(avatar));
+                statement.setBlob(8, new SerialBlob(avatar));
             } else {
-                statement.setNull(9, Types.BLOB);
+                statement.setNull(8, Types.BLOB);
             }
-            statement.setLong(10, entity.getAccountId());
+            statement.setLong(9, entity.getAccountId());
             return statement.executeUpdate();
         } catch (SQLException e) {
             throw new PersistenceException("SQLException while updating", e);
@@ -299,10 +297,9 @@ class AccountDaoImpl extends AbstractDao<Account> implements AccountDao {
         String email = resultSet.getString(4);
         String accountType = resultSet.getString(5);
         int rating = resultSet.getInt(6);
-        boolean verified = resultSet.getBoolean(7);
-        boolean blocked = resultSet.getBoolean(8);
-        String salt = resultSet.getString(9);
-        byte[] avatar = resultSet.getBytes(10);
+        boolean blocked = resultSet.getBoolean(7);
+        String salt = resultSet.getString(8);
+        byte[] avatar = resultSet.getBytes(9);
         String avatarBase64;
         if (avatar != null) {
             avatarBase64 = Base64.encodeBase64String(avatar);
@@ -310,6 +307,6 @@ class AccountDaoImpl extends AbstractDao<Account> implements AccountDao {
             avatarBase64 = null;
         }
         return new Account(accountId, username, passwordHash, email, AccountType.valueOf(accountType.toUpperCase()),
-                rating, verified, blocked, salt, avatarBase64);
+                rating, blocked, salt, avatarBase64);
     }
 }

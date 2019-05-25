@@ -58,7 +58,7 @@ public class AuthenticationServiceTest {
         when(hashGenerator.hash(eq(password), eq(DEFAULT_SALT), anyString())).thenReturn(DEFAULT_HASH);
         try {
             when(accountDao.findAccountByEmail(email)).thenReturn(new Account(1, email, DEFAULT_HASH,
-                    "email@mail.com", AccountType.USER, 0, true, false, DEFAULT_SALT, null));
+                    "email@mail.com", AccountType.USER, 0, false, DEFAULT_SALT, null));
             Account result = authenticationService.authenticate(email, password);
 
             verify(accountDao).findAccountByEmail(email);
@@ -113,7 +113,7 @@ public class AuthenticationServiceTest {
         when(hashGenerator.hash(eq(password), eq(DEFAULT_SALT), anyString())).thenReturn("other_hash");
         try {
             when(accountDao.findAccountByEmail(email)).thenReturn(new Account(1, email, DEFAULT_HASH,
-                    "email@mail.com", AccountType.USER, 0, true, false, DEFAULT_SALT, null));
+                    "email@mail.com", AccountType.USER, 0, false, DEFAULT_SALT, null));
 
             Account result = authenticationService.authenticate(email, password);
 

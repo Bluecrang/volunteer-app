@@ -51,7 +51,7 @@
                                 <strong><a href="${pageContext.request.contextPath}/controller?account_id=${message.account.accountId}&command=show_profile"><c:out value="${message.account.username}"/></a></strong>
                                 <p class="float-right text-muted"><c:out value="${message.date}"/></p>
                             </div>
-                            <p><c:out value="${message.message}"/></p>
+                            <p><c:out value="${message.text}"/></p>
                         </div>
                     </div>
                     <c:if test="${not empty account && account.accountType == 'ADMIN'}">

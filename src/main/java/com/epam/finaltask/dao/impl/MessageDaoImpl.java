@@ -142,7 +142,7 @@ class MessageDaoImpl extends AbstractDao<Message> implements MessageDao {
         Connection connection = getConnection();
         try (PreparedStatement statement = connection.prepareStatement(INSERT_MESSAGE_GENERATED_DATE)){
             Clob textClob = connection.createClob();
-            textClob.setString(1, entity.getMessage());
+            textClob.setString(1, entity.getText());
             statement.setClob(1, textClob);
             Account account = entity.getAccount();
             if (account == null) {
@@ -250,7 +250,7 @@ class MessageDaoImpl extends AbstractDao<Message> implements MessageDao {
         Connection connection = getConnection();
         try (PreparedStatement statement = connection.prepareStatement(INSERT_MESSAGE)){
             Clob textClob = connection.createClob();
-            textClob.setString(1, entity.getMessage());
+            textClob.setString(1, entity.getText());
             statement.setClob(1, textClob);
             Account account = entity.getAccount();
             if (account == null) {
@@ -285,7 +285,7 @@ class MessageDaoImpl extends AbstractDao<Message> implements MessageDao {
         Connection connection = getConnection();
         try (PreparedStatement statement = connection.prepareStatement(UPDATE_MESSAGE_BY_ID)){
             Clob textClob = connection.createClob();
-            textClob.setString(1, entity.getMessage());
+            textClob.setString(1, entity.getText());
             statement.setClob(1, textClob);
             Account account = entity.getAccount();
             if (account == null) {

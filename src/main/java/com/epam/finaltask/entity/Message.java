@@ -6,8 +6,16 @@ import java.time.LocalDateTime;
  * Message entity.
  */
 public class Message extends Entity {
+
+    /**
+     * Id of the message.
+     */
     private long messageId;
-    private String message;
+
+    /**
+     * Text of the message;
+     */
+    private String text;
     /**
      * Account of the message author.
      */
@@ -24,16 +32,16 @@ public class Message extends Entity {
     public Message() {
     }
 
-    public Message(String message, Account account, LocalDateTime date, Topic topic) {
-        this.message = message;
+    public Message(String text, Account account, LocalDateTime date, Topic topic) {
+        this.text = text;
         this.account = account;
         this.date = date;
         this.topic = topic;
     }
 
-    public Message(long messageId, String message, Account account, LocalDateTime date, Topic topic) {
+    public Message(long messageId, String text, Account account, LocalDateTime date, Topic topic) {
         this.messageId = messageId;
-        this.message = message;
+        this.text = text;
         this.account = account;
         this.date = date;
         this.topic = topic;
@@ -47,12 +55,12 @@ public class Message extends Entity {
         this.messageId = messageId;
     }
 
-    public String getMessage() {
-        return message;
+    public String getText() {
+        return text;
     }
 
-    public void setMessage(String message) {
-        this.message = message;
+    public void setText(String text) {
+        this.text = text;
     }
 
     public Account getAccount() {
@@ -87,7 +95,7 @@ public class Message extends Entity {
         Message message1 = (Message) o;
 
         if (messageId != message1.messageId) return false;
-        if (message != null ? !message.equals(message1.message) : message1.message != null) return false;
+        if (text != null ? !text.equals(message1.text) : message1.text != null) return false;
         if (account != null ? !account.equals(message1.account) : message1.account != null) return false;
         if (date != null ? !date.equals(message1.date) : message1.date != null) return false;
         return topic != null ? topic.equals(message1.topic) : message1.topic == null;
@@ -96,7 +104,7 @@ public class Message extends Entity {
     @Override
     public int hashCode() {
         int result = (int) (messageId ^ (messageId >>> 32));
-        result = 31 * result + (message != null ? message.hashCode() : 0);
+        result = 31 * result + (text != null ? text.hashCode() : 0);
         result = 31 * result + (account != null ? account.hashCode() : 0);
         result = 31 * result + (date != null ? date.hashCode() : 0);
         result = 31 * result + (topic != null ? topic.hashCode() : 0);
@@ -107,7 +115,7 @@ public class Message extends Entity {
     public String toString() {
         final StringBuilder sb = new StringBuilder("Message{");
         sb.append("messageId=").append(messageId);
-        sb.append(", message='").append(message).append('\'');
+        sb.append(", text='").append(text).append('\'');
         sb.append(", account=").append(account);
         sb.append(", date=").append(date);
         sb.append(", topic=").append(topic);

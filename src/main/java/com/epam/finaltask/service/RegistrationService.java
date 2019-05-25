@@ -25,7 +25,7 @@ public class RegistrationService extends AbstractService {
 
     private static final int DEFAULT_RATING = 0;
     private static final boolean DEFAULT_BLOCKED = false;
-    private static final boolean DEFAULT_VERIFIED = false;
+
     /**
      * Factory which is used to generate password hashes.
      */
@@ -102,7 +102,7 @@ public class RegistrationService extends AbstractService {
                         String salt = saltGenerator.generateSalt();
                         String passwordHash = hashGenerator.hash(password, salt, ApplicationConstants.HASHING_ALGORITHM);
                         Account account = new Account(username, passwordHash, email, AccountType.USER, DEFAULT_RATING,
-                                DEFAULT_VERIFIED, DEFAULT_BLOCKED, salt, null);
+                                DEFAULT_BLOCKED, salt, null);
                         if (accountDao.create(account)) {
                             logger.log(Level.INFO, "account with email=" + email + " added to database");
                             connectionManager.commit();

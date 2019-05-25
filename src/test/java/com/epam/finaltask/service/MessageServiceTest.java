@@ -56,7 +56,7 @@ public class MessageServiceTest {
         String hash = "hash";
         String email = "email@mail.com";
         Account account = new Account(1, username, hash,
-                email, AccountType.USER, 0, true, false, "salt", null);
+                email, AccountType.USER, 0, false, "salt", null);
         StringBuilder tooLongStringBuilder = new StringBuilder();
         for (int i = 0; i < 257; i++) {
             tooLongStringBuilder.append("a");
@@ -75,7 +75,7 @@ public class MessageServiceTest {
         String hash = "hash";
         String email = "email@mail.com";
         Account account = new Account(1, username, hash,
-                email, AccountType.USER, 0, true, false, "salt", null);
+                email, AccountType.USER, 0, false, "salt", null);
         try {
             when(messageDao.createWithGeneratedDate(anyObject())).thenReturn(true);
 
@@ -107,7 +107,7 @@ public class MessageServiceTest {
         String hash = "hash";
         String email = "email@mail.com";
         Account account = new Account(1, username, hash,
-                email, AccountType.USER, 0, true, false, "salt", null);
+                email, AccountType.USER, 0, false, "salt", null);
         try {
             when(messageDao.createWithGeneratedDate(anyObject())).thenReturn(false);
 
@@ -130,7 +130,7 @@ public class MessageServiceTest {
         long topicId = 1;
         String text = "text";
         Account account = new Account(1, login, hash,
-                email, AccountType.ADMIN, 0, true, false, "salt", null);
+                email, AccountType.ADMIN, 0, false, "salt", null);
         try {
             doThrow(new PersistenceException()).when(connectionManagerFactory).createConnectionManager();
 
@@ -217,7 +217,7 @@ public class MessageServiceTest {
         int currentPage = 1;
         int numberOfMessagesPerPage = 3;
         Account account = new Account(accountId, login, hash,
-                email, AccountType.USER, 0, true, false, "salt", null);
+                email, AccountType.USER, 0, false, "salt", null);
         try {
             List<Message> messagesFromDao = new ArrayList<>();
             messagesFromDao.add(new Message(1,
