@@ -16,7 +16,7 @@ public enum CommandType {
             .buildHttpMethods(HttpMethodType.POST)
             .build())),
     LOGOUT(new LogoutCommand(CommandConstraints.builder()
-            .buildAccountTypes(AccountType.USER, AccountType.ADMIN)
+            .buildAccountTypes(AccountType.USER, AccountType.ADMIN, AccountType.VOLUNTEER)
             .buildHttpMethods(HttpMethodType.POST)
             .build())),
     SHOW_TOPICS(new ShowTopicsCommand(CommandConstraints.builder()
@@ -32,7 +32,7 @@ public enum CommandType {
             .buildHttpMethods(HttpMethodType.POST)
             .build())),
     CLOSE_TOPIC(new CloseTopicCommand(CommandConstraints.builder()
-            .buildAccountTypes(AccountType.ADMIN)
+            .buildAccountTypes(AccountType.ADMIN, AccountType.VOLUNTEER)
             .buildHttpMethods(HttpMethodType.POST)
             .build())),
     MOVE_TO_INDEX_PAGE(new MoveToIndexPageCommand(CommandConstraints.builder()
@@ -40,7 +40,7 @@ public enum CommandType {
             .buildHttpMethods(HttpMethodType.GET)
             .build())),
     CREATE_TOPIC(new CreateTopicCommand(CommandConstraints.builder()
-            .buildAccountTypes(AccountType.USER, AccountType.ADMIN)
+            .buildAccountTypes(AccountType.USER, AccountType.ADMIN, AccountType.VOLUNTEER)
             .buildHttpMethods(HttpMethodType.POST)
             .build())),
     SHOW_PROFILE(new ShowProfileCommand(CommandConstraints.builder()
@@ -48,7 +48,7 @@ public enum CommandType {
             .buildHttpMethods(HttpMethodType.GET)
             .build())),
     CREATE_MESSAGE(new CreateMessageCommand(CommandConstraints.builder()
-            .buildAccountTypes(AccountType.USER, AccountType.ADMIN)
+            .buildAccountTypes(AccountType.USER, AccountType.ADMIN, AccountType.VOLUNTEER)
             .buildHttpMethods(HttpMethodType.POST)
             .build())),
     DELETE_MESSAGE(new DeleteMessageCommand(CommandConstraints.builder()
@@ -71,7 +71,7 @@ public enum CommandType {
             .buildAccountTypes(AccountType.ADMIN)
             .buildHttpMethods(HttpMethodType.POST)
             .build())),
-    PROMOTE_USER_TO_ADMIN(new PromoteUserToAdminCommand(CommandConstraints.builder()
+    CHANGE_ACCOUNT_TYPE(new ChangeAccountTypeCommand(CommandConstraints.builder()
             .buildAccountTypes(AccountType.ADMIN)
             .buildHttpMethods(HttpMethodType.POST)
             .build())),

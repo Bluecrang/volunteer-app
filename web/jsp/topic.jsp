@@ -1,4 +1,4 @@
-<%@ page contentType="text/html;charset=UTF-8" %>
+<%@ page contentType="text/html;charset=UTF-8" pageEncoding="UTF-8" %>
 <%@taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt"%>
 <%@taglib prefix="cm" uri="customtags" %>
@@ -11,7 +11,7 @@
 <body>
     <div class="container align-content-center">
         <h4><c:out value="${topic.title}"/></h4>
-        <c:if test="${account.accountType == 'ADMIN' && not topic.closed}">
+        <c:if test="${(account.accountType == 'ADMIN' || account.accountType == 'VOLUNTEER') && !topic.closed}">
             <form class="my-2" method="post" id="close_topic" action="${pageContext.request.contextPath}/controller">
                 <input type="hidden" name="topic_id" value="${topic.topicId}"/>
                 <input type="hidden" name="command" value="close_topic"/>
@@ -67,7 +67,7 @@
             </c:forEach>
         </ul>
         <c:if test="${topic_current_page > 1}">
-            <a href="${pageContext.request.contextPath}/topic?topic_id=${topic.topicId}&page=${topic_current_page - 1}&command=show_topic_page">
+            <a href="${pageContext.request.contextPath}/controller?topic_id=${topic.topicId}&page=${topic_current_page - 1}&command=show_topic_page">
                 <fmt:message key="message.previous"/>
             </a>
         </c:if>
@@ -77,14 +77,14 @@
                     ${i}
                 </c:when>
                 <c:otherwise>
-                    <a href="${pageContext.request.contextPath}/topic?topic_id=${topic.topicId}&page=${i}&command=show_topic_page">
+                    <a href="${pageContext.request.contextPath}/controller?topic_id=${topic.topicId}&page=${i}&command=show_topic_page">
                             ${i}
                     </a>
                 </c:otherwise>
             </c:choose>
         </c:forEach>
         <c:if test="${topic_current_page < topic_number_of_pages}">
-            <a href="${pageContext.request.contextPath}/topic?topic_id=${topic.topicId}&page=${topic_current_page + 1}&command=show_topic_page">
+            <a href="${pageContext.request.contextPath}/controller?topic_id=${topic.topicId}&page=${topic_current_page + 1}&command=show_topic_page">
                 <fmt:message key="message.next"/>
             </a>
         </c:if>

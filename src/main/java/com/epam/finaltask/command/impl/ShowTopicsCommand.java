@@ -1,6 +1,8 @@
 package com.epam.finaltask.command.impl;
 
 import com.epam.finaltask.command.*;
+import com.epam.finaltask.entity.Account;
+import com.epam.finaltask.entity.AccountType;
 import com.epam.finaltask.entity.Topic;
 import com.epam.finaltask.service.ServiceException;
 import com.epam.finaltask.service.TopicService;
@@ -28,17 +30,33 @@ public class ShowTopicsCommand extends Command {
     @Override
     public CommandResult performAction(CommandData data) throws CommandException {
         CommandResult commandResult = new CommandResult();
+        commandResult.setPage(PageConstants.TOPICS_PAGE);
         commandResult.assignTransitionTypeForward();
         try {
+            Account sessionAccount = data.getSessionAccount();
+            if (sessionAccount == null || sessionAccount.getAccountType() == AccountType.GUEST) {
+                data.putRequestAttribute(ApplicationConstants.TOPICS_MESSAGE_ATTRIBUTE,
+                        ApplicationConstants.ACCOUNT_TYPE_GUEST_NOTIFICATION_KEY);
+                return commandResult;
+            }
+            AccountType sessionAccountType = sessionAccount.getAccountType();
+            long sessionAccountId = sessionAccount.getAccountId();
             TopicService service = new TopicService();
-            List<Topic> topicList = service.findAllTopics();
+            List<Topic> topicList;
+            if (sessionAccountType == AccountType.ADMIN ||
+                    sessionAccountType == AccountType.VOLUNTEER) {
+                topicList = service.findAllTopics();
+            } else {
+                topicList = service.findTopicsByAuthorId(sessionAccountId);
+            }
             logger.log(Level.DEBUG, "number of found topics: " + topicList.size());
             if (!topicList.isEmpty()) {
+                logger.log(Level.INFO, "topics list provided to account id=" + sessionAccountId);
                 data.putRequestAttribute(TOPIC_LIST_ATTRIBUTE, topicList);
             } else {
+                logger.log(Level.INFO, "no topics found for account id=" + sessionAccountId);
                 data.putRequestAttribute(ApplicationConstants.TOPICS_MESSAGE_ATTRIBUTE, NO_TOPICS);
             }
-            commandResult.setPage(PageConstants.TOPICS_PAGE);
         } catch (ServiceException e) {
             throw new CommandException("unable to show topics", e);
         }

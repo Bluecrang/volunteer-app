@@ -432,7 +432,7 @@ public class AccountServiceTest {
     }
 
     @Test
-    public void promoteUserToAdminTestValidParameters() {
+    public void changeAccountTypeTestValidParameters() {
         String username = "username2";
         String hash = "hash2";
         String email = "email2@gmail.com";
@@ -445,7 +445,7 @@ public class AccountServiceTest {
             when(accountDao2.findEntityById(accountId)).thenReturn(userAccount);
             when(accountDao.update(userAccount)).thenReturn(1);
 
-            boolean result = accountService.promoteUserToAdmin(accountId);
+            boolean result = accountService.changeAccountType(accountId, AccountType.ADMIN);
 
             verify((accountDao)).update(userAccount);
             Assert.assertTrue(result);
@@ -457,7 +457,7 @@ public class AccountServiceTest {
     }
 
     @Test
-    public void promoteUserToAdminTestNoUpdate() {
+    public void changeAccountTypeTestNoUpdate() {
         String username = "username2";
         String hash = "hash2";
         String email = "email2@gmail.com";
@@ -470,7 +470,7 @@ public class AccountServiceTest {
             when(accountDao2.findEntityById(accountId)).thenReturn(userAccount);
             when(accountDao.update(userAccount)).thenReturn(0);
 
-            boolean result = accountService.promoteUserToAdmin(accountId);
+            boolean result = accountService.changeAccountType(accountId, AccountType.ADMIN);
 
             verify(accountDao).update(userAccount);
             Assert.assertFalse(result);
@@ -482,14 +482,14 @@ public class AccountServiceTest {
     }
 
     @Test
-    public void promoteUserToAdminTestAccountNotFoundInDatabase() {
+    public void changeAccountTypeTestAccountNotFoundInDatabase() {
         long accountId = 2;
         try {
             AccountDao accountDao2 = mock(AccountDao.class);
             when(daoFactory.createAccountDao(connectionManager)).thenReturn(accountDao2, accountDao);
             when(accountDao2.findEntityById(accountId)).thenReturn(null);
 
-            boolean result = accountService.promoteUserToAdmin(accountId);
+            boolean result = accountService.changeAccountType(accountId, AccountType.ADMIN);
 
             verify(accountDao2).findEntityById(accountId);
             Assert.assertFalse(result);
@@ -501,7 +501,7 @@ public class AccountServiceTest {
     }
 
     @Test(expectedExceptions = ServiceException.class)
-    public void promoteUserToAdminTestPersistenceExceptionThrown() throws ServiceException {
+    public void changeAccountTypeTestPersistenceExceptionThrown() throws ServiceException {
         String username = "username2";
         String hash = "hash2";
         String email = "email2@gmail.com";
@@ -516,17 +516,17 @@ public class AccountServiceTest {
         } catch (PersistenceException e) {
             fail("Unexpected PersistenceException", e);
         }
-        accountService.promoteUserToAdmin(accountId);
+        accountService.changeAccountType(accountId, AccountType.ADMIN);
     }
 
     @Test(expectedExceptions = ServiceException.class)
-    public void promoteUserToAdminTestPersistenceExceptionThrownWhileCreatingConnectionManager() throws ServiceException {
+    public void changeAccountTypeTestPersistenceExceptionThrownWhileCreatingConnectionManager() throws ServiceException {
         long accountId = 2;
         try {
             doThrow(new PersistenceException()).when(connectionManagerFactory).createConnectionManager();
         } catch (PersistenceException e) {
             fail("Unexpected PersistenceException", e);
         }
-        accountService.promoteUserToAdmin(accountId);
+        accountService.changeAccountType(accountId, AccountType.ADMIN);
     }
 }

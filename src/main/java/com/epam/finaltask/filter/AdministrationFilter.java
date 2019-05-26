@@ -16,8 +16,7 @@ import java.io.IOException;
 /**
  * Filter that forbids access to the pages that only administrators should see for simple users.
  */
-@WebFilter(dispatcherTypes = {DispatcherType.FORWARD, DispatcherType.REQUEST},
-        filterName = "AdministrationFilter")
+@WebFilter(filterName = "AdministrationFilter", dispatcherTypes = {DispatcherType.FORWARD, DispatcherType.REQUEST})
 public class AdministrationFilter implements Filter {
 
     private static final Logger logger = LogManager.getLogger();

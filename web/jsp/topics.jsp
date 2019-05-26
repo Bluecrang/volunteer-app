@@ -53,7 +53,7 @@
             </c:forEach>
         </ul>
         <c:if test="${not empty account}">
-            <h4 class="text-center"><fmt:message key="topics.create_topic_header"/><h4/>
+            <h4 class="text-center"><fmt:message key="topics.create_topic_header"/></h4>
             <form method="post" id="create_topic" onsubmit="return validateTopicForm();" name="topic" action="${pageContext.request.contextPath}/controller">
                 <input type="hidden" name="command" value="create_topic"/>
                 <fmt:message key="topics.create_topic.topic_name"/><br/>

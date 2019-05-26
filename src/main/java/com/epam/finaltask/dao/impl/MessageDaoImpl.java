@@ -36,7 +36,7 @@ class MessageDaoImpl extends AbstractDao<Message> implements MessageDao {
      * Creates MessageDaoImpl using chosen connection manager.
      * @param connectionManager Connection manager that provides connection to the DAO
      */
-    public MessageDaoImpl(AbstractConnectionManager connectionManager) {
+    MessageDaoImpl(AbstractConnectionManager connectionManager) {
         super(connectionManager);
     }
 
@@ -83,6 +83,7 @@ class MessageDaoImpl extends AbstractDao<Message> implements MessageDao {
      * @return Topic message count
      * @throws PersistenceException If SQLException is thrown
      */
+    @Override
     public int countMessagesByTopicId(long topicId) throws PersistenceException {
         try (PreparedStatement preparedStatement = getConnection().prepareStatement(COUNT_MESSAGES_WITH_CHOSEN_TOPIC)) {
             preparedStatement.setLong(1, topicId);
@@ -103,6 +104,7 @@ class MessageDaoImpl extends AbstractDao<Message> implements MessageDao {
      * @return Messages found by topic id
      * @throws PersistenceException If SQLException or IOException is thrown
      */
+    @Override
     public List<Message> findMessagesByTopicId(long topicId) throws PersistenceException {
         List<Message> list = new LinkedList<>();
         try (PreparedStatement statement = getConnection().prepareStatement(FIND_MESSAGES_BY_TOPIC_ID)) {
@@ -135,6 +137,7 @@ class MessageDaoImpl extends AbstractDao<Message> implements MessageDao {
      * @return {@code true} if message was successfully added, else returns {@code false}
      * @throws PersistenceException if SQLException is thrown
      */
+    @Override
     public boolean createWithGeneratedDate(Message entity) throws PersistenceException {
         if (entity == null) {
             return false;

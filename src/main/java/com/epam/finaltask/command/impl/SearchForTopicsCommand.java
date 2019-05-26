@@ -1,6 +1,8 @@
 package com.epam.finaltask.command.impl;
 
 import com.epam.finaltask.command.*;
+import com.epam.finaltask.entity.Account;
+import com.epam.finaltask.entity.AccountType;
 import com.epam.finaltask.entity.Topic;
 import com.epam.finaltask.service.ServiceException;
 import com.epam.finaltask.service.TopicService;
@@ -10,6 +12,7 @@ import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -30,17 +33,23 @@ public class SearchForTopicsCommand extends Command {
     public CommandResult performAction(CommandData data) throws CommandException {
         CommandResult commandResult = new CommandResult();
         commandResult.assignTransitionTypeForward();
+        commandResult.setPage(PageConstants.TOPICS_PAGE);
         try {
+            Account sessionAccount = data.getSessionAccount();
+            if (sessionAccount == null || sessionAccount.getAccountType() == AccountType.GUEST) {
+                data.putRequestAttribute(ApplicationConstants.TOPICS_MESSAGE_ATTRIBUTE,
+                        ApplicationConstants.ACCOUNT_TYPE_GUEST_NOTIFICATION_KEY);
+                return commandResult;
+            }
             String regex = data.getRequestParameter(SEARCH_STRING_PARAMETER);
             TopicService service = new TopicService();
-            List<Topic> topicList = service.findTopicsByTitleSubstring(regex);
+            List<Topic> topicList = service.findTopicsByTitleSubstring(sessionAccount, regex);
             logger.log(Level.DEBUG, "number of found topics: " + topicList.size());
             if (!topicList.isEmpty()) {
                 data.putRequestAttribute(TOPIC_LIST_ATTRIBUTE, topicList);
             } else {
                 data.putRequestAttribute(ApplicationConstants.TOPICS_MESSAGE_ATTRIBUTE, NO_TOPICS_FOUND);
             }
-            commandResult.setPage(PageConstants.TOPICS_PAGE);
         } catch (ServiceException e) {
             throw new CommandException("unable to show topics", e);
         }

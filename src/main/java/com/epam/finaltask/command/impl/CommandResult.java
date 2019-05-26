@@ -10,7 +10,7 @@ public class CommandResult {
     /**
      * Page to move to.
      */
-    private String page = ApplicationConstants.SHOW_INDEX_PAGE;
+    private String page = ApplicationConstants.MOVE_TO_INDEX_PAGE;
     /**
      * Type of the transition.
      */
@@ -56,6 +56,8 @@ public class CommandResult {
     public void setPage(String page) {
         if (page != null) {
             this.page = page;
+        } else {
+            this.page = ApplicationConstants.MOVE_TO_INDEX_PAGE;
         }
     }
 

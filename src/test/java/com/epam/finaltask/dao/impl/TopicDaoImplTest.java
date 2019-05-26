@@ -69,10 +69,8 @@ public class TopicDaoImplTest {
     @Test
     public void createWithGeneratedDateTest() {
         try {
-            topicDao.createWithGeneratedDate(topic);
-            topic.setDate(null);
-            Topic actual = topicDao.findTopicByTitle(BEFORE_METHOD_TOPIC_TITLE);
-            Assert.assertNotNull(actual.getDate());
+            boolean result = topicDao.createWithGeneratedDate(topic);
+            Assert.assertTrue(result);
         } catch (PersistenceException e) {
             fail("Unexpected PersistenceException", e);
         }
@@ -99,12 +97,12 @@ public class TopicDaoImplTest {
     @Test
     public void findEntityByIdTest() {
         try {
+            long topicId = 1;
             topicDao.create(topic);
-            Topic topicByTitle = topicDao.findTopicByTitle(BEFORE_METHOD_TOPIC_TITLE);
 
-            Topic actual = topicDao.findEntityById(topicByTitle.getTopicId());
+            Topic actual = topicDao.findEntityById(1);
 
-            Assert.assertEquals(actual.getTopicId(), topicByTitle.getTopicId());
+            Assert.assertEquals(actual.getTopicId(), topicId);
         } catch (PersistenceException e) {
             fail("Unexpected PersistenceException", e);
         }
@@ -124,9 +122,10 @@ public class TopicDaoImplTest {
 
     @Test
     public void updateTest() {
+        long topicId = 1;
         try {
             topicDao.create(topic);
-            Topic topicToUpdate = topicDao.findTopicByTitle(BEFORE_METHOD_TOPIC_TITLE);
+            Topic topicToUpdate = topicDao.findEntityById(topicId);
             topicToUpdate.setText("text2");
 
             int actual = topicDao.update(topicToUpdate);

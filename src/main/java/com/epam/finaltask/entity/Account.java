@@ -28,7 +28,7 @@ public class Account extends Entity {
     /**
      * Type of the account.
      */
-    private AccountType accountType;
+    private AccountType accountType = AccountType.GUEST;
 
     /**
      * Account's rating.
@@ -117,7 +117,11 @@ public class Account extends Entity {
     }
 
     public void setAccountType(AccountType accountType) {
-        this.accountType = accountType;
+        if (accountType != null) {
+            this.accountType = accountType;
+        } else {
+            this.accountType = AccountType.GUEST;
+        }
     }
 
     public int getRating() {

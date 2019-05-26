@@ -21,8 +21,8 @@ class TopicDaoImpl extends AbstractDao<Topic> implements TopicDao {
             "FROM topic";
     private static final String FIND_TOPIC_BY_ID = "SELECT closed, title, text, date_posted, account_id, hidden " +
             "FROM topic WHERE topic_id = ?";
-    private static final String FIND_TOPIC_BY_TITLE = "SELECT topic_id, closed, text, date_posted, account_id, hidden " +
-            "FROM topic WHERE title = ?";
+    private static final String FIND_TOPICS_BY_ACCOUNT_ID = "SELECT topic_id, closed, title, text, date_posted, account_id, hidden " +
+            "FROM topic WHERE account_id = ?";
     private static final String INSERT_TOPIC = "INSERT INTO topic(closed, title, text, date_posted, account_id, hidden) " +
             "VALUES(?,?,?,?,?,?)";
     private static final String INSERT_TOPIC_GENERATED_CURRENT_DATE =
@@ -36,8 +36,23 @@ class TopicDaoImpl extends AbstractDao<Topic> implements TopicDao {
      * Creates TopicDaoImpl using chosen connectionManager
      * @param connectionManager Connection manager that provides connection to the DAO
      */
-    public TopicDaoImpl(AbstractConnectionManager connectionManager) {
+    TopicDaoImpl(AbstractConnectionManager connectionManager) {
         super(connectionManager);
+    }
+
+
+    @Override
+    public List<Topic> findTopicsByAccountId(long accountId) throws PersistenceException {
+        try (PreparedStatement statement = getConnection().prepareStatement(FIND_TOPICS_BY_ACCOUNT_ID)){
+            statement.setLong(1, accountId);
+            try (ResultSet resultSet = statement.executeQuery()) {
+                return constructTopicsFromResultSet(resultSet);
+            } catch (IOException e) {
+                throw new PersistenceException("IOException while working with clob reader", e);
+            }
+        } catch (SQLException e) {
+            throw new PersistenceException("SQLException while executing findAll", e);
+        }
     }
 
     /**
@@ -46,6 +61,7 @@ class TopicDaoImpl extends AbstractDao<Topic> implements TopicDao {
      * @return {@code true} if topic was successfully added, else returns {@code false}
      * @throws PersistenceException If SQLException is thrown
      */
+    @Override
     public boolean createWithGeneratedDate(Topic entity) throws PersistenceException {
         Connection connection = getConnection();
         try (PreparedStatement statement = connection.prepareStatement(INSERT_TOPIC_GENERATED_CURRENT_DATE)){
@@ -73,86 +89,21 @@ class TopicDaoImpl extends AbstractDao<Topic> implements TopicDao {
     }
 
     /**
-     * Finds topic by title.
-     * @param title Topic title
-     * @return Topic if it was found, else returns null
-     * @throws PersistenceException If SQLException or IOException is thrown
-     */
-    public Topic findTopicByTitle(String title) throws PersistenceException {
-        if (title == null) {
-            return null;
-        }
-        Topic topic = null;
-        try (PreparedStatement statement = getConnection().prepareStatement(FIND_TOPIC_BY_TITLE)){
-            statement.setString(1, title);
-            try (ResultSet resultSet = statement.executeQuery()) {
-                if (resultSet.next()) {
-                    long topicId = resultSet.getLong(1);
-                    boolean closed = resultSet.getBoolean(2);
-                    Clob textClob = resultSet.getClob(3);
-                    LocalDateTime date = resultSet.getObject(4, LocalDateTime.class);
-                    long accountId = resultSet.getLong(5);
-                    boolean hidden = resultSet.getBoolean(6);
-
-                    Account account = new Account(accountId);
-
-                    String text;
-                    try (Reader textReader = textClob.getCharacterStream()) {
-                        text = IOUtils.toString(textReader);
-                    }
-                    topic = new Topic(topicId, title, text, date, account, closed, hidden);
-                }
-            } catch (IOException e) {
-                throw new PersistenceException("IOException while working with clob reader", e);
-            }
-        } catch (SQLException e) {
-            throw new PersistenceException("SQLException while finding by title", e);
-        }
-        return topic;
-    }
-
-    /**
      * Finds all topics from the database.
      * @return All topics from the database
      * @throws PersistenceException If SQLException thrown
      */
     @Override
     public List<Topic> findAll() throws PersistenceException {
-        List<Topic> list = new LinkedList<>();
         try (PreparedStatement statement = getConnection().prepareStatement(FIND_ALL_TOPICS)){
             try (ResultSet resultSet = statement.executeQuery()) {
-                while (resultSet.next()) {
-                    long topicId = resultSet.getLong(1);
-                    boolean closed = resultSet.getBoolean(2);
-                    Clob titleClob = resultSet.getClob(3);
-                    Clob textClob = resultSet.getClob(4);
-                    LocalDateTime date = resultSet.getObject(5, LocalDateTime.class);
-                    long accountId = resultSet.getLong(6);
-                    boolean hidden = resultSet.getBoolean(7);
-
-                    Account account = new Account(accountId);
-
-                    String title;
-                    try (Reader titleReader = titleClob.getCharacterStream()) {
-                        title = IOUtils.toString(titleReader);
-                    }
-
-                    String text = null;
-                    if (textClob != null) {
-                        try (Reader textReader = textClob.getCharacterStream()) {
-                            text = IOUtils.toString(textReader);
-                        }
-                    }
-
-                    list.add(new Topic(topicId, title, text, date, account, closed, hidden));
-                }
+                return constructTopicsFromResultSet(resultSet);
             } catch (IOException e) {
                 throw new PersistenceException("IOException while working with clob reader", e);
             }
         } catch (SQLException e) {
             throw new PersistenceException("SQLException while executing findAll", e);
         }
-        return list;
     }
 
     /**
@@ -275,5 +226,35 @@ class TopicDaoImpl extends AbstractDao<Topic> implements TopicDao {
         } catch (SQLException e) {
             throw new PersistenceException("SQLException while updating", e);
         }
+    }
+
+    private List<Topic> constructTopicsFromResultSet(ResultSet resultSet) throws SQLException, IOException {
+        List<Topic> list = new LinkedList<>();
+        while (resultSet.next()) {
+            long topicId = resultSet.getLong(1);
+            boolean closed = resultSet.getBoolean(2);
+            Clob titleClob = resultSet.getClob(3);
+            Clob textClob = resultSet.getClob(4);
+            LocalDateTime date = resultSet.getObject(5, LocalDateTime.class);
+            long accountId = resultSet.getLong(6);
+            boolean hidden = resultSet.getBoolean(7);
+
+            Account account = new Account(accountId);
+
+            String title;
+            try (Reader titleReader = titleClob.getCharacterStream()) {
+                title = IOUtils.toString(titleReader);
+            }
+
+            String text = null;
+            if (textClob != null) {
+                try (Reader textReader = textClob.getCharacterStream()) {
+                    text = IOUtils.toString(textReader);
+                }
+            }
+
+            list.add(new Topic(topicId, title, text, date, account, closed, hidden));
+        }
+        return list;
     }
 }

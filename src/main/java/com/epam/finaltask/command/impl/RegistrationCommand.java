@@ -60,20 +60,20 @@ public class RegistrationCommand extends Command {
             switch (registrationResult) {
                 case SUCCESS: {
                     logger.log(Level.INFO, "user with username=" + username + " successfully registered");
-                    data.putRequestAttribute(ApplicationConstants.AUTHORIZATION_MESSAGE_ATTRIBUTE, ACCOUNT_SUCCESSFULLY_REGISTERED);
+                    data.putSessionAttribute(ApplicationConstants.AUTHORIZATION_MESSAGE_ATTRIBUTE, ACCOUNT_SUCCESSFULLY_REGISTERED);
                     commandResult.setPage(ApplicationConstants.SHOW_LOGIN_PAGE);
                     break;
                 }
                 case EMAIL_EXISTS: {
                     logger.log(Level.INFO, "could not register user with username=" + username + ", email=" + email +
                             "; email is already in use");
-                    data.putRequestAttribute(ApplicationConstants.REGISTRATION_MESSAGE_ATTRIBUTE, EMAIL_EXISTS);
+                    data.putSessionAttribute(ApplicationConstants.REGISTRATION_MESSAGE_ATTRIBUTE, EMAIL_EXISTS);
                     break;
                 }
                 case USERNAME_EXISTS: {
                     logger.log(Level.INFO, "could not register user with username=" + username + ", email=" + email +
                             "; username is already in use");
-                    data.putRequestAttribute(ApplicationConstants.REGISTRATION_MESSAGE_ATTRIBUTE, USERNAME_EXISTS);
+                    data.putSessionAttribute(ApplicationConstants.REGISTRATION_MESSAGE_ATTRIBUTE, USERNAME_EXISTS);
                     break;
                 }
                 case CANNOT_CREATE_ACCOUNT_IN_DATABASE: {

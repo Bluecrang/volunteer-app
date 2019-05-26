@@ -1,6 +1,7 @@
 package com.epam.finaltask.command.impl;
 
 import com.epam.finaltask.command.*;
+import com.epam.finaltask.entity.AccountType;
 import com.epam.finaltask.service.AccountService;
 import com.epam.finaltask.service.ServiceException;
 import com.epam.finaltask.util.ApplicationConstants;
@@ -11,14 +12,14 @@ import org.apache.logging.log4j.Logger;
 /**
  * Command that is used to promote user to administrator.
  */
-public class PromoteUserToAdminCommand extends Command {
+public class ChangeAccountTypeCommand extends Command {
 
     private static final Logger logger = LogManager.getLogger();
 
     private static final String PROMOTION_ERROR = "profile.promotion_error";
     private static final String ACCOUNT_PROMOTED = "profile.account_promoted";
 
-    public PromoteUserToAdminCommand(CommandConstraints constraints) {
+    public ChangeAccountTypeCommand(CommandConstraints constraints) {
         super(constraints);
     }
 
@@ -29,8 +30,10 @@ public class PromoteUserToAdminCommand extends Command {
             long accountId = Long.parseLong(data.getRequestParameter(ApplicationConstants.ACCOUNT_ID_PARAMETER));
             commandResult.setPage(ApplicationConstants.SHOW_PROFILE + accountId);
             try {
+                String accountTypeString = data.getRequestParameter(ApplicationConstants.ACCOUNT_TYPE_PARAMETER);
+                AccountType accountType = AccountType.valueOf(accountTypeString.toUpperCase());
                 AccountService accountService = new AccountService();
-                if (accountService.promoteUserToAdmin(accountId)) {
+                if (accountService.changeAccountType(accountId, accountType)) {
                     data.putSessionAttribute(ApplicationConstants.PROFILE_ACTION_NOTIFICATION_ATTRIBUTE, ACCOUNT_PROMOTED);
                     logger.log(Level.INFO, "account id=" + accountId + " promoted to admin");
                 } else {
@@ -39,6 +42,8 @@ public class PromoteUserToAdminCommand extends Command {
                 }
             } catch (ServiceException e) {
                 throw new CommandException("unable to promote account to admin", e);
+            } catch (IllegalArgumentException e) {
+                throw new CommandException("could not define account type using chosen account type string", e);
             }
         } catch (NumberFormatException e) {
             throw new CommandException("could not parse topic id to long value", e);

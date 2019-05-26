@@ -27,25 +27,49 @@
                 <div class="row">
                     <fmt:message key="profile.rating"/> <c:out value="${profile.rating}"/>
                 </div>
-                <div class="row">
-                    <c:if test="${profile.accountType == 'ADMIN'}"><fmt:message key="profile.account_type_admin"/></c:if>
-                </div>
-                <div class="row">
-                    <c:if test="${not empty account}">
-                        <c:if test="${account.accountId == profile.accountId or account.accountType == 'ADMIN'}">
+                <c:if test="${account.accountType == 'ADMIN' || account.accountId == profile.accountId}">
+                    <div class="row">
+                        <c:if test="${profile.accountType == 'ADMIN'}"><fmt:message key="profile.account_type_admin"/></c:if>
+                        <c:if test="${profile.accountType == 'VOLUNTEER'}"><fmt:message key="profile.account_type_volunteer"/></c:if>
+                        <c:if test="${profile.accountType == 'USER'}"><fmt:message key="profile.account_type_user"/></c:if>
+                    </div>
+                </c:if>
+                <c:if test="${not empty account}">
+                    <c:if test="${account.accountId == profile.accountId or account.accountType == 'ADMIN'}">
+                        <div class="row">
                             <fmt:message key="profile.email"/> <c:out value="${profile.email}"/>
-                        </c:if>
+                        </div>
                     </c:if>
-                </div>
+                </c:if>
                 <div class="row mt-2">
                     <c:if test="${account.accountType == 'ADMIN'}">
+                        <c:if test="${profile.accountType != 'ADMIN'}">
                         <form method="post" id="block_account" action="${pageContext.request.contextPath}/controller">
                             <input type="hidden" name="account_id" value="${profile.accountId}"/>
-                            <input type="hidden" name="command" value="promote_user_to_admin"/>
-                            <c:if test="${profile.accountType != 'ADMIN'}">
-                                <input class="btn btn-primary" type="submit" value="<fmt:message key="profile.promote_to_admin.submit"/>"/>
-                            </c:if>
+                            <input type="hidden" name="command" value="change_account_type"/>
+                            <input type="hidden" name="account_type" value="admin"/>
+                                <input class="btn btn-primary" type="submit" value="<fmt:message key="profile.change_account_type_administrator.submit"/>"/>
                         </form>
+                            <c:if test="${profile.accountType != 'VOLUNTEER'}">
+                                <br/>
+                                <form method="post" id="block_account" action="${pageContext.request.contextPath}/controller">
+                                    <input type="hidden" name="account_id" value="${profile.accountId}"/>
+                                    <input type="hidden" name="command" value="change_account_type"/>
+                                    <input type="hidden" name="account_type" value="volunteer"/>
+                                    <input class="btn btn-primary" type="submit" value="<fmt:message key="profile.change_account_type_volunteer.submit"/>"/>
+                                </form>
+                            </c:if>
+                            <c:if test="${profile.accountType == 'VOLUNTEER'}">
+                                <br/>
+                                <form method="post" id="block_account" action="${pageContext.request.contextPath}/controller">
+                                    <input type="hidden" name="account_id" value="${profile.accountId}"/>
+                                    <input type="hidden" name="command" value="change_account_type"/>
+                                    <input type="hidden" name="account_type" value="user"/>
+                                    <input class="btn btn-primary" type="submit" value="<fmt:message key="profile.change_account_type_user.submit"/>"/>
+                                </form>
+                            </c:if>
+                        </c:if>
+                        <br/>
                         <form method="post" id="block_account" action="${pageContext.request.contextPath}/controller">
                             <input type="hidden" name="account_id" value="${profile.accountId}"/>
                             <input type="hidden" name="command" value="change_account_block_state"/>

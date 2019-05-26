@@ -70,7 +70,7 @@ public class AuthenticationService extends AbstractService {
                     return null;
                 }
             } else {
-                logger.log(Level.INFO, "User with email +" + email + ", does not exist in the database, cannot authenticate");
+                logger.log(Level.INFO, "User with email " + email + ", does not exist in the database, cannot authenticate");
             }
             return account;
         } catch (PersistenceException e) {

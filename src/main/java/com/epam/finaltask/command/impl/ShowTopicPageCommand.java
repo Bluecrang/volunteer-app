@@ -41,15 +41,24 @@ public class ShowTopicPageCommand extends Command {
             TopicService topicService = new TopicService();
             try {
                 Topic topic = topicService.findTopicById(topicId);
-                data.putRequestAttribute(TOPIC_ATTRIBUTE, topic);
-                if (topic.isHidden()) {
-                    Account sessionAccount = data.getSessionAccount();
-                    if (sessionAccount == null || sessionAccount.getAccountType() != AccountType.ADMIN) {
-                        commandResult.assignTransitionTypeError();
-                        commandResult.setCode(ApplicationConstants.PAGE_NOT_FOUND_ERROR_CODE);
-                        return commandResult;
-                    }
+                Account sessionAccount = data.getSessionAccount();
+                if ((topic == null || sessionAccount == null) ||
+                        (sessionAccount.getAccountId() != topic.getAccount().getAccountId() &&
+                                sessionAccount.getAccountType() != AccountType.ADMIN &&
+                                sessionAccount.getAccountType() != AccountType.VOLUNTEER)) {
+                    commandResult.assignTransitionTypeError();
+                    commandResult.setCode(ApplicationConstants.PAGE_NOT_FOUND_ERROR_CODE);
+                    logger.log(Level.WARN, "cannot show topic page, " +
+                            "topic not found or session account does not have rights. Topic id=" + topicId);
+                    return commandResult;
                 }
+                if (topic.isHidden() && sessionAccount.getAccountType() != AccountType.ADMIN) {
+                    logger.log(Level.WARN, "cannot show topic page, topic is hidden. Topic id=" + topicId);
+                    commandResult.assignTransitionTypeError();
+                    commandResult.setCode(ApplicationConstants.PAGE_NOT_FOUND_ERROR_CODE);
+                    return commandResult;
+                }
+                data.putRequestAttribute(TOPIC_ATTRIBUTE, topic);
                 commandResult.assignTransitionTypeForward();
                 String currentPageString = data.getRequestParameter(ApplicationConstants.PAGE_PARAMETER);
                 MessageService messageService = new MessageService();

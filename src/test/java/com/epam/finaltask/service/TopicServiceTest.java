@@ -371,8 +371,10 @@ public class TopicServiceTest {
     }
 
     @Test(dataProvider = "SearchStringProvider")
-    public void findTopicsByTitleSubstringRegexTestNoPersistenceException(String searchString, int expectedSize) {
+    public void findTopicsByTitleSubstringRegexTestNoPersistenceExceptionValidParameters(String searchString, int expectedSize) {
         try {
+            Account sessionAccount = new Account(15);
+            sessionAccount.setAccountType(AccountType.ADMIN);
             Account account1 = new Account(1);
             Topic expected1 = new Topic(1, "title1", "text2",
                     LocalDateTime.of(2113, 10, 3, 1, 10),
@@ -402,7 +404,7 @@ public class TopicServiceTest {
             when(accountDao.findEntityById(account1.getAccountId())).thenReturn(new Account(1));
             when(accountDao.findEntityById(account2.getAccountId())).thenReturn(new Account(2));
 
-            List<Topic> actual = topicService.findTopicsByTitleSubstring(searchString);
+            List<Topic> actual = topicService.findTopicsByTitleSubstring(sessionAccount, searchString);
 
             verify(topicDao).findAll();
             Assert.assertEquals(actual.size(), expectedSize);
@@ -414,10 +416,12 @@ public class TopicServiceTest {
     }
 
     @Test
-    public void findTopicsByTitleSubstringTestSubstringNull() {
+    public void findTopicsByTitleSubstringTestSubstringNullAccountTypeAdmin() {
+        Account sessionAccount = new Account(15);
+        sessionAccount.setAccountType(AccountType.ADMIN);
         int expectedSize = 0;
         try {
-            List<Topic> actual = topicService.findTopicsByTitleSubstring(null);
+            List<Topic> actual = topicService.findTopicsByTitleSubstring(sessionAccount,null);
 
             Assert.assertEquals(actual.size(), expectedSize);
         } catch (ServiceException e) {
@@ -427,12 +431,14 @@ public class TopicServiceTest {
 
     @Test(expectedExceptions = ServiceException.class)
     public void findTopicsByTitleSubstringRegexTestPersistenceExceptionThrownByTopicDao() throws ServiceException {
+        Account sessionAccount = new Account(15);
+        sessionAccount.setAccountType(AccountType.ADMIN);
         try {
             when(topicDao.findAll()).thenThrow(new PersistenceException());
             AccountDao accountDao = mock(AccountDao.class);
             when(daoFactory.createAccountDao(connectionManager)).thenReturn(accountDao);
 
-            topicService.findTopicsByTitleSubstring("title");
+            topicService.findTopicsByTitleSubstring(sessionAccount,"title");
         } catch (PersistenceException e) {
             fail("Unexpected PersistenceException", e);
         }
@@ -440,24 +446,26 @@ public class TopicServiceTest {
 
     @Test(expectedExceptions = ServiceException.class)
     public void findTopicsByTitleSubstringRegexTestPersistenceExceptionThrownByAccountDao() throws ServiceException {
+        Account sessionAccount = new Account(15);
+        sessionAccount.setAccountType(AccountType.ADMIN);
+        Account account1 = new Account(1);
+        Topic expected1 = new Topic(1, "title1", "text2",
+                LocalDateTime.of(2113, 10, 3, 1, 10),
+                account1,
+                false,
+                false);
+        Topic expected2 = new Topic(2, "title2", "text2",
+                LocalDateTime.of(2013, 1, 5, 10, 12),
+                account1,
+                false,
+                false);
+        Account account2 = new Account(2);
+        Topic expected3 = new Topic(3, "title3", "text3",
+                LocalDateTime.of(2012, 4, 7, 4, 38),
+                account2,
+                true,
+                true);
         try {
-            Account account1 = new Account(1);
-            Topic expected1 = new Topic(1, "title1", "text2",
-                    LocalDateTime.of(2113, 10, 3, 1, 10),
-                    account1,
-                    false,
-                    false);
-            Topic expected2 = new Topic(2, "title2", "text2",
-                    LocalDateTime.of(2013, 1, 5, 10, 12),
-                    account1,
-                    false,
-                    false);
-            Account account2 = new Account(2);
-            Topic expected3 = new Topic(3, "title3", "text3",
-                    LocalDateTime.of(2012, 4, 7, 4, 38),
-                    account2,
-                    true,
-                    true);
             when(topicDao.findAll()).thenReturn(new ArrayList<Topic>() {
                 {
                     add(expected1);
@@ -469,7 +477,7 @@ public class TopicServiceTest {
             when(daoFactory.createAccountDao(connectionManager)).thenReturn(accountDao);
             when(accountDao.findEntityById(account1.getAccountId())).thenThrow(new PersistenceException());
 
-            topicService.findTopicsByTitleSubstring("title");
+            topicService.findTopicsByTitleSubstring(sessionAccount,"title");
         } catch (PersistenceException e) {
             fail("Unexpected PersistenceException", e);
         }

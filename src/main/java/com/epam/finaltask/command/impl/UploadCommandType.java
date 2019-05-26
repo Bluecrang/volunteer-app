@@ -9,7 +9,7 @@ import com.epam.finaltask.entity.AccountType;
 public enum UploadCommandType {
     UPLOAD_AVATAR(new UploadAvatarCommand(CommandConstraints.builder()
             .buildHttpMethods(HttpMethodType.POST)
-            .buildAccountTypes(AccountType.USER, AccountType.ADMIN)
+            .buildAccountTypes(AccountType.USER, AccountType.ADMIN, AccountType.VOLUNTEER)
             .build()));
 
     private UploadCommand uploadCommand;

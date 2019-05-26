@@ -22,9 +22,6 @@ public class CommandDataValidator {
             AccountType accountType;
             if (sessionAccount != null) {
                 accountType = sessionAccount.getAccountType();
-                if (accountType == null) {
-                    accountType = AccountType.GUEST;
-                }
             } else {
                 accountType = AccountType.GUEST;
             }

@@ -215,27 +215,25 @@ public class AccountService extends AbstractService {
         }
     }
 
-    /**
-     * Promotes user to administrator. Returns {@code true} if account successfully promoted to administrator.
-     * @param accountId Id of the account to be promoted
-     * @return {@code true} if account promoted successfully.
-     * @throws ServiceException if {@link PersistenceException} has occurred when working with database
-     */
-    public boolean promoteUserToAdmin(long accountId) throws ServiceException {
-        try (AbstractConnectionManager connectionManager = connectionManagerFactory.createConnectionManager()) {
-            connectionManager.disableAutoCommit();
-            Account account = findAccountById(accountId, connectionManager);
-            if (account != null) {
-                account.setAccountType(AccountType.ADMIN);
-                AccountDao accountDao = daoFactory.createAccountDao(connectionManager);
-                int result = accountDao.update(account);
-                connectionManager.commit();
-                return (result == 1);
+    //todo
+    public boolean changeAccountType(long accountId, AccountType accountType) throws ServiceException {
+        if (accountType != null && accountType != AccountType.GUEST) {
+            try (AbstractConnectionManager connectionManager = connectionManagerFactory.createConnectionManager()) {
+                connectionManager.disableAutoCommit();
+                Account account = findAccountById(accountId, connectionManager);
+                if (account != null) {
+                    logger.log(Level.DEBUG, "account found: id=" + account.getAccountId());
+                    account.setAccountType(accountType);
+                    AccountDao accountDao = daoFactory.createAccountDao(connectionManager);
+                    int result = accountDao.update(account);
+                    connectionManager.commit();
+                    return (result == 1);
+                }
+                connectionManager.rollback();
+                logger.log(Level.WARN, "could not change account type: account not found in the database");
+            } catch (PersistenceException e) {
+                throw new ServiceException(e);
             }
-            connectionManager.rollback();
-            logger.log(Level.WARN, "could not promote account: account not found in the database");
-        } catch (PersistenceException e) {
-            throw new ServiceException(e);
         }
         return false;
     }

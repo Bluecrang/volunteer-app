@@ -15,13 +15,13 @@
             </tr>
             <c:forEach var="account_from_list" items="${account_list}">
                 <tr>
-                    <td><a href="${pageContext.request.contextPath}/profile?account_id=${account_from_list.accountId}&command=show_profile"><c:out value="${account_from_list.username}"/></a></td>
+                    <td><a href="${pageContext.request.contextPath}/controller?account_id=${account_from_list.accountId}&command=show_profile"><c:out value="${account_from_list.username}"/></a></td>
                     <td><c:out value="${account_from_list.rating}"/></td>
                 </tr>
             </c:forEach>
         </table>
         <c:if test="${ranking_current_page > 1}">
-            <a href="${pageContext.request.contextPath}/ranking?page=${ranking_current_page - 1}&command=show_ranking_page">
+            <a href="${pageContext.request.contextPath}/controller?page=${ranking_current_page - 1}&command=show_ranking_page">
                 <fmt:message key="ranking.previous"/>
             </a>
         </c:if>
@@ -31,12 +31,12 @@
                     ${i}
                 </c:when>
                 <c:otherwise>
-                    <a href="${pageContext.request.contextPath}/ranking?page=${i}&command=show_ranking_page">${i}</a>
+                    <a href="${pageContext.request.contextPath}/controller?page=${i}&command=show_ranking_page">${i}</a>
                 </c:otherwise>
             </c:choose>
         </c:forEach>
         <c:if test="${ranking_current_page < ranking_number_of_pages}">
-            <a href="${pageContext.request.contextPath}/ranking?page=${ranking_current_page + 1}&command=show_ranking_page"><fmt:message key="ranking.next"/></a>
+            <a href="${pageContext.request.contextPath}/controller?page=${ranking_current_page + 1}&command=show_ranking_page"><fmt:message key="ranking.next"/></a>
         </c:if>
     </div>
 </html>

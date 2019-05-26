@@ -56,7 +56,7 @@ class AccountDaoImpl extends AbstractDao<Account> implements AccountDao {
      * Creates AccountDaoImpl which uses connection provided by connectionManager.
      * @param connectionManager Connection manager that provides connection to the DAO
      */
-    public AccountDaoImpl(AbstractConnectionManager connectionManager) {
+    AccountDaoImpl(AbstractConnectionManager connectionManager) {
         super(connectionManager);
     }
 
@@ -65,6 +65,7 @@ class AccountDaoImpl extends AbstractDao<Account> implements AccountDao {
      * @return Database account count
      * @throws PersistenceException If SQLException is thrown
      */
+    @Override
     public int findAccountCount() throws PersistenceException {
         try (PreparedStatement statement = getConnection().prepareStatement(FIND_ACCOUNT_COUNT)){
             try (ResultSet resultSet = statement.executeQuery()) {
@@ -85,6 +86,7 @@ class AccountDaoImpl extends AbstractDao<Account> implements AccountDao {
      * @return Accounts from the page
      * @throws PersistenceException If SQLException is thrown
      */
+    @Override
     public List<Account> findPageAccountsSortByRating(int page, int numberOfAccountsPerPage) throws PersistenceException {
         List<Account> accountList = new LinkedList<>();
         try (PreparedStatement statement = getConnection().prepareStatement(FIND_ACCOUNTS_IN_RANGE_SORT_BY_RATING)){
@@ -107,6 +109,7 @@ class AccountDaoImpl extends AbstractDao<Account> implements AccountDao {
      * @return Account if it exists, else returns null
      * @throws PersistenceException If SQLException is thrown
      */
+    @Override
     public Account findAccountByUsername(String username) throws PersistenceException {
         if (username == null) {
             return null;
@@ -131,6 +134,7 @@ class AccountDaoImpl extends AbstractDao<Account> implements AccountDao {
      * @return Account if it exists, else returns null
      * @throws PersistenceException If SQLException is thrown
      */
+    @Override
     public Account findAccountByEmail(String email) throws PersistenceException {
         if (email == null) {
             return null;
@@ -155,6 +159,7 @@ class AccountDaoImpl extends AbstractDao<Account> implements AccountDao {
      * @return All accounts with chosen account type
      * @throws PersistenceException If SQLException is thrown
      */
+    @Override
     public List<Account> findAllByAccountType(AccountType accountType) throws PersistenceException {
         List<Account> list = new LinkedList<>();
         try (PreparedStatement statement = getConnection().prepareStatement(FIND_ALL_BY_ACCOUNT_TYPE)){

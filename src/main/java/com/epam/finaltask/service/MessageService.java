@@ -1,9 +1,6 @@
 package com.epam.finaltask.service;
 
-import com.epam.finaltask.dao.AccountDao;
-import com.epam.finaltask.dao.ConnectionManagerFactory;
-import com.epam.finaltask.dao.DaoFactory;
-import com.epam.finaltask.dao.MessageDao;
+import com.epam.finaltask.dao.*;
 import com.epam.finaltask.dao.impl.AbstractConnectionManager;
 import com.epam.finaltask.dao.impl.PersistenceException;
 import com.epam.finaltask.entity.Account;
@@ -136,7 +133,7 @@ public class MessageService extends AbstractService {
         }
     }
 
-    /**
+    /**todo
      * Creates message with specified account, topicId and text and adds it to the database.
      * @param account Account of the message author
      * @param topicId Id of the topic that owns message
@@ -159,14 +156,20 @@ public class MessageService extends AbstractService {
             return false;
         }
         try (AbstractConnectionManager connectionManager = connectionManagerFactory.createConnectionManager()) {
-            Message message = new Message();
-            message.setText(text);
-            message.setAccount(account);
-            message.setTopic(new Topic(topicId));
-            MessageDao messageDao = daoFactory.createMessageDao(connectionManager);
-            return messageDao.createWithGeneratedDate(message);
+            connectionManager.disableAutoCommit();
+            TopicDao topicDao = daoFactory.createTopicDao(connectionManager);
+            Topic topic = topicDao.findEntityById(topicId);
+            if (topic != null && !topic.isClosed()) {
+                Message message = new Message();
+                message.setText(text);
+                message.setAccount(account);
+                message.setTopic(new Topic(topicId));
+                MessageDao messageDao = daoFactory.createMessageDao(connectionManager);
+                return messageDao.createWithGeneratedDate(message);
+            }
         } catch (PersistenceException e) {
             throw new ServiceException(e);
         }
+        return false;
     }
 }

@@ -1,4 +1,4 @@
-<%@ page contentType="text/html;charset=UTF-8"%>
+<%@ page contentType="text/html;charset=UTF-8" %>
 <%@taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt"%>
 <%@include file="/WEB-INF/parts/header.jsp"%>
@@ -25,6 +25,7 @@
         </form>
         <c:if test="${not empty authorization_message}">
             <fmt:message key="${authorization_message}"/><br/>
+            <c:remove var="authorization_message"/>
         </c:if>
         <a href="${pageContext.request.contextPath}/controller?command=show_registration_page"><fmt:message key="login.registration_link"/></a>
     </div>

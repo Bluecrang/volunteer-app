@@ -1,23 +1,19 @@
 package com.epam.finaltask.service;
 
-import com.epam.finaltask.dao.AccountDao;
-import com.epam.finaltask.dao.ConnectionManagerFactory;
-import com.epam.finaltask.dao.DaoFactory;
-import com.epam.finaltask.dao.TopicDao;
+import com.epam.finaltask.dao.*;
 import com.epam.finaltask.dao.impl.AbstractConnectionManager;
 import com.epam.finaltask.dao.impl.PersistenceException;
 import com.epam.finaltask.entity.Account;
 import com.epam.finaltask.entity.AccountType;
+import com.epam.finaltask.entity.Message;
 import com.epam.finaltask.entity.Topic;
+import com.epam.finaltask.util.ApplicationConstants;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.LinkedList;
-import java.util.List;
+import java.util.*;
 import java.util.regex.Pattern;
 import java.util.regex.PatternSyntaxException;
 import java.util.stream.Collectors;
@@ -46,7 +42,7 @@ public class TopicService extends AbstractService {
         super();
     }
 
-    /**
+    /** todo
      * Changes topic closed flag to {@code true}.
      * @param topicId Id of the topic to close
      * @return {@code true} if topic successfully closed, else returns {@code false}
@@ -64,6 +60,25 @@ public class TopicService extends AbstractService {
                 }
                 topic.setClosed(true);
                 topicDao.update(topic);
+                MessageDao messageDao = daoFactory.createMessageDao(connectionManager);
+                List<Message> messageList = messageDao.findMessagesByTopicId(topic.getTopicId());
+                AccountDao accountDao = daoFactory.createAccountDao(connectionManager);
+                List<Account> accountList = messageList.stream()
+                        .map(Message::getAccount)
+                        .distinct()
+                        .filter(account -> account.getAccountId() != topic.getAccount().getAccountId())
+                        .collect(Collectors.toList());
+                for (Account account : accountList) {
+                    Account fetchedAccount = accountDao.findEntityById(account.getAccountId());
+                    if (fetchedAccount != null) {
+                        logger.log(Level.DEBUG, "Fetched account id=" + fetchedAccount.getAccountId());
+                        AccountType accountType = fetchedAccount.getAccountType();
+                        if (accountType == AccountType.ADMIN || accountType == AccountType.VOLUNTEER) {
+                            fetchedAccount.setRating(fetchedAccount.getRating() + ApplicationConstants.TOPIC_CLOSE_RATING_BONUS);
+                            accountDao.update(fetchedAccount);
+                        }
+                    }
+                }
                 connectionManager.commit();
                 return true;
             } catch (PersistenceException e) {
@@ -193,18 +208,26 @@ public class TopicService extends AbstractService {
         }
     }
 
-    /**
-     * Finds topics by it's title substring.
-     * @param searchString Title substring used to search topics.
-     * @return All topics which titles contain chosen substring
-     * @throws ServiceException if PersistenceException is thrown while working with database
-     */
-    public List<Topic> findTopicsByTitleSubstring(String searchString) throws ServiceException {
+    //todo
+    public List<Topic> findTopicsByTitleSubstring(Account sessionAccount, String searchString) throws ServiceException {
         if (searchString == null) {
             logger.log(Level.WARN, "unable to find topics by title searchString: searchString is null");
-            return new LinkedList<>();
+            return Collections.emptyList();
         }
-        return findAllTopics().stream()
+        if (sessionAccount == null) {
+            logger.log(Level.WARN, "unable to find topics by title searchString: sessionAccount is null");
+            return Collections.emptyList();
+        }
+        AccountType accountType = sessionAccount.getAccountType();
+        List<Topic> topics;
+        if (accountType == AccountType.ADMIN || accountType == AccountType.VOLUNTEER) {
+            topics = findAllTopics();
+        } else if (accountType == AccountType.USER) {
+            topics = findTopicsByAuthorId(sessionAccount.getAccountId());
+        } else {
+            topics = Collections.emptyList();
+        }
+        return topics.stream()
                 .filter((topic -> {
                     String title = topic.getTitle();
                     if (title != null) {
@@ -216,5 +239,20 @@ public class TopicService extends AbstractService {
                     return false;
                 }))
                 .collect(Collectors.toList());
+    }
+
+    /**
+     * Finds all topics by authors Account id.
+     * @param authorId Id of the account
+     * @return List of topics with chosen author id
+     * @throws ServiceException If PersistenceException is thrown
+     */
+    public List<Topic> findTopicsByAuthorId(long authorId) throws ServiceException {
+        try (AbstractConnectionManager connectionManager = connectionManagerFactory.createConnectionManager()) {
+            TopicDao topicDao = daoFactory.createTopicDao(connectionManager);
+            return topicDao.findTopicsByAccountId(authorId);
+        } catch (PersistenceException e) {
+            throw new ServiceException(e);
+        }
     }
 }

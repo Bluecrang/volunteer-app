@@ -32,7 +32,7 @@ public class AuthenticationCommand extends Command {
 
         AuthenticationService authenticationService = new AuthenticationService();
         CommandResult commandResult = new CommandResult();
-        commandResult.setPage(PageConstants.LOGIN_PAGE);
+        commandResult.setPage(ApplicationConstants.SHOW_LOGIN_PAGE);
         try {
             Account account = authenticationService.authenticate(email, password);
             if (account != null) {
@@ -45,7 +45,8 @@ public class AuthenticationCommand extends Command {
                 commandResult.setPage(ApplicationConstants.SHOW_MAIN_PAGE);
             } else {
                 logger.log(Level.INFO, "user with email=" + email + " does not exist or password does not match");
-                data.putSessionAttribute(ApplicationConstants.AUTHORIZATION_MESSAGE_ATTRIBUTE, ACCOUNT_DOES_NOT_EXIST_OR_PASSWORD_DOES_NOT_MATCH_PROPERTY);
+                data.putSessionAttribute(ApplicationConstants.AUTHORIZATION_MESSAGE_ATTRIBUTE,
+                        ACCOUNT_DOES_NOT_EXIST_OR_PASSWORD_DOES_NOT_MATCH_PROPERTY);
             }
         } catch (ServiceException e) {
             logger.log(Level.ERROR, "unable to authenticate user email=" + email, e);
