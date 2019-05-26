@@ -11,7 +11,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 /**
- * Command which is used to create message and add it to the database.
+ * Command that is used to create message and add it to the database.
  */
 public class CreateMessageCommand extends Command {
 

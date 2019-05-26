@@ -9,7 +9,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 /**
- * Command which allows to delete message from the database.
+ * Command that allows to delete message from the database.
  */
 public class DeleteMessageCommand extends Command {
 

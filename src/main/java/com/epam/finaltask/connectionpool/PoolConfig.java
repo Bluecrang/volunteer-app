@@ -7,7 +7,7 @@ import org.apache.logging.log4j.Logger;
 import java.util.Properties;
 
 /**
- * Class instances of which contain pool configurations.
+ * Class instances of that contain pool configurations.
  */
 public class PoolConfig {
 
@@ -49,7 +49,7 @@ public class PoolConfig {
     /**
      * Creates PoolConfig with values taken from the properties.
      * Sets default pool size is less than 1.
-     * @param properties Properties which provide necessary data to the pool config
+     * @param properties Properties that provide necessary data to the pool config
      */
     public PoolConfig(Properties properties) {
         databaseUrl = properties.getProperty(DATABASE_URL_PROPERTY);

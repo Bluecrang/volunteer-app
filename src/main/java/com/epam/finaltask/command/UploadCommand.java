@@ -11,17 +11,17 @@ import javax.servlet.http.Part;
 import java.util.Collection;
 
 /**
- * Class, instances of which are used to upload files to server.
+ * Class, instances of that are used to upload files to server.
  */
 public abstract class UploadCommand {
 
     /**
-     * Constraints which specify what type of account can execute command and which http method can be used.
+     * Constraints that specify what type of account can execute command and which http method can be used.
      */
     private CommandConstraints constraints;
 
     /**
-     * Constructor which assigns chosen constraints or uses default if chosen constraints is {@code null}.
+     * Constructor that assigns chosen constraints or uses default if chosen constraints is {@code null}.
      * @param constraints Constraints to be applied to command.
      */
     public UploadCommand(CommandConstraints constraints) {
@@ -52,7 +52,7 @@ public abstract class UploadCommand {
     }
 
     /**
-     * Method which is used in {@link UploadCommand#execute(CommandData, Collection)}. Defines what command should do.
+     * Method that is used in {@link UploadCommand#execute(CommandData, Collection)}. Defines what command should do.
      * @param data Data to be used to perform action
      * @param parts Parts to be used to perform action
      * @return Result of the execution as {@link CommandResult} instance

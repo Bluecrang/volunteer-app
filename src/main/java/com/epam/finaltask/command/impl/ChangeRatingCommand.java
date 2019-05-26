@@ -9,7 +9,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 /**
- * Command which is used to change rating.
+ * Command that is used to change rating.
  */
 public class ChangeRatingCommand extends Command {
 

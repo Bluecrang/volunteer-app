@@ -9,7 +9,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 /**
- * Command which is used to change topic's {@code hidden} state.
+ * Command that is used to change topic's {@code hidden} state.
  */
 public class ChangeTopicHiddenStateCommand extends Command {
 

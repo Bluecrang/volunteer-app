@@ -6,7 +6,7 @@ import com.epam.finaltask.entity.Message;
 import java.util.List;
 
 /**
- * Interface which contains methods specific for DAO which works with messages.
+ * Interface that contains methods specific to DAO that works with messages.
  */
 public interface MessageDao extends Dao<Message> {
 

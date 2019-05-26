@@ -4,7 +4,7 @@ import com.epam.finaltask.command.Command;
 import com.epam.finaltask.entity.AccountType;
 
 /**
- * Enum which contains all command types.
+ * Enum that contains all command types.
  */
 public enum CommandType {
     AUTHORIZATION(new AuthenticationCommand(CommandConstraints.builder()

@@ -17,7 +17,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 /**
- * Service class which provides registration logic.
+ * Service class that provides registration logic.
  */
 public class RegistrationService extends AbstractService {
 
@@ -27,15 +27,15 @@ public class RegistrationService extends AbstractService {
     private static final boolean DEFAULT_BLOCKED = false;
 
     /**
-     * Factory which is used to generate password hashes.
+     * Factory that is used to generate password hashes.
      */
     private HashGeneratorFactory hashGeneratorFactory;
 
     /**
      * Creates RegistrationService with chosen DaoFactory, connectionManagerFactory, hashGeneratorFactory.
-     * @param daoFactory Factory which is used to create DAO objects
-     * @param connectionManagerFactory Factory which is used to create {@link com.epam.finaltask.dao.impl.AbstractConnectionManager} subclass instances
-     * @param hashGeneratorFactory Factory which is used to create {@link HashGenerator} implementations
+     * @param daoFactory Factory that is used to create DAO objects
+     * @param connectionManagerFactory Factory that is used to create {@link com.epam.finaltask.dao.impl.AbstractConnectionManager} subclass instances
+     * @param hashGeneratorFactory Factory that is used to create {@link HashGenerator} implementations
      */
     public RegistrationService(DaoFactory daoFactory, ConnectionManagerFactory connectionManagerFactory,
                                HashGeneratorFactory hashGeneratorFactory) {
@@ -53,7 +53,7 @@ public class RegistrationService extends AbstractService {
     }
 
     /**
-     * Enum which contains constants for {@link RegistrationService#registerAccount(String, String, String)} to return.
+     * Enum that contains constants for {@link RegistrationService#registerAccount(String, String, String)} to return.
      */
     public enum RegistrationResult {
         SUCCESS,
@@ -69,7 +69,7 @@ public class RegistrationService extends AbstractService {
      * {@link RegistrationResult#USERNAME_EXISTS} respectively.
      * @param username Accounts username
      * @param password Accounts password
-     * @param email Accounts email. Registration of the account with email which is already used by another account is not permitted
+     * @param email Accounts email. Registration of the account with email that is already used by another account is not permitted
      * @return {@link RegistrationResult} constant based on the registration result.
      * @throws ServiceException If PersistenceException thrown
      */

@@ -4,7 +4,7 @@ import com.epam.finaltask.command.Command;
 import com.epam.finaltask.util.ApplicationConstants;
 
 /**
- * Command which is used to change locale.
+ * Command that is used to change locale.
  */
 public class ChangeLocaleCommand extends Command {
 

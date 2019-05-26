@@ -15,7 +15,7 @@ import java.util.LinkedList;
 import java.util.List;
 
 /**
- * Class which implements CRUD and several other operations to work with database messages.
+ * Class that implements CRUD and several other operations to work with database messages.
  */
 class MessageDaoImpl extends AbstractDao<Message> implements MessageDao {
 
@@ -34,7 +34,7 @@ class MessageDaoImpl extends AbstractDao<Message> implements MessageDao {
 
     /**
      * Creates MessageDaoImpl using chosen connection manager.
-     * @param connectionManager Connection manager which will provide it's connection to DAO
+     * @param connectionManager Connection manager that provides connection to the DAO
      */
     public MessageDaoImpl(AbstractConnectionManager connectionManager) {
         super(connectionManager);
@@ -228,8 +228,8 @@ class MessageDaoImpl extends AbstractDao<Message> implements MessageDao {
     }
 
     /**
-     * Returns query which deletes message by id.
-     * @return query which deletes message by id
+     * Returns query that deletes message by id.
+     * @return query that deletes message by id
      */
     @Override
     public String getDeleteByIdQuery() {

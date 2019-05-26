@@ -5,18 +5,18 @@ import com.epam.finaltask.entity.AccountType;
 import java.util.*;
 
 /**
- * Class, instances of which contain allowed account types and http methods to execute command with.
- * Contains nested builder class, which should be used to create CommandConstraints instances.
+ * Class, instances of that contain allowed account types and http methods to execute command with.
+ * Contains nested builder class that should be used to create CommandConstraints instances.
  */
 public class CommandConstraints {
 
     /**
-     * Set of http methods with which command execution is allowed.
+     * Set of http methods with that command execution is allowed.
      */
     private Set<HttpMethodType> allowedMethods = new HashSet<>();
 
     /**
-     * Types of accounts which are allowed to execute command.
+     * Types of accounts that are allowed to execute command.
      */
     private Set<AccountType> allowedAccountTypes = new HashSet<>();
 
@@ -31,7 +31,7 @@ public class CommandConstraints {
      */
     public static class CommandConstraintsBuilder {
         /**
-         * Constraints object which will be built.
+         * Constraints object that will be built.
          */
         private CommandConstraints constraints = new CommandConstraints();
 
@@ -90,7 +90,7 @@ public class CommandConstraints {
 
     /**
      * Checks if method is allowed by constraints.
-     * @param httpMethodType Method which is checked.
+     * @param httpMethodType Method that is checked.
      * @return {@code true} if method is allowed, else returns {@code false}
      */
     public boolean checkIfAllowed(HttpMethodType httpMethodType) {
@@ -99,7 +99,7 @@ public class CommandConstraints {
 
     /**
      * Checks if account type is allowed by constraints.
-     * @param accountType Account type which is checked
+     * @param accountType Account type that is checked
      * @return {@code true} if account type is allowed, else returns {@code false}
      */
     public boolean checkIfAllowed(AccountType accountType) {

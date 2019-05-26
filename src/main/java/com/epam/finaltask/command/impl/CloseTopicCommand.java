@@ -9,7 +9,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 /**
- * Command which allows to close topic.
+ * Command that allows to close topic.
  */
 public class CloseTopicCommand extends Command {
 

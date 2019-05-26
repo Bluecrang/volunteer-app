@@ -14,7 +14,7 @@ import java.util.LinkedList;
 import java.util.List;
 
 /**
- * Class which implements CRUD and several other operations to work with database accounts.
+ * Class that implements CRUD and several other operations to work with database accounts.
  */
 class AccountDaoImpl extends AbstractDao<Account> implements AccountDao {
 
@@ -53,8 +53,8 @@ class AccountDaoImpl extends AbstractDao<Account> implements AccountDao {
             "WHERE acc_type.type = ?";
 
     /**
-     * Creates AccountDaoImpl using connection provided by connectionManager.
-     * @param connectionManager Connection manager which provides connection to the DAO
+     * Creates AccountDaoImpl which uses connection provided by connectionManager.
+     * @param connectionManager Connection manager that provides connection to the DAO
      */
     public AccountDaoImpl(AbstractConnectionManager connectionManager) {
         super(connectionManager);
@@ -192,7 +192,7 @@ class AccountDaoImpl extends AbstractDao<Account> implements AccountDao {
     /**
      * Finds entity by id.
      * @param id Id of the entity to find
-     * @return Account which chosen id if it exists, else returns null
+     * @return Account that chosen id if it exists, else returns null
      * @throws PersistenceException If SQLException is thrown
      */
     @Override
@@ -212,8 +212,8 @@ class AccountDaoImpl extends AbstractDao<Account> implements AccountDao {
     }
 
     /**
-     * Returns query which deletes account by id.
-     * @return Query which deletes account by id.
+     * Returns query that deletes account by id.
+     * @return Query that deletes account by id.
      */
     @Override
     public String getDeleteByIdQuery() {
@@ -286,7 +286,7 @@ class AccountDaoImpl extends AbstractDao<Account> implements AccountDao {
 
     /**
      * Creates account using data from result set.
-     * @param resultSet Result set which provides data to create account
+     * @param resultSet Result set that provides data to create account
      * @return Created account
      * @throws SQLException If SQLException is thrown
      */

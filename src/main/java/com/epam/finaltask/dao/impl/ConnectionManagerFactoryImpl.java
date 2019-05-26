@@ -9,7 +9,7 @@ public class ConnectionManagerFactoryImpl implements ConnectionManagerFactory {
     /**
      * Creates {@link ConnectionManager}.
      * @return {@link ConnectionManager}
-     * @throws PersistenceException if ConnectionManager no-argument constructor thrown a PersistenceException
+     * @throws PersistenceException if ConnectionManager's no-argument constructor thrown a PersistenceException
      */
     @Override
     public AbstractConnectionManager createConnectionManager() throws PersistenceException {

@@ -21,7 +21,7 @@ import java.io.InputStream;
 import java.util.List;
 
 /**
- * Service class which provides methods to add and manipulate database accounts.
+ * Service class that provides methods to add and manipulate database accounts.
  */
 public class AccountService extends AbstractService {
 
@@ -90,7 +90,7 @@ public class AccountService extends AbstractService {
     /**
      * Adds chosen value to accounts rating. Returns {@code true if rating was successfully added}.
      * @param accountId Id of the account which rating will be changed
-     * @param value Rating value which will be added to the rating of the chosen account
+     * @param value Rating value that will be added to the rating of the chosen account
      * @return {@code true} if rating was successfully added
      * @throws ServiceException if {@link PersistenceException} has occurred when working with database
      */
@@ -152,7 +152,7 @@ public class AccountService extends AbstractService {
     /**
      * Changed account avatar to the specified avatar.
      * @param account Account which avatar should be updated
-     * @param part {@link Part} which contains new avatar
+     * @param part {@link Part} that contains new avatar
      * @return {@code true} if avatar was successfully updated
      * @throws ServiceException if {@link PersistenceException} has occurred when working with database
      */
@@ -202,7 +202,7 @@ public class AccountService extends AbstractService {
      * Returns account with specified from the database. Returns null if account with chosen id does not exist.
      * Uses existing {@link AbstractConnectionManager} to find account.
      * @param accountId Id of the account to be searched for
-     * @param connectionManager {@link AbstractConnectionManager} subclass, which provides database access
+     * @param connectionManager {@link AbstractConnectionManager} subclass that provides database access
      * @return {@link Account} instance if account is found, {@code null} if account is not found
      * @throws ServiceException if {@link PersistenceException} has occurred when working with database
      */

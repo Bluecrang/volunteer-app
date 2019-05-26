@@ -16,7 +16,7 @@ public class CommandResult {
      */
     private TransitionType transitionType = TransitionType.REDIRECT;
     /**
-     * Flag which tells if session should be invalidated.
+     * Flag that tells if session should be invalidated.
      */
     private boolean sessionInvalidationFlag;
     /**

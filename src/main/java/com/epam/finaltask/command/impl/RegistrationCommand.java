@@ -12,7 +12,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 /**
- * Command which is used to register user.
+ * Command that is used to register user.
  */
 public class RegistrationCommand extends Command {
 

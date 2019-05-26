@@ -11,8 +11,8 @@ import com.epam.finaltask.dao.TopicDao;
 public class DaoFactoryImpl implements DaoFactory {
 
     /**
-     * Creates {@link AccountDaoImpl} using chosen connection manager to provide connection.
-     * @param connectionManager ConnectionManager which provides connection
+     * Creates {@link AccountDaoImpl} using chosen connection manager to access database.
+     * @param connectionManager ConnectionManager that provides connection
      * @return {@link AccountDaoImpl}
      */
     @Override
@@ -21,8 +21,8 @@ public class DaoFactoryImpl implements DaoFactory {
     }
 
     /**
-     * Creates {@link MessageDaoImpl} using chosen connection manager to provide connection.
-     * @param connectionManager ConnectionManager which provides connection
+     * Creates {@link MessageDaoImpl} using chosen connection manager to access database.
+     * @param connectionManager ConnectionManager that provides connection
      * @return {@link MessageDaoImpl}
      */
     @Override
@@ -31,8 +31,8 @@ public class DaoFactoryImpl implements DaoFactory {
     }
 
     /**
-     * Creates {@link TopicDaoImpl} using chosen connection manager to provide connection.
-     * @param connectionManager ConnectionManager which provides connection
+     * Creates {@link TopicDaoImpl} using chosen connection manager to access database.
+     * @param connectionManager ConnectionManager that provides connection
      * @return {@link TopicDaoImpl}
      */
     @Override

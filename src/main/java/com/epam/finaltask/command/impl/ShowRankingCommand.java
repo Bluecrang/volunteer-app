@@ -13,7 +13,7 @@ import org.apache.logging.log4j.Logger;
 import java.util.List;
 
 /**
- * Command which is used to initialize data for the ranking page.
+ * Command that is used to initialize data for the ranking page.
  */
 public class ShowRankingCommand extends Command {
 

@@ -3,7 +3,7 @@ package com.epam.finaltask.dao.impl;
 import java.sql.Connection;
 
 /**
- * Abstract class which subclasses are intended to provide connection manipulation methods.
+ * Abstract class that subclasses are intended to provide connection manipulation methods.
  * Used by service layer to provide connection to DAOs.
  */
 public abstract class AbstractConnectionManager implements AutoCloseable {

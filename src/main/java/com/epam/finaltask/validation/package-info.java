@@ -1,4 +1,4 @@
 /**
- * Provides validation classes
+ * Provides validation classes.
  */
 package com.epam.finaltask.validation;

@@ -4,7 +4,7 @@ import com.epam.finaltask.command.Command;
 import com.epam.finaltask.util.ApplicationConstants;
 
 /**
- * Command which is used to log out.
+ * Command that is used to log out.
  */
 public class LogoutCommand extends Command {
 

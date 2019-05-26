@@ -8,7 +8,7 @@ import java.sql.PreparedStatement;
 import java.sql.SQLException;
 
 /**
- * Abstract Dao, which defines basic delete and getConnection implementations.
+ * Abstract Dao, that defines basic delete and getConnection implementations.
  * @param <T> Application's Entity
  */
 abstract class AbstractDao<T extends Entity> implements Dao<T> {
@@ -19,8 +19,8 @@ abstract class AbstractDao<T extends Entity> implements Dao<T> {
     private Connection connection;
 
     /**
-     * Constructor which retrieves connection from connection manager.
-     * @param connectionManager ConnectionManager which connection will be used for database interactions
+     * Constructor that retrieves connection from connection manager.
+     * @param connectionManager ConnectionManager that is used for database interactions
      */
     AbstractDao(AbstractConnectionManager connectionManager) {
         this.connection = connectionManager.getConnection();

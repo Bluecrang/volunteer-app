@@ -7,7 +7,7 @@ import org.apache.logging.log4j.Logger;
 import java.io.File;
 
 /**
- * A validation class which can be used to check if file with chosen name exists and is not a directory.
+ * A validation class that can be used to check if file with chosen name exists and is not a directory.
  */
 public class FileValidator {
 

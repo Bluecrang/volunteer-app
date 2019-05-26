@@ -12,7 +12,7 @@ import org.apache.logging.log4j.Logger;
 import java.util.List;
 
 /**
- * Command which initializes data for administrators page.
+ * Command that initializes data for administrators page.
  */
 public class ShowAdministratorsCommand extends Command {
 

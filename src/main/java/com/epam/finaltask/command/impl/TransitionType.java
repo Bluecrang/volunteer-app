@@ -1,7 +1,7 @@
 package com.epam.finaltask.command.impl;
 
 /**
- * Enum which is used to determine transition type.
+ * Enum that is used to determine transition type.
  */
 public enum TransitionType {
     REDIRECT,

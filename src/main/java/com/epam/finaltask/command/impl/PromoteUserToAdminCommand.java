@@ -9,7 +9,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 /**
- * Command which is used to promote user to administrator.
+ * Command that is used to promote user to administrator.
  */
 public class PromoteUserToAdminCommand extends Command {
 

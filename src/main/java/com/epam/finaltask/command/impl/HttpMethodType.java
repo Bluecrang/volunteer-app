@@ -1,7 +1,7 @@
 package com.epam.finaltask.command.impl;
 
 /**
- * Enum which provides all HTTP methods.
+ * Enum that provides all HTTP methods.
  */
 public enum HttpMethodType {
     GET,

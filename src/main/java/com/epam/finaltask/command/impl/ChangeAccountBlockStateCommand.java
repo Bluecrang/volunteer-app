@@ -9,7 +9,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 /**
- * Command which allows to change account block state.
+ * Command that allows to change account block state.
  */
 public class ChangeAccountBlockStateCommand extends Command {
 

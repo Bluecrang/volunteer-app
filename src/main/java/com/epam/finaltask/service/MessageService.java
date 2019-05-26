@@ -139,7 +139,7 @@ public class MessageService extends AbstractService {
     /**
      * Creates message with specified account, topicId and text and adds it to the database.
      * @param account Account of the message author
-     * @param topicId Id of the topic which owns message
+     * @param topicId Id of the topic that owns message
      * @param text Text of the message
      * @return {@code true} if message successfully created and added to the database, else returns {@code false}
      * @throws ServiceException If PersistenceException is thrown while working with database

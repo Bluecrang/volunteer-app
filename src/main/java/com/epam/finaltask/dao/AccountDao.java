@@ -7,7 +7,7 @@ import com.epam.finaltask.entity.AccountType;
 import java.util.List;
 
 /**
- * Interface which contains methods specific for DAO which works with accounts.
+ * Interface that contains methods specific to DAO that works with accounts.
  */
 public interface AccountDao extends Dao<Account> {
 
@@ -45,7 +45,7 @@ public interface AccountDao extends Dao<Account> {
 
     /**
      * Finds all database accounts by account type.
-     * @param accountType Type of the account which account should have.
+     * @param accountType Type of the account that account should have.
      * @return All accounts with chosen account type
      * @throws PersistenceException if SQLException was thrown
      */

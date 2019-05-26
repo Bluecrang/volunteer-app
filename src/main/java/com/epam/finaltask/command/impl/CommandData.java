@@ -10,7 +10,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * Class instances of which contain data for command execution.
+ * Class instances of that contain data for command execution.
  */
 public class CommandData {
     private static final int FIRST_ELEMENT_INDEX = 0;
@@ -29,7 +29,7 @@ public class CommandData {
     private Map<String, Object> sessionAttributes = new HashMap<>();
 
     /**
-     * Http method which was used to execute command.
+     * Http method that was used to execute command.
      */
     private HttpMethodType method;
 
@@ -70,7 +70,7 @@ public class CommandData {
 
     /**
      * Updates attributes of the chosen HttpSession or adds them if they do not exist.
-     * @param session Session, attributes of which will be updated
+     * @param session Session, attributes of that will be updated
      */
     public void updateSessionAttributes(HttpSession session) {
         sessionAttributes.forEach(session::setAttribute);
@@ -78,7 +78,7 @@ public class CommandData {
 
     /**
      * Updates attributes of the chosen HttpServletRequest or adds them if they do not exist.
-     * @param request Request, attributes of which will be updated
+     * @param request Request, attributes of that will be updated
      */
     public void updateRequestAttributes(HttpServletRequest request) {
         requestAttributes.forEach(request::setAttribute);

@@ -29,27 +29,27 @@ public enum ConnectionPool {
     private static final Logger logger = LogManager.getLogger();
 
     /**
-     * Object which contains pool configurations.
+     * Object that contains pool configurations.
      */
     private PoolConfig config;
 
     /**
-     * Queue which contains connection not currently in use.
+     * Queue that contains connection not currently in use.
      */
     private BlockingQueue<ProxyConnection> idlingConnections = new LinkedBlockingQueue<>();
 
     /**
-     * Set which contains all connections of the connection pool.
+     * Set that contains all connections of the connection pool.
      */
     private Set<ProxyConnection> allConnections = ConcurrentHashMap.newKeySet();
 
     /**
-     * Lock which is used to prevent pool cleaning when closing it.
+     * Lock that is used to prevent pool cleaning when closing it.
      */
     private Lock lock = new ReentrantLock();
 
     /**
-     * Flag which shows if connection pool is closed.
+     * Flag that shows if connection pool is closed.
      */
     private AtomicBoolean closed = new AtomicBoolean(false);
 
@@ -90,7 +90,7 @@ public enum ConnectionPool {
 
     /**
      * Retrieves {@link ProxyConnection} from the pool. If there are no free connections, waits until connections frees.
-     * @return {@link ProxyConnection} which provides access to {@link Connection}
+     * @return {@link ProxyConnection} that provides access to {@link Connection}
      * @throws ConnectionPoolException If connection.isClosed() throws SQLException or thread is interrupted while taking connection
      */
     public Connection getConnection() throws ConnectionPoolException {

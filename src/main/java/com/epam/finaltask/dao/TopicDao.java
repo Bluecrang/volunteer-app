@@ -4,7 +4,7 @@ import com.epam.finaltask.dao.impl.PersistenceException;
 import com.epam.finaltask.entity.Topic;
 
 /**
- * Interface which contains methods specific for DAO which works with topics.
+ * Interface that contains methods specific to DAO that works with topics.
  */
 public interface TopicDao extends Dao<Topic> {
 

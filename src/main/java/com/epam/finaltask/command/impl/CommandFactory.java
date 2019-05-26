@@ -10,7 +10,7 @@ import org.apache.logging.log4j.Logger;
 import javax.servlet.http.HttpServletRequest;
 
 /**
- * Factory which is used to create commands.
+ * Factory that is used to create commands.
  */
 public class CommandFactory {
 

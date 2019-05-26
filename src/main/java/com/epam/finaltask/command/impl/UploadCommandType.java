@@ -4,7 +4,7 @@ import com.epam.finaltask.command.UploadCommand;
 import com.epam.finaltask.entity.AccountType;
 
 /**
- * Enum which contains all UploadCommand types.
+ * Enum that contains all UploadCommand types.
  */
 public enum UploadCommandType {
     UPLOAD_AVATAR(new UploadAvatarCommand(CommandConstraints.builder()

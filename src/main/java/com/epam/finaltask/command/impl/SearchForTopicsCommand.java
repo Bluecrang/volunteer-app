@@ -13,7 +13,7 @@ import org.apache.logging.log4j.Logger;
 import java.util.List;
 
 /**
- * Command which is used to search for topics using title substring.
+ * Command that is used to search for topics using title substring.
  */
 public class SearchForTopicsCommand extends Command {
 

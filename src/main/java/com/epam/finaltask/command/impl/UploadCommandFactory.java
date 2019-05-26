@@ -10,7 +10,7 @@ import org.apache.logging.log4j.Logger;
 import javax.servlet.http.HttpServletRequest;
 
 /**
- * Factory which is used to create upload commands.
+ * Factory that is used to create upload commands.
  */
 public class UploadCommandFactory {
 
@@ -19,7 +19,7 @@ public class UploadCommandFactory {
 
     /**
      * Creates UploadCommand using data from the request.
-     * @param request Request which is used to create UploadCommand
+     * @param request Request that is used to create UploadCommand
      * @return Defined UploadCommand
      * @throws CommandException if command creation failed
      */

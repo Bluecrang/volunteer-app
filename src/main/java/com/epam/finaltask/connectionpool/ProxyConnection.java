@@ -6,8 +6,8 @@ import java.util.Properties;
 import java.util.concurrent.Executor;
 
 /**
- * Connection proxy class, instances of which created and provided by the {@link ConnectionPool}.
- * Delegates all method invocations to the real connection except for close() method, which puts ProxyConnection
+ * Connection proxy class, instances of that created and provided by the {@link ConnectionPool}.
+ * Delegates all method invocations to the real connection except for close() method which puts ProxyConnection
  * to the connection pool. Method closeRealConnection() allows to close proxied connection.
  */
 class ProxyConnection implements Connection {
@@ -19,15 +19,15 @@ class ProxyConnection implements Connection {
 
     /**
      * Creates ProxyConnection for chosen connection.
-     * @param connection Connection which should be proxied
+     * @param connection Connection that will be proxied
      */
     ProxyConnection(Connection connection) {
         this.connection = connection;
     }
 
     /**
-     * Sets autocommit to the connection and returns proxy to the pool.
-     * @throws SQLException If auto commit check or it's change to {@code true} throws exception
+     * Sets autocommit to {@code true} and returns proxy to the pool.
+     * @throws SQLException If check for auto commit or auto commit set threw SQLException
      */
     @Override
     public void close() throws SQLException {

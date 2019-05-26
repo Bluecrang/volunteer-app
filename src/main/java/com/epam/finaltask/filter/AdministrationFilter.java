@@ -14,7 +14,7 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
 /**
- * Filter which forbids access to the pages that only administrators should see for simple users.
+ * Filter that forbids access to the pages that only administrators should see for simple users.
  */
 @WebFilter(dispatcherTypes = {DispatcherType.FORWARD, DispatcherType.REQUEST},
         filterName = "AdministrationFilter")

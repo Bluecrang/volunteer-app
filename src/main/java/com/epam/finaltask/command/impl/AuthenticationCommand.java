@@ -11,7 +11,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 /**
- * Command which allows to authenticate user.
+ * Command that allows to authenticate user.
  */
 public class AuthenticationCommand extends Command {
 

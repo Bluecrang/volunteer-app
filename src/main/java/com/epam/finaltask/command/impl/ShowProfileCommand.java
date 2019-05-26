@@ -11,7 +11,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 /**
- * Command which is used to initialize data for the profile page.
+ * Command that is used to initialize data for the profile page.
  */
 public class ShowProfileCommand extends Command {
 

@@ -12,12 +12,12 @@ import com.epam.finaltask.dao.impl.DaoFactoryImpl;
 public abstract class AbstractService {
 
     /**
-     * Factory which is used to create new DAO objects.
+     * Factory that is used to create new DAO objects.
      */
     protected DaoFactory daoFactory;
 
     /**
-     * Factory which is used to create {@link com.epam.finaltask.dao.impl.AbstractConnectionManager} implementation.
+     * Factory that is used to create {@link com.epam.finaltask.dao.impl.AbstractConnectionManager} implementation.
      */
     protected ConnectionManagerFactory connectionManagerFactory;
 
@@ -74,7 +74,7 @@ public abstract class AbstractService {
     }
 
     /**
-     * Constructor which creates {@link DaoFactoryImpl} and {@link ConnectionManagerFactoryImpl} and assign them to
+     * Constructor that creates {@link DaoFactoryImpl} and {@link ConnectionManagerFactoryImpl} and assign them to
      * corresponding fields
      */
     public AbstractService() {

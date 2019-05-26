@@ -4,7 +4,7 @@ import com.epam.finaltask.command.Command;
 import com.epam.finaltask.util.PageConstants;
 
 /**
- * Command which is used to move to the registration page.
+ * Command that is used to move to the registration page.
  */
 public class ShowRegistrationPageCommand extends Command {
 

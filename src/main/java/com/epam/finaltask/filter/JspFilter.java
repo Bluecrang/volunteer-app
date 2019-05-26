@@ -14,7 +14,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 /**
- * Filter which forbids access to jsp files.
+ * Filter that forbids access to jsp files.
  */
 @WebFilter(dispatcherTypes = {DispatcherType.REQUEST}, filterName = "JspFilter")
 public class JspFilter implements Filter{

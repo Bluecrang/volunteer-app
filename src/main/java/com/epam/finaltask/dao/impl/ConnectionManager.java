@@ -7,17 +7,17 @@ import java.sql.Connection;
 import java.sql.SQLException;
 
 /**
- * Class which instances are used to provide connection to DAOs.
+ * Class that instances are used to provide connection to DAOs.
  */
 class ConnectionManager extends AbstractConnectionManager {
     /**
-     * Connection which is being provided.
+     * Connection that is being provided.
      */
     private Connection connection;
 
     /**
-     * Creates ConnectionManager with connection from the database.
-     * @throws PersistenceException if ConnetionPoolException is thrown
+     * Creates ConnectionManager that takes connection from the connection pool.
+     * @throws PersistenceException if ConnectionPoolException is thrown
      */
     public ConnectionManager() throws PersistenceException {
         try {

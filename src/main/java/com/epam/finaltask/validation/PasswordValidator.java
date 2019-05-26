@@ -4,7 +4,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 /**
- * Validation class which is used to check if password can be used for registration.
+ * Validation class that is used to check if password can be used for registration.
  */
 public class PasswordValidator {
 

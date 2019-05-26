@@ -13,7 +13,7 @@ import java.util.LinkedList;
 import java.util.List;
 
 /**
- * Class which implements CRUD and several other operations to work with database topics.
+ * Class that implements CRUD and several other operations to work with database topics.
  */
 class TopicDaoImpl extends AbstractDao<Topic> implements TopicDao {
 
@@ -34,7 +34,7 @@ class TopicDaoImpl extends AbstractDao<Topic> implements TopicDao {
 
     /**
      * Creates TopicDaoImpl using chosen connectionManager
-     * @param connectionManager Connection manager which will provide it's connection to the DAO
+     * @param connectionManager Connection manager that provides connection to the DAO
      */
     public TopicDaoImpl(AbstractConnectionManager connectionManager) {
         super(connectionManager);
@@ -199,8 +199,8 @@ class TopicDaoImpl extends AbstractDao<Topic> implements TopicDao {
     }
 
     /**
-     * Returns query which deletes topic by id.
-     * @return Query which deletes topic by id
+     * Returns query that deletes topic by id.
+     * @return Query that deletes topic by id
      */
     @Override
     public String getDeleteByIdQuery() {

@@ -13,7 +13,7 @@ import javax.servlet.http.Part;
 import java.util.Collection;
 
 /**
- * Command which is used to upload avatar.
+ * Command that is used to upload avatar.
  */
 public class UploadAvatarCommand extends UploadCommand {
 

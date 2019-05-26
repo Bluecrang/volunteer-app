@@ -6,7 +6,7 @@ import java.util.Arrays;
 import java.util.Optional;
 
 /**
- * Validation class which is used to define if string can be associated with {@link UploadCommandType} constant.
+ * Validation class that is used to define if string can be associated with {@link UploadCommandType} constant.
  */
 public class UploadCommandValidator {
 

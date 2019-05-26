@@ -17,7 +17,7 @@ import org.apache.logging.log4j.Logger;
 import java.util.List;
 
 /**
- * Command which is used to show topic page.
+ * Command that is used to show topic page.
  */
 public class ShowTopicPageCommand extends Command {
 

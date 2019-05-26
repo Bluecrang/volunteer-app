@@ -23,7 +23,7 @@ import java.util.regex.PatternSyntaxException;
 import java.util.stream.Collectors;
 
 /**
- * Service class which provides methods to add and manipulate database topics.
+ * Service class that provides methods to add and manipulate database topics.
  */
 public class TopicService extends AbstractService {
 
@@ -31,8 +31,8 @@ public class TopicService extends AbstractService {
 
     /**
      * Creates TopicService with chosen DaoFactory and ConnectionManagerFactory implementations.
-     * @param daoFactory Factory which is used to create DAO objects
-     * @param connectionManagerFactory Factory which is used to create {@link AbstractConnectionManager} subclass instances
+     * @param daoFactory Factory that is used to create DAO objects
+     * @param connectionManagerFactory Factory that is used to create {@link AbstractConnectionManager} subclass instances
      */
     public TopicService(DaoFactory daoFactory, ConnectionManagerFactory connectionManagerFactory) {
         super(daoFactory, connectionManagerFactory);
@@ -196,7 +196,7 @@ public class TopicService extends AbstractService {
     /**
      * Finds topics by it's title substring.
      * @param searchString Title substring used to search topics.
-     * @return All topics which titles contained chosen substring
+     * @return All topics which titles contain chosen substring
      * @throws ServiceException if PersistenceException is thrown while working with database
      */
     public List<Topic> findTopicsByTitleSubstring(String searchString) throws ServiceException {

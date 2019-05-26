@@ -8,7 +8,7 @@ import org.apache.logging.log4j.Logger;
 import java.util.List;
 
 /**
- * Interface which provides basic DAO methods.
+ * Interface that provides basic DAO methods.
  * @param <T> Entity to work with
  */
 public interface Dao<T extends Entity> {
