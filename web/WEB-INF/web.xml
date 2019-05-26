@@ -27,10 +27,6 @@
         <url-pattern>/*</url-pattern>
     </filter-mapping>
     <filter-mapping>
-        <filter-name>AdministrationFilter</filter-name>
-        <url-pattern>/jsp/admin/*</url-pattern>
-    </filter-mapping>
-    <filter-mapping>
         <filter-name>EncodingFilter</filter-name>
         <url-pattern>/*</url-pattern>
     </filter-mapping>
