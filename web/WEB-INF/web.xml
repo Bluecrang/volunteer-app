@@ -14,6 +14,14 @@
         </taglib>
     </jsp-config>
 
+    <error-page>
+        <error-code>404</error-code>
+        <location>/WEB-INF/error/error_404.jsp</location>
+    </error-page>
+    <error-page>
+        <location>/WEB-INF/error/error.jsp</location>
+    </error-page>
+
     <filter-mapping>
         <filter-name>JspFilter</filter-name>
         <url-pattern>/*</url-pattern>
@@ -26,12 +34,4 @@
         <filter-name>EncodingFilter</filter-name>
         <url-pattern>/*</url-pattern>
     </filter-mapping>
-
-    <!--<error-page>-->
-        <!--<error-code>404</error-code>-->
-        <!--<location>/WEB-INF/error/error_404.jsp</location>-->
-    <!--</error-page>-->
-    <!--<error-page>-->
-        <!--<location>/WEB-INF/error/error.jsp</location>-->
-    <!--</error-page>-->
 </web-app>

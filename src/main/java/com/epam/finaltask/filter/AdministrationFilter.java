@@ -29,7 +29,7 @@ public class AdministrationFilter implements Filter {
         logger.log(Level.DEBUG, "uri = " + uri);
         if(accountObject instanceof Account)  {
             Account account = (Account) accountObject;
-            if (AccountType.ADMIN.equals(account.getAccountType())) {
+            if (AccountType.ADMIN == account.getAccountType()) {
                 logger.log(Level.DEBUG, "account type is admin");
                 chain.doFilter(request, response);
                 return;

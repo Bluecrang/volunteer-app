@@ -28,12 +28,16 @@ public class JspFilter implements Filter{
         HttpServletRequest httpRequest = (HttpServletRequest) request;
         HttpServletResponse httpResponse = (HttpServletResponse) response;
         String uri = httpRequest.getRequestURI();
-        logger.log(Level.DEBUG, "uri = " + uri);
-        Matcher matcher = JSP_EXTENSION_PATTERN.matcher(uri);
-        if (matcher.matches()) {
-            logger.log(Level.DEBUG, "jsp extension found, sending error");
-            httpResponse.sendError(ApplicationConstants.PAGE_NOT_FOUND_ERROR_CODE);
-            return;
+        logger.log(Level.INFO, "JspFilter uri = " + uri);
+        int status = httpResponse.getStatus();
+        logger.log(Level.INFO, "JspFilter status =" + status);
+        if (status < 400) {
+            Matcher matcher = JSP_EXTENSION_PATTERN.matcher(uri);
+            if (matcher.matches()) {
+                logger.log(Level.DEBUG, "jsp extension found, sending error");
+                httpResponse.sendError(ApplicationConstants.PAGE_NOT_FOUND_ERROR_CODE);
+                return;
+            }
         }
         chain.doFilter(request, response);
     }
