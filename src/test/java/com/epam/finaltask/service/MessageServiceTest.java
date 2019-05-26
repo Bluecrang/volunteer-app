@@ -1,9 +1,6 @@
 package com.epam.finaltask.service;
 
-import com.epam.finaltask.dao.AccountDao;
-import com.epam.finaltask.dao.ConnectionManagerFactory;
-import com.epam.finaltask.dao.DaoFactory;
-import com.epam.finaltask.dao.MessageDao;
+import com.epam.finaltask.dao.*;
 import com.epam.finaltask.dao.impl.AbstractConnectionManager;
 import com.epam.finaltask.dao.impl.PersistenceException;
 import com.epam.finaltask.entity.AccountType;
@@ -50,6 +47,32 @@ public class MessageServiceTest {
         messageService = new MessageService(daoFactory, connectionManagerFactory);
     }
 
+    @Test
+    public void createMessageTestValidParameters() {
+        String username = "username";
+        String hash = "hash";
+        String email = "email@mail.com";
+        Account account = new Account(1, username, hash,
+                email, AccountType.USER, 0, false, "salt", null);
+        try {
+            when(messageDao.createWithGeneratedDate(anyObject())).thenReturn(true);
+            TopicDao topicDao = mock(TopicDao.class);
+            Topic topic = new Topic(15);
+            topic.setClosed(false);
+            when(daoFactory.createTopicDao(connectionManager)).thenReturn(topicDao);
+            when(topicDao.findEntityById(anyLong())).thenReturn(topic);
+
+            boolean result = messageService.createMessage(account, 1, "text");
+
+            verify(messageDao).createWithGeneratedDate(anyObject());
+            Assert.assertTrue(result);
+        } catch (ServiceException e) {
+            fail("Unexpected ServiceException", e);
+        } catch (PersistenceException e) {
+            fail("Unexpected PersistenceException", e);
+        }
+    }
+
     @DataProvider(name = "CreateMessageInvalidParametersProvider")
     public Object[][] provideInvalidCreateMessageMethodParameters() {
         String username = "username";
@@ -69,27 +92,6 @@ public class MessageServiceTest {
         };
     }
 
-    @Test
-    public void createMessageTestValidParameters() {
-        String username = "username";
-        String hash = "hash";
-        String email = "email@mail.com";
-        Account account = new Account(1, username, hash,
-                email, AccountType.USER, 0, false, "salt", null);
-        try {
-            when(messageDao.createWithGeneratedDate(anyObject())).thenReturn(true);
-
-            boolean result = messageService.createMessage(account, 1, "text");
-
-            verify(messageDao).createWithGeneratedDate(anyObject());
-            Assert.assertTrue(result);
-        } catch (ServiceException e) {
-            fail("Unexpected ServiceException", e);
-        } catch (PersistenceException e) {
-            fail("Unexpected PersistenceException", e);
-        }
-    }
-
     @Test(dataProvider = "CreateMessageInvalidParametersProvider")
     public void createMessageTestInvalidParameters(Account account, long topicId, String text) {
         try {
@@ -102,6 +104,31 @@ public class MessageServiceTest {
     }
 
     @Test
+    public void createMessageTestTopicClosed() {
+        String username = "username";
+        String hash = "hash";
+        String email = "email@mail.com";
+        Account account = new Account(1, username, hash,
+                email, AccountType.USER, 0, false, "salt", null);
+        try {
+            when(messageDao.createWithGeneratedDate(anyObject())).thenReturn(true);
+            TopicDao topicDao = mock(TopicDao.class);
+            Topic topic = new Topic(15);
+            topic.setClosed(true);
+            when(daoFactory.createTopicDao(connectionManager)).thenReturn(topicDao);
+            when(topicDao.findEntityById(anyLong())).thenReturn(topic);
+
+            boolean result = messageService.createMessage(account, 1, "text");
+
+            Assert.assertFalse(result);
+        } catch (ServiceException e) {
+            fail("Unexpected ServiceException", e);
+        } catch (PersistenceException e) {
+            fail("Unexpected PersistenceException", e);
+        }
+    }
+
+    @Test
     public void createMessageTestCouldNotCreateMessageInDatabase() {
         String username = "username";
         String hash = "hash";
@@ -110,6 +137,11 @@ public class MessageServiceTest {
                 email, AccountType.USER, 0, false, "salt", null);
         try {
             when(messageDao.createWithGeneratedDate(anyObject())).thenReturn(false);
+            TopicDao topicDao = mock(TopicDao.class);
+            Topic topic = new Topic(15);
+            topic.setClosed(false);
+            when(topicDao.findEntityById(anyLong())).thenReturn(topic);
+            when(daoFactory.createTopicDao(connectionManager)).thenReturn(topicDao);
 
             boolean result = messageService.createMessage(account, 1, "text");
 

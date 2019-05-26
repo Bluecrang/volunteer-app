@@ -28,8 +28,8 @@ public class TopicDaoImplTest {
 
     @BeforeClass
     public void init() {
+        MockitoAnnotations.initMocks(this);
         try {
-            MockitoAnnotations.initMocks(this);
             DatabaseTestUtil.registerDrivers();
             DatabaseTestUtil.initializeDatabase();
             Connection connection = DatabaseTestUtil.getConnection();
@@ -97,10 +97,22 @@ public class TopicDaoImplTest {
     @Test
     public void findEntityByIdTest() {
         try {
-            long topicId = 1;
+            long topicId = -1;
+            String title = "new Title";
+            topic.setTitle(title);
             topicDao.create(topic);
 
-            Topic actual = topicDao.findEntityById(1);
+            List<Topic> topics = topicDao.findAll();
+            for (Topic topic : topics) {
+                if (title.equals(topic.getTitle())) {
+                    topicId = topic.getTopicId();
+                }
+            }
+            if (topicId == -1) {
+                fail("unable to find created topic to define topicId");
+            }
+
+            Topic actual = topicDao.findEntityById(topicId);
 
             Assert.assertEquals(actual.getTopicId(), topicId);
         } catch (PersistenceException e) {
@@ -122,11 +134,23 @@ public class TopicDaoImplTest {
 
     @Test
     public void updateTest() {
-        long topicId = 1;
         try {
+            long topicId = -1;
+            String title = "new Title2";
+            topic.setTitle(title);
             topicDao.create(topic);
+
+            List<Topic> topics = topicDao.findAll();
+            for (Topic topic : topics) {
+                if (title.equals(topic.getTitle())) {
+                    topicId = topic.getTopicId();
+                }
+            }
+            if (topicId == -1) {
+                fail("unable to find created topic to define topicId");
+            }
             Topic topicToUpdate = topicDao.findEntityById(topicId);
-            topicToUpdate.setText("text2");
+            topicToUpdate.setText("text22");
 
             int actual = topicDao.update(topicToUpdate);
             Assert.assertEquals(actual, 1);

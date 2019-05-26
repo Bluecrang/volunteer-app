@@ -1,13 +1,11 @@
 package com.epam.finaltask.service;
 
-import com.epam.finaltask.dao.AccountDao;
-import com.epam.finaltask.dao.ConnectionManagerFactory;
-import com.epam.finaltask.dao.DaoFactory;
-import com.epam.finaltask.dao.TopicDao;
+import com.epam.finaltask.dao.*;
 import com.epam.finaltask.dao.impl.AbstractConnectionManager;
 import com.epam.finaltask.dao.impl.PersistenceException;
 import com.epam.finaltask.entity.AccountType;
 import com.epam.finaltask.entity.Account;
+import com.epam.finaltask.entity.Message;
 import com.epam.finaltask.entity.Topic;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
@@ -184,8 +182,34 @@ public class TopicServiceTest {
         try {
             when(topicDao.findEntityById(topicId)).thenReturn(topic);
             when(topicDao.update(topic)).thenReturn(1);
+            MessageDao messageDao = mock(MessageDao.class);
+            when(daoFactory.createMessageDao(connectionManager)).thenReturn(messageDao);
+            when(messageDao.findMessagesByTopicId(1)).thenReturn(new ArrayList<Message>() {
+                {
+                    add(new Message(5, "text", new Account(3),
+                            LocalDateTime.of(2001, 10, 10, 10, 10),
+                            topic));
+                    add(new Message(7, "text1", new Account(2),
+                            LocalDateTime.of(2001, 10, 10, 10, 10),
+                            topic));
+                    add(new Message(15, "text2", new Account(2),
+                            LocalDateTime.of(2001, 10, 10, 10, 10),
+                            topic));
+                }
+            });
+            AccountDao accountDao = mock(AccountDao.class);
+            Account account1 = new Account(2);
+            account1.setAccountType(AccountType.VOLUNTEER);
+            Account account2 = new Account(3);
+            account2.setAccountType(AccountType.ADMIN);
+            when(accountDao.findEntityById(2)).thenReturn(account1);
+            when(accountDao.findEntityById(3)).thenReturn(account2);
+            when(daoFactory.createAccountDao(connectionManager)).thenReturn(accountDao);
+
             boolean result = topicService.closeTopic(1);
 
+            verify(accountDao).update(account1);
+            verify(accountDao).update(account2);
             verify(topicDao).update(topic);
             Assert.assertTrue(result);
         } catch (ServiceException e) {
