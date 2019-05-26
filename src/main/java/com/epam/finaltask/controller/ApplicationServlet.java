@@ -69,7 +69,7 @@ public class ApplicationServlet extends AbstractServlet {
     }
 
     /**
-     * Process GET or POST request.
+     * Processes GET or POST request.
      * @param request HttpServletRequest
      * @param response HttpServletResponse
      * @throws IOException If {@link AbstractServlet#performTransition(HttpServletRequest, HttpServletResponse, CommandResult, CommandData)} throws IOException

@@ -26,7 +26,7 @@ public class UploadAvatarCommand extends UploadCommand {
     }
 
     @Override
-    public CommandResult performAction(CommandData commandData, Collection<Part> parts) throws CommandException { //todo add id
+    public CommandResult performAction(CommandData commandData, Collection<Part> parts) throws CommandException { 
         CommandResult result = new CommandResult();
         Account sessionAccount = commandData.getSessionAccount();
         if (sessionAccount != null) {

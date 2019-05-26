@@ -215,7 +215,13 @@ public class AccountService extends AbstractService {
         }
     }
 
-    //todo
+    /**
+     * Changes account type of the account with chosen id to the chosen account type.
+     * @param accountId Id of the account which type will be changed
+     * @param accountType Type of the account to set
+     * @return {@code true} if account type was set successfully, else returns {@code false}
+     * @throws ServiceException If PersistenceException is thrown while working with database
+     */
     public boolean changeAccountType(long accountId, AccountType accountType) throws ServiceException {
         if (accountType != null && accountType != AccountType.GUEST) {
             try (AbstractConnectionManager connectionManager = connectionManagerFactory.createConnectionManager()) {

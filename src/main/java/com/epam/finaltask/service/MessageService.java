@@ -133,12 +133,14 @@ public class MessageService extends AbstractService {
         }
     }
 
-    /**todo
+    /**
      * Creates message with specified account, topicId and text and adds it to the database.
+     * If topic that owns the message can't be found in the database or it is closed, then result is {@code false}.
      * @param account Account of the message author
-     * @param topicId Id of the topic that owns message
+     * @param topicId Id of the topic that owns the message
      * @param text Text of the message
-     * @return {@code true} if message successfully created and added to the database, else returns {@code false}
+     * @return {@code true} if message successfully created and added to the database, else returns {@code false}.
+     * Returns {@code false} if topic that owns the message can't be found in the database or it is closed
      * @throws ServiceException If PersistenceException is thrown while working with database
      */
     public boolean createMessage(Account account, long topicId, String text) throws ServiceException {

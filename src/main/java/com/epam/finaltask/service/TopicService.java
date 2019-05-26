@@ -42,10 +42,12 @@ public class TopicService extends AbstractService {
         super();
     }
 
-    /** todo
+    /**
      * Changes topic closed flag to {@code true}.
+     * Adds {@link ApplicationConstants#TOPIC_CLOSE_RATING_BONUS} to the accounts with type {@link AccountType#ADMIN} or
+     * {@link AccountType#VOLUNTEER} if they own message(s) in the topic and do not own the topic.
      * @param topicId Id of the topic to close
-     * @return {@code true} if topic successfully closed, else returns {@code false}
+     * @return {@code true} if topic was successfully closed, else returns {@code false}
      * @throws ServiceException if PersistenceException is thrown while working with database
      */
     public boolean closeTopic(long topicId) throws ServiceException {
@@ -208,7 +210,16 @@ public class TopicService extends AbstractService {
         }
     }
 
-    //todo
+    /**
+     * Find topics by chosen substring.
+     * If sessionAccount's account type is {@link AccountType#ADMIN} or {@link AccountType#VOLUNTEER}, returns all
+     * topics, if {@link AccountType#USER} - returns only topics owned by session account, else returns empty list.
+     * @param sessionAccount Session account
+     * @param searchString String that is used to find topics.
+     * @return If sessionAccount's account type is {@link AccountType#ADMIN} or {@link AccountType#VOLUNTEER}, returns all
+     * topics, if {@link AccountType#USER} - returns only topics owned by session account, else returns empty list.
+     * @throws ServiceException If PersistenceException is thrown while working with database
+     */
     public List<Topic> findTopicsByTitleSubstring(Account sessionAccount, String searchString) throws ServiceException {
         if (searchString == null) {
             logger.log(Level.WARN, "unable to find topics by title searchString: searchString is null");
