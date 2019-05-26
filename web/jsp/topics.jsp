@@ -61,11 +61,11 @@
                 <textarea class="form-control" id="topic_text" name="text" form="create_topic"><fmt:message key="topics.create_topic.textarea"/></textarea><br/>
                 <input class="btn btn-primary" type="submit" value="<fmt:message key="topics.create_topic.submit"/>"/>
             </form>
+            <div id="topic_creation_message">
             <c:if test="${not empty topic_creation_message}">
-                <div id="topic_creation_message">
                     <fmt:message key="${topic_creation_message}"/>
-                </div>
             </c:if>
+            </div>
         </c:if>
     </div>
 </body>

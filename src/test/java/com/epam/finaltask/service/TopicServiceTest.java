@@ -333,7 +333,6 @@ public class TopicServiceTest {
             when(daoFactory.createAccountDao(connectionManager)).thenReturn(accountDao);
 
             topicService.findAllTopics();
-
         } catch (PersistenceException e) {
             fail("Unexpected PersistenceException", e);
         }
@@ -378,7 +377,6 @@ public class TopicServiceTest {
             doThrow(new PersistenceException()).when(connectionManager).disableAutoCommit();
             topicService.findAllTopics();
 
-            verify(connectionManager).disableAutoCommit();
         } catch (PersistenceException e) {
             fail("Unexpected PersistenceException", e);
         }
@@ -647,6 +645,112 @@ public class TopicServiceTest {
             when(accountDao.findEntityById(account1.getAccountId())).thenThrow(new PersistenceException());
 
             topicService.findTopicsByTitleSubstring(sessionAccount,"title");
+        } catch (PersistenceException e) {
+            fail("Unexpected PersistenceException", e);
+        }
+    }
+
+    @Test
+    public void findTopicsByAuthorIdNoPersistenceException() {
+        try {
+            long accountId = 1;
+            Account account = new Account(accountId);
+            Topic expected1 = new Topic(1, "title1", "text2",
+                    LocalDateTime.of(2113, 10, 3, 1, 10),
+                    account,
+                    false,
+                    false);
+            Topic expected2 = new Topic(2, "title2", "text2",
+                    LocalDateTime.of(2013, 1, 5, 10, 12),
+                    account,
+                    false,
+                    false);
+            Topic expected3 = new Topic(3, "title4", "text4",
+                    LocalDateTime.of(2012, 4, 7, 4, 38),
+                    account,
+                    true,
+                    true);
+            when(topicDao.findTopicsByAccountId(accountId)).thenReturn(new ArrayList<Topic>() {
+                {
+                    add(expected1);
+                    add(expected2);
+                    add(expected3);
+                }
+            });
+            AccountDao accountDao = mock(AccountDao.class);
+            when(daoFactory.createAccountDao(connectionManager)).thenReturn(accountDao);
+            when(accountDao.findEntityById(account.getAccountId())).thenReturn(new Account(accountId));
+
+            List<Topic> actual = topicService.findTopicsByAuthorId(accountId);
+
+            verify(topicDao).findTopicsByAccountId(accountId);
+            Assert.assertEquals(actual.size(), 3);
+        } catch (PersistenceException e) {
+            fail("Unexpected PersistenceException", e);
+        } catch (ServiceException e) {
+            fail("Unexpected ServiceException", e);
+        }
+    }
+
+    @Test(expectedExceptions = ServiceException.class)
+    public void findTopicsByAuthorIdPersistenceExceptionThrownInTopicDao() throws ServiceException {
+        try {
+            long accountId = 1;
+            when(topicDao.findTopicsByAccountId(accountId)).thenThrow(new PersistenceException());
+            AccountDao accountDao = mock(AccountDao.class);
+            when(daoFactory.createAccountDao(connectionManager)).thenReturn(accountDao);
+
+            topicService.findTopicsByAuthorId(accountId);
+
+        } catch (PersistenceException e) {
+            fail("Unexpected PersistenceException", e);
+        }
+    }
+
+    @Test(expectedExceptions = ServiceException.class)
+    public void findTopicsByAuthorIdPersistenceExceptionThrownInAccountDao() throws ServiceException {
+        try {
+            long accountId = 1;
+            Account account = new Account(accountId);
+            Topic expected1 = new Topic(1, "title1", "text2",
+                    LocalDateTime.of(2113, 10, 3, 1, 10),
+                    account,
+                    false,
+                    false);
+            Topic expected2 = new Topic(2, "title2", "text2",
+                    LocalDateTime.of(2013, 1, 5, 10, 12),
+                    account,
+                    false,
+                    false);
+            Topic expected3 = new Topic(3, "title4", "text4",
+                    LocalDateTime.of(2012, 4, 7, 4, 38),
+                    account,
+                    true,
+                    true);
+            when(topicDao.findTopicsByAccountId(accountId)).thenReturn(new ArrayList<Topic>() {
+                {
+                    add(expected1);
+                    add(expected2);
+                    add(expected3);
+                }
+            });
+            AccountDao accountDao = mock(AccountDao.class);
+            when(daoFactory.createAccountDao(connectionManager)).thenReturn(accountDao);
+            when(accountDao.findEntityById(accountId)).thenThrow(new PersistenceException());
+            topicService.findTopicsByAuthorId(accountId);
+
+        } catch (PersistenceException e) {
+            fail("Unexpected PersistenceException", e);
+        }
+    }
+
+    @Test(expectedExceptions = ServiceException.class)
+    public void findTopicsByAuthorIdPersistenceExceptionBeforeTransaction() throws ServiceException {
+        try {
+            long accountId = 1;
+            doThrow(new PersistenceException()).when(connectionManager).disableAutoCommit();
+
+            topicService.findTopicsByAuthorId(accountId);
         } catch (PersistenceException e) {
             fail("Unexpected PersistenceException", e);
         }

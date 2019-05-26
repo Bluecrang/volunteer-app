@@ -194,10 +194,7 @@ public class TopicService extends AbstractService {
                 TopicDao topicDao = daoFactory.createTopicDao(connectionManager);
                 AccountDao accountDao = daoFactory.createAccountDao(connectionManager);
                 List<Topic> topics = topicDao.findAll();
-                for (Topic topic : topics) {
-                    Account account = accountDao.findEntityById(topic.getAccount().getAccountId());
-                    topic.setAccount(account);
-                }
+                provideAccountsToTopics(topics, accountDao);
                 connectionManager.commit();
                 topics.sort(Comparator.comparing(Topic::getDate, Comparator.reverseOrder()));
                 return topics;
@@ -260,10 +257,33 @@ public class TopicService extends AbstractService {
      */
     public List<Topic> findTopicsByAuthorId(long authorId) throws ServiceException {
         try (AbstractConnectionManager connectionManager = connectionManagerFactory.createConnectionManager()) {
-            TopicDao topicDao = daoFactory.createTopicDao(connectionManager);
-            return topicDao.findTopicsByAccountId(authorId);
+            connectionManager.disableAutoCommit();
+            try {
+                TopicDao topicDao = daoFactory.createTopicDao(connectionManager);
+                AccountDao accountDao = daoFactory.createAccountDao(connectionManager);
+                List<Topic> topics = topicDao.findTopicsByAccountId(authorId);
+                provideAccountsToTopics(topics, accountDao);
+                connectionManager.commit();
+                return topics;
+            } catch (PersistenceException e) {
+                connectionManager.rollback();
+                throw new ServiceException(e);
+            }
         } catch (PersistenceException e) {
             throw new ServiceException(e);
+        }
+    }
+
+    /**
+     * Finds accounts of topic authors and assigns them to topics.
+     * @param topics Topics which require account to be set
+     * @param accountDao Dao that will be used to load accounts from the database
+     * @throws PersistenceException If PersistenceException is thrown while working with database
+     */
+    private void provideAccountsToTopics(List<Topic> topics, AccountDao accountDao) throws PersistenceException {
+        for (Topic topic : topics) {
+            Account account = accountDao.findEntityById(topic.getAccount().getAccountId());
+            topic.setAccount(account);
         }
     }
 }
