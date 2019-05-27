@@ -19,7 +19,7 @@ CREATE TABLE IF NOT EXISTS `volunteerdbtest`.`account` (
   `rating` INT NOT NULL,
   `blocked` TINYINT NOT NULL,
   `salt` VARCHAR(32) NOT NULL,
-  `avatar` BLOB NULL,
+  `avatar` MEDIUMBLOB NULL,
   PRIMARY KEY (`account_id`),
   UNIQUE INDEX `login_UNIQUE` (`username` ASC),
   INDEX `fk_account_account_type_idx` (`account_type_id` ASC),

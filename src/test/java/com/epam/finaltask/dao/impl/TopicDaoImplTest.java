@@ -168,4 +168,28 @@ public class TopicDaoImplTest {
             throw new RuntimeException(e);
         }
     }
+
+    @Test
+    public void findPageMessagesTest() {
+        try {
+            topicDao.create(topic);
+            topicDao.create(new Topic("title12",
+                    "text12",
+                    LocalDateTime.of(2001, 7, 15, 22, 44),
+                    new Account(1),
+                    false,
+                    false));
+            topicDao.create(new Topic("title13",
+                    "text13",
+                    LocalDateTime.of(2020, 5, 3, 1, 54),
+                    new Account(1),
+                    false,
+                    false));
+            List<Topic> actual = topicDao.findPageTopics(1, 2, true);
+
+            Assert.assertEquals(actual.size(), 2);
+        } catch (PersistenceException e) {
+            fail("Unexpected PersistenceException", e);
+        }
+    }
 }

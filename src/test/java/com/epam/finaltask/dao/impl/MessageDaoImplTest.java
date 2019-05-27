@@ -60,7 +60,7 @@ public class MessageDaoImplTest {
     }
 
     @Test
-    public void findPage() {
+    public void findPageMessagesTest() {
         try {
             messageDao.create(message);
             LocalDateTime localDateTime = LocalDateTime.of(2001, 5, 17, 5, 52);

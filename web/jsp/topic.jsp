@@ -71,7 +71,7 @@
                 <fmt:message key="message.previous"/>
             </a>
         </c:if>
-        <c:forEach var="i" begin="${topic_current_page > messages_per_page ? topic_current_page - messages_per_page : 1}" end="${topic_number_of_pages - topic_current_page > messages_per_page ? topic_current_page + messages_per_page : topic_number_of_pages}">
+        <c:forEach var="i" begin="${topic_current_page > page_step ? topic_current_page - page_step : 1}" end="${topic_number_of_pages - topic_current_page > page_step ? topic_current_page + page_step : topic_number_of_pages}">
             <c:choose>
                 <c:when test="${topic_current_page == i}">
                     ${i}

@@ -31,13 +31,14 @@ public class ChangeTopicHiddenStateCommand extends Command {
                 boolean hide = Boolean.parseBoolean(data.getRequestParameter(TOPIC_CHANGE_HIDDEN_STATE_PARAMETER));
                 TopicService topicService = new TopicService();
                 try {
+                    commandResult.setPage(ApplicationConstants.SHOW_TOPICS);
                     if (topicService.changeTopicHiddenState(topicId, hide)) {
                         logger.log(Level.INFO, "topic hidden state successfully changed, topic id=" + topicId +
                                 ", new hidden state: " + hide);
-                        data.putRequestAttribute(ApplicationConstants.TOPIC_ACTION_NOTIFICATION_ATTRIBUTE,
+                        data.putSessionAttribute(ApplicationConstants.TOPIC_ACTION_NOTIFICATION_ATTRIBUTE,
                                 MESSAGE_SUCCESSFULLY_DELETED_PROPERTY);
                     } else {
-                        data.putRequestAttribute(ApplicationConstants.TOPIC_ACTION_NOTIFICATION_ATTRIBUTE,
+                        data.putSessionAttribute(ApplicationConstants.TOPIC_ACTION_NOTIFICATION_ATTRIBUTE,
                                 MESSAGE_DELETION_ERROR_PROPERTY);
                         logger.log(Level.WARN, "unable to change topic hidden state, topicId=" + topicId);
                     }

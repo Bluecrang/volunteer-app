@@ -52,6 +52,34 @@
                 </c:if>
             </c:forEach>
         </ul>
+        <c:if test="${current_page > 1}">
+            <a href="${pageContext.request.contextPath}/controller?page=${current_page - 1}&command=show_topics">
+                <fmt:message key="message.previous"/>
+            </a>
+        </c:if>
+        <c:forEach var="i" begin="${current_page > page_step ? current_page - page_step : 1}" end="${number_of_pages - current_page > page_step ? current_page + page_step : number_of_pages}">
+            <c:choose>
+                <c:when test="${current_page == i}">
+                    ${i}
+                </c:when>
+                <c:otherwise>
+                    <a href="${pageContext.request.contextPath}/controller?page=${i}&command=show_topics">
+                            ${i}
+                    </a>
+                </c:otherwise>
+            </c:choose>
+        </c:forEach>
+        <c:if test="${current_page < number_of_pages}">
+            <a href="${pageContext.request.contextPath}/controller?page=${current_page + 1}&command=show_topics">
+                <fmt:message key="message.next"/>
+            </a>
+        </c:if>
+        <div id="topic_creation_message">
+            <c:if test="${not empty topic_creation_message}">
+                <fmt:message key="${topic_creation_message}"/>
+                <c:remove var="topic_creation_message"/>
+            </c:if>
+        </div>
         <c:if test="${not empty account}">
             <h4 class="text-center"><fmt:message key="topics.create_topic_header"/></h4>
             <form method="post" id="create_topic" onsubmit="return validateTopicForm();" name="topic" action="${pageContext.request.contextPath}/controller">
@@ -61,11 +89,6 @@
                 <textarea class="form-control" id="topic_text" name="text" form="create_topic"><fmt:message key="topics.create_topic.textarea"/></textarea><br/>
                 <input class="btn btn-primary" type="submit" value="<fmt:message key="topics.create_topic.submit"/>"/>
             </form>
-            <div id="topic_creation_message">
-            <c:if test="${not empty topic_creation_message}">
-                    <fmt:message key="${topic_creation_message}"/>
-            </c:if>
-            </div>
         </c:if>
     </div>
 </body>

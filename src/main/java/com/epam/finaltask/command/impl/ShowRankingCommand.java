@@ -19,9 +19,9 @@ public class ShowRankingCommand extends Command {
 
     private static final Logger logger = LogManager.getLogger();
 
-    private static final int NUMBER_OF_ACCOUNTS_PER_PAGE = 5;
-    private static final String NUMBER_OF_ACCOUNTS_PER_PAGE_ATTRIBUTE = "accounts_per_page";
+    private static final int NUMBER_OF_ACCOUNTS_PER_PAGE = 10;
     private static final String ACCOUNT_LIST_ATTRIBUTE = "account_list";
+    private static final Integer PAGE_STEP = 5;
 
     public ShowRankingCommand(CommandConstraints constraints) {
         super(constraints);
@@ -41,7 +41,7 @@ public class ShowRankingCommand extends Command {
             int numberOfPages = Math.toIntExact(Math.round(Math.ceil((double)accountCount / NUMBER_OF_ACCOUNTS_PER_PAGE)));
             data.putRequestAttribute(ApplicationConstants.RANKING_PAGE_COUNT_ATTRIBUTE, numberOfPages);
             data.putRequestAttribute(ApplicationConstants.RANKING_CURRENT_PAGE_ATTRIBUTE, currentPage);
-            data.putRequestAttribute(NUMBER_OF_ACCOUNTS_PER_PAGE_ATTRIBUTE, NUMBER_OF_ACCOUNTS_PER_PAGE);
+            data.putRequestAttribute(ApplicationConstants.PAGE_STEP_ATTRIBUTE, PAGE_STEP);
             commandResult.setPage(PageConstants.RANKING_PAGE);
         } catch (ServiceException e) {
             throw new CommandException("Unable to show rating page: ServiceException has occurred", e);

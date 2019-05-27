@@ -26,8 +26,8 @@ public class ShowTopicPageCommand extends Command {
     private static final String MESSAGE_LIST_ATTRIBUTE = "message_list";
     private static final String TOPIC_ATTRIBUTE = "topic";
     private static final int NUMBER_OF_MESSAGES_PER_PAGE = 5;
-    private static final String NUMBER_OF_MESSAGES_PER_PAGE_ATTRIBUTE = "messages_per_page";
     private static final String LAST_PAGE = "last";
+    private static final Integer PAGE_STEP = 5;
 
     public ShowTopicPageCommand(CommandConstraints constraints) {
         super(constraints);
@@ -76,7 +76,7 @@ public class ShowTopicPageCommand extends Command {
                 logger.log(Level.DEBUG, "number of pages: " + numberOfPages);
                 data.putRequestAttribute(MESSAGE_LIST_ATTRIBUTE, messageList);
                 data.putRequestAttribute(ApplicationConstants.TOPIC_PAGE_COUNT_ATTRIBUTE, numberOfPages);
-                data.putRequestAttribute(NUMBER_OF_MESSAGES_PER_PAGE_ATTRIBUTE, NUMBER_OF_MESSAGES_PER_PAGE);
+                data.putRequestAttribute(ApplicationConstants.PAGE_STEP_ATTRIBUTE, PAGE_STEP);
                 commandResult.setPage(PageConstants.TOPIC_PAGE);
             } catch (ServiceException e) {
                 throw new CommandException("Unable to show topic page: ServiceException has occurred", e);

@@ -4,11 +4,13 @@ import com.epam.finaltask.dao.TopicDao;
 import com.epam.finaltask.entity.Account;
 import com.epam.finaltask.entity.Topic;
 import org.apache.commons.io.IOUtils;
+import org.apache.logging.log4j.Level;
 
 import java.io.IOException;
 import java.io.Reader;
 import java.sql.*;
 import java.time.LocalDateTime;
+import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -31,6 +33,17 @@ class TopicDaoImpl extends AbstractDao<Topic> implements TopicDao {
     private static final String UPDATE_TOPIC_BY_ID = "UPDATE topic " +
             "SET closed = ?, title = ?, text = ?, date_posted = ?, account_id = ?, hidden = ? " +
             "WHERE topic_id = ?";
+    private static final String COUNT_TOPICS = "SELECT COUNT(1) FROM topic";
+    private static final String FIND_TOPICS_IN_RANGE_SORT_BY_DATE_DESC = "SELECT topic_id, closed, title, text, " +
+            "date_posted, account_id, hidden " +
+            "FROM topic " +
+            "ORDER BY date_posted DESC LIMIT ? OFFSET ?";
+    private static final String FIND_TOPICS_IN_RANGE_SORT_BY_DATE_DESC_NO_HIDDEN = "SELECT topic_id, closed, title, text, " +
+            "date_posted, account_id, hidden " +
+            "FROM topic " +
+            "WHERE hidden = 0 " +
+            "ORDER BY date_posted DESC LIMIT ? OFFSET ?";
+    private static final String COUNT_TOPICS_NO_HIDDEN = "SELECT COUNT(1) FROM topic WHERE hidden = 0";
 
     /**
      * Creates TopicDaoImpl using chosen connectionManager
@@ -228,6 +241,67 @@ class TopicDaoImpl extends AbstractDao<Topic> implements TopicDao {
         }
     }
 
+    /**
+     * Counts all database topics.
+     * @param countHidden Determines if hidden topics will be counted
+     * @return number of database topics
+     * @throws PersistenceException If SQLException is thrown or if the ResultSet is empty
+     */
+    public int countTopics(boolean countHidden) throws PersistenceException {
+        String query = COUNT_TOPICS;
+        if (!countHidden) {
+            query = COUNT_TOPICS_NO_HIDDEN;
+        }
+        Connection connection = getConnection();
+        try (PreparedStatement statement = connection.prepareStatement(query)) {
+            try (ResultSet resultSet = statement.executeQuery()) {
+                if(resultSet.next()) {
+                    return resultSet.getInt(1);
+                } else {
+                    throw new PersistenceException("unable to get result from the count operation");
+                }
+            }
+        } catch (SQLException e) {
+            throw new PersistenceException(e);
+        }
+    }
+
+    /**
+     * Finds all topics on the chosen page.
+     * @param currentPage Page to take topics from
+     * @param numberOfTopicsPerPage Number of topics per page
+     * @param showHidden Flag that determines if hidden topics will be fetched
+     * @return Topics from the chosen page
+     * @throws PersistenceException If SQLException is thrown while working with database
+     */
+    @Override
+    public List<Topic> findPageTopics(int currentPage, int numberOfTopicsPerPage, boolean showHidden) throws PersistenceException {
+        String query = FIND_TOPICS_IN_RANGE_SORT_BY_DATE_DESC;
+        if (!showHidden) {
+            query = FIND_TOPICS_IN_RANGE_SORT_BY_DATE_DESC_NO_HIDDEN;
+        }
+        try (PreparedStatement statement = getConnection().prepareStatement(query)){
+            statement.setInt(1, numberOfTopicsPerPage);
+            statement.setInt(2, (currentPage - 1) * numberOfTopicsPerPage);
+            try (ResultSet resultSet = statement.executeQuery()) {
+                return constructTopicsFromResultSet(resultSet);
+            } catch (IOException e) {
+                throw new PersistenceException("IOException while working with clob");
+            }
+        } catch (SQLException e) {
+            throw new PersistenceException("SQLException while finding page topics", e);
+        }
+    }
+
+    /**
+     * Creates list of topics using result set.
+     * ResultSet should contain next values in specific columns ({@code value - columnIndex}):
+     * topicId - 1, closed - 2, title - 3, text - 4, date - 5, accountId - 6, hidden - 7.
+     * @param resultSet ResultSet which data is used to create list of topics
+     * @return List of topics created using result set data
+     * @throws SQLException If exception is thrown while getting values from the result set.
+     * @throws IOException If clob character streams can't be acquired
+     */
     private List<Topic> constructTopicsFromResultSet(ResultSet resultSet) throws SQLException, IOException {
         List<Topic> list = new LinkedList<>();
         while (resultSet.next()) {
@@ -252,8 +326,9 @@ class TopicDaoImpl extends AbstractDao<Topic> implements TopicDao {
                     text = IOUtils.toString(textReader);
                 }
             }
-
-            list.add(new Topic(topicId, title, text, date, account, closed, hidden));
+            Topic topic = new Topic(topicId, title, text, date, account, closed, hidden);
+            logger.log(Level.DEBUG, "Topic created from the ResultSet: " + topic);
+            list.add(topic);
         }
         return list;
     }

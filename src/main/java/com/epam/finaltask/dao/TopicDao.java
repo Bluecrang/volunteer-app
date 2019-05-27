@@ -19,4 +19,22 @@ public interface TopicDao extends Dao<Topic> {
      * @throws PersistenceException if SQLException is thrown
      */
     boolean createWithGeneratedDate(Topic entity) throws PersistenceException;
+
+    /**
+     * Counts all topics in database
+     * @param countHidden Determines if hidden topics will be counted
+     * @return Topic count
+     * @throws PersistenceException If SQLException is thrown while working with database
+     */
+    int countTopics(boolean countHidden) throws PersistenceException;
+
+    /**
+     * Finds all topics on the chosen page.
+     * @param currentPage Page to take topics from
+     * @param numberOfTopicsPerPage Number of topics per page
+     * @param showHidden Flag that determines if hidden topics will be fetched
+     * @return Topics from the chosen page
+     * @throws PersistenceException If SQLException is thrown while working with database
+     */
+    List<Topic> findPageTopics(int currentPage, int numberOfTopicsPerPage, boolean showHidden) throws PersistenceException;
 }

@@ -25,7 +25,7 @@
                 <fmt:message key="ranking.previous"/>
             </a>
         </c:if>
-        <c:forEach var="i" begin="${ranking_current_page > accounts_per_page ? ranking_current_page - accounts_per_page : 1}" end="${ranking_number_of_pages - ranking_current_page > accounts_per_page ? ranking_current_page + accounts_per_page : ranking_number_of_pages}">
+        <c:forEach var="i" begin="${ranking_current_page > page_step ? ranking_current_page - page_step : 1}" end="${ranking_number_of_pages - ranking_current_page > page_step ? ranking_current_page + page_step : ranking_number_of_pages}">
             <c:choose>
                 <c:when test="${ranking_current_page == i}">
                     ${i}

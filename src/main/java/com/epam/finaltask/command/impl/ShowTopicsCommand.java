@@ -15,13 +15,18 @@ import org.apache.logging.log4j.Logger;
 import java.util.List;
 
 /**
- * Command that is used to show all topics.
+ * Command that is used to show all topics or several from the specific page.
+ * If account type is {@link AccountType#ADMIN} or {@link AccountType#VOLUNTEER}, then topics will be paginated.
+ * If account type is  {@link AccountType#USER}, then all topics created by user will be shown.
  */
 public class ShowTopicsCommand extends Command {
 
     private static final Logger logger = LogManager.getLogger();
     private static final String TOPIC_LIST_ATTRIBUTE = "topic_list";
     private static final String NO_TOPICS = "topics.no_topics";
+    private static final int NUMBER_OF_TOPICS_PER_PAGE = 10;
+    private static final int DEFAULT_CURRENT_PAGE = 1;
+    private static final Integer PAGE_STEP = 5;
 
     public ShowTopicsCommand(CommandConstraints constraints) {
         super(constraints);
@@ -45,7 +50,23 @@ public class ShowTopicsCommand extends Command {
             List<Topic> topicList;
             if (sessionAccountType == AccountType.ADMIN ||
                     sessionAccountType == AccountType.VOLUNTEER) {
-                topicList = service.findAllTopics();
+                int currentPage;
+                try {
+                    currentPage = Integer.parseInt(data.getRequestParameter(ApplicationConstants.PAGE_PARAMETER));
+                } catch (NumberFormatException e) {
+                    currentPage = DEFAULT_CURRENT_PAGE;
+                }
+                boolean showHidden = false;
+                if (sessionAccountType == AccountType.ADMIN) {
+                    showHidden = true;
+                }
+                topicList = service.findPageTopics(currentPage, NUMBER_OF_TOPICS_PER_PAGE, showHidden);
+                logger.log(Level.DEBUG, "topic list: " + topicList);
+                int topicCount = service.countTopics(showHidden);
+                int numberOfPages = Math.toIntExact(Math.round(Math.ceil((double)topicCount / NUMBER_OF_TOPICS_PER_PAGE)));
+                data.putRequestAttribute(ApplicationConstants.TOPICS_PAGE_COUNT_ATTRIBUTE, numberOfPages);
+                data.putRequestAttribute(ApplicationConstants.TOPICS_CURRENT_PAGE_ATTRIBUTE, currentPage);
+                data.putRequestAttribute(ApplicationConstants.PAGE_STEP_ATTRIBUTE, PAGE_STEP);
             } else {
                 topicList = service.findTopicsByAuthorId(sessionAccountId);
             }

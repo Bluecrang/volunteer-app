@@ -755,4 +755,120 @@ public class TopicServiceTest {
             fail("Unexpected PersistenceException", e);
         }
     }
+
+    @Test
+    public void findPageTopicsTestValidParametersShowHiddenTrue() {
+        String login = "login";
+        String hash = "hash";
+        String email = "email@mail.com";
+        long accountId = 1;
+        int currentPage = 1;
+        int numberOfTopicsPerPage = 3;
+        Account account = new Account(accountId, login, hash,
+                email, AccountType.ADMIN, 0, false, "salt", null);
+        try {
+            List<Topic> topicsFromDao = new ArrayList<>();
+            Topic topic1 = new Topic(1, "title1", "text2",
+                    LocalDateTime.of(2113, 10, 3, 1, 10),
+                    account,
+                    false,
+                    false);
+            Topic topic2 = new Topic(2, "title2", "text2",
+                    LocalDateTime.of(2013, 1, 5, 10, 12),
+                    account,
+                    false,
+                    false);
+            Topic topic3 = new Topic(3, "title4", "text4",
+                    LocalDateTime.of(2012, 4, 7, 4, 38),
+                    account,
+                    true,
+                    true);
+            topicsFromDao.add(topic1);
+            topicsFromDao.add(topic2);
+            topicsFromDao.add(topic3);
+            when(topicDao.findPageTopics(currentPage, numberOfTopicsPerPage, true))
+                    .thenReturn(topicsFromDao);
+
+            AccountDao accountDao = mock(AccountDao.class);
+            when(daoFactory.createAccountDao(connectionManager)).thenReturn(accountDao);
+            when(accountDao.findEntityById(accountId)).thenReturn(account);
+            List<Topic> topicList = topicService.findPageTopics(currentPage, numberOfTopicsPerPage, true);
+
+            verify(topicDao).findPageTopics(currentPage, numberOfTopicsPerPage, true);
+            Assert.assertEquals(topicList.size(), 3);
+        } catch (ServiceException e) {
+            fail("Unexpected ServiceException", e);
+        } catch (PersistenceException e) {
+            fail("Unexpected PersistenceException", e);
+        }
+    }
+
+    @Test
+    public void findPageTopicsTestValidParametersShowHiddenFalse() {
+        String login = "login";
+        String hash = "hash";
+        String email = "email@mail.com";
+        long accountId = 1;
+        int currentPage = 1;
+        int numberOfTopicsPerPage = 3;
+        Account account = new Account(accountId, login, hash,
+                email, AccountType.ADMIN, 0, false, "salt", null);
+        boolean showHidden = false;
+        try {
+            List<Topic> topicsFromDao = new ArrayList<>();
+            Topic topic1 = new Topic(1, "title1", "text2",
+                    LocalDateTime.of(2113, 10, 3, 1, 10),
+                    account,
+                    false,
+                    false);
+            Topic topic2 = new Topic(2, "title2", "text2",
+                    LocalDateTime.of(2013, 1, 5, 10, 12),
+                    account,
+                    false,
+                    false);
+            topicsFromDao.add(topic1);
+            topicsFromDao.add(topic2);
+            when(topicDao.findPageTopics(currentPage, numberOfTopicsPerPage, showHidden))
+                    .thenReturn(topicsFromDao);
+
+            AccountDao accountDao = mock(AccountDao.class);
+            when(daoFactory.createAccountDao(connectionManager)).thenReturn(accountDao);
+            when(accountDao.findEntityById(accountId)).thenReturn(account);
+            List<Topic> topicList = topicService.findPageTopics(currentPage, numberOfTopicsPerPage, showHidden);
+
+            verify(topicDao).findPageTopics(currentPage, numberOfTopicsPerPage, showHidden);
+            Assert.assertEquals(topicList.size(), 2);
+        } catch (ServiceException e) {
+            fail("Unexpected ServiceException", e);
+        } catch (PersistenceException e) {
+            fail("Unexpected PersistenceException", e);
+        }
+    }
+
+    @Test(expectedExceptions = ServiceException.class)
+    public void findPageTopicsTestPersistenceExceptionThrown() throws ServiceException {
+        int currentPage = 1;
+        int numberOfTopicsPerPage = 2;
+        try {
+            when(topicDao.findPageTopics(currentPage, numberOfTopicsPerPage, true))
+                    .thenThrow(new PersistenceException());
+
+            topicService.findPageTopics(currentPage, numberOfTopicsPerPage, true);
+        } catch (PersistenceException e) {
+            fail("Unexpected PersistenceException", e);
+        }
+    }
+
+    @Test(expectedExceptions = ServiceException.class)
+    public void findPageTopicsTestPersistenceExceptionThrownBeforeTransaction() throws ServiceException {
+        int currentPage = 1;
+        int numberOfTopicsPerPage = 3;
+        try {
+            doThrow(new PersistenceException()).when(connectionManager).disableAutoCommit();
+
+            topicService.findPageTopics(currentPage, numberOfTopicsPerPage, true);
+        } catch (PersistenceException e) {
+            fail("Unexpected PersistenceException", e);
+        }
+    }
 }

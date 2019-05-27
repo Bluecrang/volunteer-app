@@ -44,6 +44,9 @@ public class SearchForTopicsCommand extends Command {
             String regex = data.getRequestParameter(SEARCH_STRING_PARAMETER);
             TopicService service = new TopicService();
             List<Topic> topicList = service.findTopicsByTitleSubstring(sessionAccount, regex);
+            if (sessionAccount.getAccountType() != AccountType.ADMIN) {
+                topicList.removeIf(Topic::isHidden);
+            }
             logger.log(Level.DEBUG, "number of found topics: " + topicList.size());
             if (!topicList.isEmpty()) {
                 data.putRequestAttribute(TOPIC_LIST_ATTRIBUTE, topicList);

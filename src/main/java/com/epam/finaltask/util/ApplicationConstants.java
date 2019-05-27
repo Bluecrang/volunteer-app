@@ -33,11 +33,14 @@ public final class ApplicationConstants {
     public static final String TOPIC_ACTION_NOTIFICATION_ATTRIBUTE = "topic_action_notification";
     public static final String PROFILE_ACTION_NOTIFICATION_ATTRIBUTE = "profile_action_notification";
     public static final String ACCOUNT_TYPE_PARAMETER = "account_type";
+    public static final String TOPICS_PAGE_COUNT_ATTRIBUTE = "number_of_pages";
+    public static final String TOPICS_CURRENT_PAGE_ATTRIBUTE = "current_page";
+    public static final String PAGE_STEP_ATTRIBUTE = "page_step";
 
     public static final String SHOW_TOPICS = "/controller?command=show_topics";
     public static final String SHOW_PROFILE = "/controller?command=show_profile&account_id=";
-    public static final String SHOW_TOPIC = "/controller?command=show_topic_page&load_messages=true&page=1&topic_id=";
-    public static final String SHOW_TOPIC_LAST_PAGE = "/controller?command=show_topic_page&load_messages=true&page=last&topic_id=";
+    public static final String SHOW_TOPIC = "/controller?command=show_topic_page&page=1&topic_id=";
+    public static final String SHOW_TOPIC_LAST_PAGE = "/controller?command=show_topic_page&page=last&topic_id=";
     public static final String SHOW_MAIN_PAGE = "/controller?command=show_main_page";
     public static final String MOVE_TO_INDEX_PAGE = "/controller?command=move_to_index_page";
     public static final String SHOW_REGISTRATION_PAGE = "/controller?command=show_registration_page";

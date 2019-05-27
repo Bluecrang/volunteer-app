@@ -286,4 +286,49 @@ public class TopicService extends AbstractService {
             topic.setAccount(account);
         }
     }
+
+    /**
+     * Counts all existing database topics.
+     * @param countHidden Determines if hidden topics will be counted
+     * @return Number of database topics
+     * @throws ServiceException If PersistenceException is thrown
+     */
+    public int countTopics(boolean countHidden) throws ServiceException {
+        try(AbstractConnectionManager connectionManager = connectionManagerFactory.createConnectionManager()) {
+            TopicDao topicDao = daoFactory.createTopicDao(connectionManager);
+            return topicDao.countTopics(countHidden);
+        } catch (PersistenceException e) {
+            throw new ServiceException(e);
+        }
+    }
+
+    /**
+     * Finds topics on the chosen page sorted by date descending.
+     * @param currentPage Page from which topics will be taken
+     * @param numberOfTopicsPerPage Number of topics on each page
+     * @param showHidden Determines of hidden topics will be shown
+     * @return Topics from chosen page
+     * @throws ServiceException If PersistenceException is thrown
+     */
+    public List<Topic> findPageTopics(int currentPage, int numberOfTopicsPerPage, boolean showHidden) throws ServiceException {
+        try (AbstractConnectionManager connectionManager = connectionManagerFactory.createConnectionManager()) {
+            connectionManager.disableAutoCommit();
+            try {
+                TopicDao topicDao = daoFactory.createTopicDao(connectionManager);
+                List<Topic> topics = topicDao.findPageTopics(currentPage, numberOfTopicsPerPage, showHidden);
+                for (Topic topic : topics) {
+                    AccountDao accountDao = daoFactory.createAccountDao(connectionManager);
+                    Account account = accountDao.findEntityById(topic.getAccount().getAccountId());
+                    topic.setAccount(account);
+                }
+                connectionManager.commit();
+                return topics;
+            } catch (PersistenceException e) {
+                connectionManager.rollback();
+                throw new ServiceException(e);
+            }
+        } catch (PersistenceException e) {
+            throw new ServiceException(e);
+        }
+    }
 }

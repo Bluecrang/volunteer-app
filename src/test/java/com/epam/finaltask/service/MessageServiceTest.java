@@ -294,7 +294,6 @@ public class MessageServiceTest {
                     .thenThrow(new PersistenceException());
             messageService.findTopicPageMessages(topicId, currentPage, numberOfMessagesPerPage);
 
-            verify(messageDao).findPageMessages(topicId, currentPage, numberOfMessagesPerPage);
         } catch (PersistenceException e) {
             fail("Unexpected PersistenceException", e);
         }
