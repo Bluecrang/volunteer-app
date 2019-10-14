@@ -70,60 +70,33 @@ public class AuthenticationServiceTest {
         }
     }
 
-    @Test
-    public void authenticateTestUsernameNull() {
+    @Test(expectedExceptions = AuthenticationException.class)
+    public void authenticateTestEmailNull() throws PersistenceException, ServiceException {
         String email = null;
         String password = "password";
-        try {
-            when(accountDao.findAccountByEmail(email)).thenReturn(null);
+        when(accountDao.findAccountByEmail(email)).thenReturn(null);
 
-            Account result = authenticationService.authenticate(email, password);
-
-            verify(accountDao).findAccountByEmail(email);
-            Assert.assertNull(result);
-        } catch (ServiceException e) {
-            fail("Unexpected ServiceException", e);
-        } catch (PersistenceException e) {
-            fail("Unexpected PersistenceException", e);
-        }
+        authenticationService.authenticate(email, password);
     }
 
-    @Test
-    public void authenticateTestUserDoesNotExistInDatabase() {
+    @Test(expectedExceptions = AuthenticationException.class)
+    public void authenticateTestUserDoesNotExistInDatabase() throws PersistenceException, ServiceException {
         String email = "email";
         String password = "password";
-        try {
-            when(accountDao.findAccountByEmail(email)).thenReturn(null);
+        when(accountDao.findAccountByEmail(email)).thenReturn(null);
 
-            Account result = authenticationService.authenticate(email, password);
-
-            verify(accountDao).findAccountByEmail(email);
-            Assert.assertNull(result);
-        } catch (ServiceException e) {
-            fail("Unexpected ServiceException", e);
-        } catch (PersistenceException e) {
-            fail("Unexpected PersistenceException", e);
-        }
+        authenticationService.authenticate(email, password);
     }
 
-    @Test
-    public void authenticateTestPasswordHashesDoNotMatch() {
+    @Test(expectedExceptions = AuthenticationException.class)
+    public void authenticateTestPasswordHashesDoNotMatch() throws PersistenceException, ServiceException {
         String email = "email";
         String password = "password";
         when(hashGenerator.hash(eq(password), eq(DEFAULT_SALT), anyString())).thenReturn("other_hash");
-        try {
-            when(accountDao.findAccountByEmail(email)).thenReturn(new Account(1, email, DEFAULT_HASH,
-                    "email@mail.com", AccountType.USER, 0, false, DEFAULT_SALT, null));
+        when(accountDao.findAccountByEmail(email)).thenReturn(new Account(1, email, DEFAULT_HASH,
+                "email@mail.com", AccountType.USER, 0, false, DEFAULT_SALT, null));
 
-            Account result = authenticationService.authenticate(email, password);
-
-            verify(accountDao).findAccountByEmail(email);
-            Assert.assertNull(result);
-        } catch (ServiceException e) {
-            fail("Unexpected ServiceException", e);
-        } catch (PersistenceException e) {
-            fail("Unexpected PersistenceException", e);
-        }
+        authenticationService.authenticate(email, password);
     }
 
     @Test(expectedExceptions = ServiceException.class)

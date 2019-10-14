@@ -2,6 +2,7 @@ package com.epam.finaltask.command.impl;
 
 import com.epam.finaltask.command.Command;
 import com.epam.finaltask.entity.Account;
+import com.epam.finaltask.service.AuthenticationException;
 import com.epam.finaltask.service.AuthenticationService;
 import com.epam.finaltask.service.ServiceException;
 import com.epam.finaltask.util.ApplicationConstants;
@@ -35,19 +36,18 @@ public class AuthenticationCommand extends Command {
         commandResult.setPage(ApplicationConstants.SHOW_LOGIN_PAGE);
         try {
             Account account = authenticationService.authenticate(email, password);
-            if (account != null) {
                 if (account.isBlocked()) {
-                    logger.log(Level.INFO, "account with email=" + email + " is blocked");
+                    logger.log(Level.INFO, "account with email=" + email + " is blocked, cannot authorize");
                     data.putSessionAttribute(ApplicationConstants.AUTHORIZATION_MESSAGE_ATTRIBUTE, ACCOUNT_BLOCKED_PROPERTY);
                     return commandResult;
                 }
                 data.putSessionAttribute(ApplicationConstants.ACCOUNT_ATTRIBUTE, account);
                 commandResult.setPage(ApplicationConstants.SHOW_MAIN_PAGE);
-            } else {
-                logger.log(Level.INFO, "user with email=" + email + " does not exist or password does not match");
-                data.putSessionAttribute(ApplicationConstants.AUTHORIZATION_MESSAGE_ATTRIBUTE,
-                        ACCOUNT_DOES_NOT_EXIST_OR_PASSWORD_DOES_NOT_MATCH_PROPERTY);
-            }
+        } catch (AuthenticationException e) {
+            logger.log(Level.INFO, "user with email=" + email +
+                    " does not exist or password does not match, cannot authorize");
+            data.putSessionAttribute(ApplicationConstants.AUTHORIZATION_MESSAGE_ATTRIBUTE,
+                    ACCOUNT_DOES_NOT_EXIST_OR_PASSWORD_DOES_NOT_MATCH_PROPERTY);
         } catch (ServiceException e) {
             logger.log(Level.ERROR, "unable to authenticate user email=" + email, e);
             data.putSessionAttribute(ApplicationConstants.AUTHORIZATION_MESSAGE_ATTRIBUTE, AUTHENTICATION_ERROR_PROPERTY);

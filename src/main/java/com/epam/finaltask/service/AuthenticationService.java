@@ -53,9 +53,10 @@ public class AuthenticationService extends AbstractService {
      * @param email Email used for authentication
      * @param password Password used for authentication
      * @return {@link Account} if authentication went successfully, else returns null
+     * @throws AuthenticationException if account was not found or password hashes don't match
      * @throws ServiceException if PersistenceException is thrown while working with database
      */
-    public Account authenticate(String email, String password) throws ServiceException {
+    public Account authenticate(String email, String password) throws AuthenticationException, ServiceException {
         try (AbstractConnectionManager connectionManager = connectionManagerFactory.createConnectionManager()) {
             AccountDao accountDao = daoFactory.createAccountDao(connectionManager);
             Account account = accountDao.findAccountByEmail(email);
@@ -67,10 +68,11 @@ public class AuthenticationService extends AbstractService {
                     logger.log(Level.INFO, "User with email=" + email + " is authenticated successfully");
                 } else {
                     logger.log(Level.INFO, "Cannot authenticate user with email=" + email + ", password hashes do not match");
-                    return null;
+                    throw new AuthenticationException("cannot authenticate user, password hashes do not match");
                 }
             } else {
                 logger.log(Level.INFO, "User with email " + email + ", does not exist in the database, cannot authenticate");
+                throw new AuthenticationException("Could not find user with chosen email");
             }
             return account;
         } catch (PersistenceException e) {
