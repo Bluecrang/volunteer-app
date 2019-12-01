@@ -25,23 +25,25 @@ public class TopicDaoImplTest {
     private Topic topic;
     @Mock
     AbstractConnectionManager connectionManager;
+    Connection connection;
 
     @BeforeClass
-    public void init() {
-        MockitoAnnotations.initMocks(this);
-        try {
-            DatabaseTestUtil.registerDrivers();
-            DatabaseTestUtil.initializeDatabase();
-            Connection connection = DatabaseTestUtil.getConnection();
-            when(connectionManager.getConnection()).thenReturn(connection);
-            topicDao = new TopicDaoImpl(connectionManager);
-        } catch (SQLException | IOException e) {
-            throw new RuntimeException(e);
-        }
+    public void init() throws SQLException {
+        DatabaseTestUtil.registerDrivers();
+    }
+
+    @AfterClass(alwaysRun = true)
+    public void cleanUp() throws SQLException {
+        DatabaseTestUtil.deregisterDrivers();
     }
 
     @BeforeMethod
-    public void initBeforeMethod() {
+    public void initBeforeMethod() throws SQLException, IOException {
+        MockitoAnnotations.initMocks(this);
+        DatabaseTestUtil.initializeDatabase();
+        connection = DatabaseTestUtil.getConnection();
+        when(connectionManager.getConnection()).thenReturn(connection);
+        topicDao = new TopicDaoImpl(connectionManager);
         topic = new Topic(BEFORE_METHOD_TOPIC_TITLE,
                 BEFORE_METHOD_TOPIC_TEXT,
                 LocalDateTime.of(2000, 2, 15, 21, 54),
@@ -50,146 +52,85 @@ public class TopicDaoImplTest {
                 false);
     }
 
-    @AfterMethod
-    public void cleanUpDatabaseTopics() {
-        try {
-            List<Topic> topics = topicDao.findAll();
-            if (topics != null) {
-                for (Topic databaseTopic : topics) {
-                    if (databaseTopic.getTopicId() != 1) {
-                        topicDao.delete(databaseTopic.getTopicId());
-                    }
-                }
-            }
-        } catch (PersistenceException e) {
-            throw new RuntimeException(e);
-        }
+    @AfterMethod(alwaysRun = true)
+    public void cleanUpDatabaseTopics() throws IOException, SQLException {
+        DatabaseTestUtil.dropSchema();
     }
 
     @Test
-    public void createWithGeneratedDateTest() {
-        try {
-            boolean result = topicDao.createWithGeneratedDate(topic);
-            Assert.assertTrue(result);
-        } catch (PersistenceException e) {
-            fail("Unexpected PersistenceException", e);
-        }
+    public void createWithGeneratedDate_validTopic_true() throws PersistenceException {
+        boolean result = topicDao.createWithGeneratedDate(topic);
+
+        Assert.assertTrue(result);
     }
 
     @Test
-    public void findAllTest() {
-        try {
-            topicDao.create(topic);
-            topicDao.create(new Topic("title2",
-                    "text2",
-                    LocalDateTime.of(2000, 3, 2, 20, 15),
-                    new Account(1),
-                    false,
-                    false));
-            List<Topic> actual = topicDao.findAll();
+    public void findAll_threeTopicsExist_threeTopics() throws PersistenceException {
+        topicDao.create(topic);
+        topicDao.create(new Topic("title2",
+                "text2",
+                LocalDateTime.of(2000, 3, 2, 20, 15),
+                new Account(1),
+                false,
+                false));
 
-            Assert.assertEquals(actual.size(), 3);
-        } catch (PersistenceException e) {
-            fail("Unexpected PersistenceException", e);
-        }
+        List<Topic> actual = topicDao.findAll();
+
+        Assert.assertEquals(actual.size(), 3);
     }
 
     @Test
-    public void findEntityByIdTest() {
-        try {
-            long topicId = -1;
-            String title = "new Title";
-            topic.setTitle(title);
-            topicDao.create(topic);
+    public void findEntityById_topicExists_topicFound() throws PersistenceException {
+        long topicId = 2;
+        String title = "new Title";
+        topic.setTitle(title);
+        topicDao.create(topic);
 
-            List<Topic> topics = topicDao.findAll();
-            for (Topic topic : topics) {
-                if (title.equals(topic.getTitle())) {
-                    topicId = topic.getTopicId();
-                }
-            }
-            if (topicId == -1) {
-                fail("unable to find created topic to define topicId");
-            }
+        Topic actual = topicDao.findEntityById(topicId);
 
-            Topic actual = topicDao.findEntityById(topicId);
-
-            Assert.assertEquals(actual.getTopicId(), topicId);
-        } catch (PersistenceException e) {
-            fail("Unexpected PersistenceException", e);
-        }
+        Assert.assertEquals(actual.getTopicId(), topicId);
     }
 
     @Test
-    public void createTest() {
-        try {
-            boolean result = topicDao.create(topic);
+    public void create_validTopic_true() throws PersistenceException {
+        boolean result = topicDao.create(topic);
 
-            Assert.assertTrue(result);
-
-        } catch (PersistenceException e) {
-            fail("Unexpected PersistenceException", e);
-        }
+        Assert.assertTrue(result);
     }
 
     @Test
-    public void updateTest() {
-        try {
-            long topicId = -1;
-            String title = "new Title2";
-            topic.setTitle(title);
-            topicDao.create(topic);
+    public void update_validUpdateData_true() throws PersistenceException {
+        long topicId = 2;
+        String title = "new Title";
+        topic.setTitle(title);
+        topicDao.create(topic);
 
-            List<Topic> topics = topicDao.findAll();
-            for (Topic topic : topics) {
-                if (title.equals(topic.getTitle())) {
-                    topicId = topic.getTopicId();
-                }
-            }
-            if (topicId == -1) {
-                fail("unable to find created topic to define topicId");
-            }
-            Topic topicToUpdate = topicDao.findEntityById(topicId);
-            topicToUpdate.setText("text22");
+        Topic topicToUpdate = topicDao.findEntityById(topicId);
+        topicToUpdate.setText("text22");
 
-            int actual = topicDao.update(topicToUpdate);
-            Assert.assertEquals(actual, 1);
-        } catch (PersistenceException e) {
-            fail("Unexpected PersistenceException", e);
-        }
-    }
+        int actual = topicDao.update(topicToUpdate);
 
-    @AfterClass(alwaysRun = true)
-    public void cleanUp() {
-        try {
-            DatabaseTestUtil.dropSchema();
-            DatabaseTestUtil.deregisterDrivers();
-        } catch (SQLException | IOException e) {
-            throw new RuntimeException(e);
-        }
+        Assert.assertEquals(actual, 1);
     }
 
     @Test
-    public void findPageMessagesTest() {
-        try {
-            topicDao.create(topic);
-            topicDao.create(new Topic("title12",
-                    "text12",
-                    LocalDateTime.of(2001, 7, 15, 22, 44),
-                    new Account(1),
-                    false,
-                    false));
-            topicDao.create(new Topic("title13",
-                    "text13",
-                    LocalDateTime.of(2020, 5, 3, 1, 54),
-                    new Account(1),
-                    false,
-                    false));
-            List<Topic> actual = topicDao.findPageTopics(1, 2, true);
+    public void findPageTopics_twoTopicsLongPageFourTopicsExist_twoTopicsFound() throws PersistenceException {
+        topicDao.create(topic);
+        topicDao.create(new Topic("title12",
+                "text12",
+                LocalDateTime.of(2001, 7, 15, 22, 44),
+                new Account(1),
+                false,
+                false));
+        topicDao.create(new Topic("title13",
+                "text13",
+                LocalDateTime.of(2020, 5, 3, 1, 54),
+                new Account(1),
+                false,
+                false));
 
-            Assert.assertEquals(actual.size(), 2);
-        } catch (PersistenceException e) {
-            fail("Unexpected PersistenceException", e);
-        }
+        List<Topic> actual = topicDao.findPageTopics(1, 2, true);
+
+        Assert.assertEquals(actual.size(), 2);
     }
 }

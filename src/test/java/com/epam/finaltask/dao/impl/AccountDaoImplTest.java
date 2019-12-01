@@ -39,13 +39,23 @@ public class AccountDaoImplTest {
         }
     }
 
+    @AfterClass(alwaysRun = true)
+    public void cleanUp() {
+        try {
+            DatabaseTestUtil.dropSchema();
+            DatabaseTestUtil.deregisterDrivers();
+        } catch (SQLException | IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
     @BeforeMethod
     public void initBeforeMethod() {
         account = new Account(BEFORE_METHOD_ACCOUNT_USERNAME, "PASS", BEFORE_METHOD_ACCOUNT_MAIL, AccountType.USER,
         0, false, "salt", null);
     }
 
-    @AfterMethod
+    @AfterMethod(alwaysRun = true)
     public void cleanDatabaseAccountsTable() {
         try {
             List<Account> actual = accountDao.findAll();
@@ -60,155 +70,129 @@ public class AccountDaoImplTest {
     }
 
     @Test
-    public void findAccountByUsernameTest() {
-        try {
-            accountDao.create(account);
-            Account actual = accountDao.findAccountByUsername(BEFORE_METHOD_ACCOUNT_USERNAME);
-            Assert.assertEquals(actual.getUsername(), BEFORE_METHOD_ACCOUNT_USERNAME);
-        } catch (PersistenceException e) {
-            fail("Unexpected PersistenceException", e);
-        }
+    public void findAccountByUsername_accountExist_accountFound() throws PersistenceException {
+        accountDao.create(account);
+
+        Account actual = accountDao.findAccountByUsername(BEFORE_METHOD_ACCOUNT_USERNAME);
+
+        Assert.assertEquals(actual.getUsername(), BEFORE_METHOD_ACCOUNT_USERNAME);
     }
 
     @Test
-    public void findAllTest() {
-        try {
-            accountDao.create(account);
-            List<Account> actual = accountDao.findAll();
-            Assert.assertEquals(actual.size(), 2);
-        } catch (PersistenceException e) {
-            fail("Unexpected PersistenceException", e);
-        }
+    public void findAll_twoAccountsExist_twoAccounts() throws PersistenceException {
+        accountDao.create(account);
+
+        List<Account> actual = accountDao.findAll();
+
+        Assert.assertEquals(actual.size(), 2);
     }
 
     @Test
-    public void findAllByAccountTypeTestNoAccountsWithChosenAccountTypeExistAccountTypeAdmin() {
-        try {
-            accountDao.create(account);
+    public void findAllByAccountType_noAccountsWithChosenAccountTypeExistAccountTypeAdmin_noAccountsFound()
+            throws PersistenceException {
+        accountDao.create(account);
 
-            List<Account> actual = accountDao.findAllByAccountType(AccountType.ADMIN);
+        List<Account> actual = accountDao.findAllByAccountType(AccountType.ADMIN);
 
-            Assert.assertEquals(actual.size(), 0);
-        } catch (PersistenceException e) {
-            fail("Unexpected PersistenceException", e);
-        }
+        Assert.assertEquals(actual.size(), 0);
     }
 
     @Test
-    public void findAllByAccountTypeTestAccountWithChosenAccountTypeExistsAccountTypeAdmin() {
-        try {
-            accountDao.create(account);
-            Account accountAdmin = new Account("name3", "PAS", "mail@ma.ru", AccountType.ADMIN,
-                    10, false, "s", null);
-            accountDao.create(accountAdmin);
+    public void findAllByAccountType_AaccountWithChosenAccountTypeExistsAccountTypeAdmin_oneAccountFound()
+            throws PersistenceException {
+        accountDao.create(account);
+        Account accountAdmin = new Account("name3", "PAS", "mail@ma.ru", AccountType.ADMIN,
+                10, false, "s", null);
+        accountDao.create(accountAdmin);
 
-            List<Account> actual = accountDao.findAllByAccountType(AccountType.ADMIN);
+        List<Account> actual = accountDao.findAllByAccountType(AccountType.ADMIN);
 
-            Assert.assertEquals(actual.size(), 1);
-        } catch (PersistenceException e) {
-            fail("Unexpected PersistenceException", e);
-        }
+        Assert.assertEquals(actual.size(), 1);
     }
 
     @Test
-    public void findAllByAccountTypeTestAccountTypeUser() {
-        try {
-            accountDao.create(account);
+    public void findAllByAccountType_accountTypeUser_twoAccountsFound() throws PersistenceException {
+        accountDao.create(account);
 
-            List<Account> actual = accountDao.findAllByAccountType(AccountType.USER);
+        List<Account> actual = accountDao.findAllByAccountType(AccountType.USER);
 
-            Assert.assertEquals(actual.size(), 2);
-        } catch (PersistenceException e) {
-            fail("Unexpected PersistenceException", e);
-        }
+        Assert.assertEquals(actual.size(), 2);
     }
 
     @Test
-    public void findAccountCountTest() {
-        try {
-            accountDao.create(account);
-            int actual = accountDao.findAccountCount();
-            Assert.assertEquals(actual, 2);
-        } catch (PersistenceException e) {
-            fail("Unexpected PersistenceException", e);
-        }
+    public void findAccountCount_twoAccountsExist_two() throws PersistenceException {
+        int expected = 2;
+        accountDao.create(account);
+
+        int actual = accountDao.findAccountCount();
+
+        Assert.assertEquals(actual, expected);
     }
 
     @Test
-    public void findEntityByIdTest() {
-        try {
-            accountDao.create(account);
-            Account accountByLogin = accountDao.findAccountByUsername(BEFORE_METHOD_ACCOUNT_USERNAME);
+    public void findEntityById_entityExist_entityFound() throws PersistenceException {
+        accountDao.create(account);
+        Account accountByLogin = accountDao.findAccountByUsername(BEFORE_METHOD_ACCOUNT_USERNAME);
 
-            Account actual = accountDao.findEntityById(accountByLogin.getAccountId());
+        Account actual = accountDao.findEntityById(accountByLogin.getAccountId());
 
-            Assert.assertEquals(actual.getUsername(), accountByLogin.getUsername());
-        } catch (PersistenceException e) {
-            fail("Unexpected PersistenceException", e);
-        }
+        Assert.assertEquals(actual.getUsername(), accountByLogin.getUsername());
     }
 
     @Test
-    public void createTest() {
-        try {
-            boolean result = accountDao.create(account);
+    public void findEntityById_entityDoesNotExist_null() throws PersistenceException {
+        long id = 155;
 
-            Assert.assertTrue(result);
+        Account actual = accountDao.findEntityById(id);
 
-        } catch (PersistenceException e) {
-            fail("Unexpected PersistenceException", e);
-        }
+        Assert.assertNull(actual);
     }
 
     @Test
-    public void updateTest() {
-        try {
-            accountDao.create(account);
-            Account accountToUpdate = accountDao.findAccountByUsername(BEFORE_METHOD_ACCOUNT_USERNAME);
-            accountToUpdate.setPasswordHash("changed");
+    public void create_validAccount_true() throws PersistenceException {
+        boolean result = accountDao.create(account);
 
-            int actual = accountDao.update(accountToUpdate);
-
-            Assert.assertEquals(actual, 1);
-        } catch (PersistenceException e) {
-            fail("Unexpected PersistenceException", e);
-        }
+        Assert.assertTrue(result);
     }
 
     @Test
-    public void findAccountByEmailTest() {
-        try {
-            accountDao.create(account);
+    public void update_validUpdateData_success() throws PersistenceException {
+        int expected = 1;
+        accountDao.create(account);
+        Account accountToUpdate = accountDao.findAccountByUsername(BEFORE_METHOD_ACCOUNT_USERNAME);
+        accountToUpdate.setPasswordHash("changed");
 
-            Account actual = accountDao.findAccountByEmail(BEFORE_METHOD_ACCOUNT_MAIL);
+        int actual = accountDao.update(accountToUpdate);
 
-            Assert.assertEquals(actual.getUsername(), account.getUsername());
-        } catch (PersistenceException e) {
-            fail("Unexpected PersistenceException", e);
-        }
+        Assert.assertEquals(actual, expected);
     }
 
     @Test
-    public void findPageAccountsSortByRatingTest() {
-        try {
-            account.setRating(3);
-            accountDao.create(account);
+    public void update_accountDoesNotExist_success() throws PersistenceException {
+        int expected = 0;
+        account.setAccountId(164);
 
-            List<Account> actual = accountDao.findPageAccountsSortByRating(1, 2);
+        int actual = accountDao.update(account);
 
-            Assert.assertEquals(actual.get(1).getRating(), 3);
-        } catch (PersistenceException e) {
-            fail("Unexpected PersistenceException", e);
-        }
+        Assert.assertEquals(actual, expected);
     }
 
-    @AfterClass(alwaysRun = true)
-    public void cleanUp() {
-        try {
-            DatabaseTestUtil.dropSchema();
-            DatabaseTestUtil.deregisterDrivers();
-        } catch (SQLException | IOException e) {
-            throw new RuntimeException(e);
-        }
+    @Test
+    public void findAccountByEmail_accountExists_accountFound() throws PersistenceException {
+        accountDao.create(account);
+
+        Account actual = accountDao.findAccountByEmail(BEFORE_METHOD_ACCOUNT_MAIL);
+
+        Assert.assertEquals(actual.getUsername(), account.getUsername());
+    }
+
+    @Test
+    public void findPageAccountsSortByRating_twoAccounts_sortedList() throws PersistenceException {
+        account.setRating(3);
+        accountDao.create(account);
+
+        List<Account> actual = accountDao.findPageAccountsSortByRating(1, 2);
+
+        Assert.assertTrue(actual.get(0).getRating() > actual.get(1).getRating());
     }
 }

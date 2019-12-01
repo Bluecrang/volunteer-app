@@ -17,136 +17,84 @@ import static org.mockito.Mockito.when;
 public class CommandDataValidatorTest {
 
     private CommandDataValidator validator = new CommandDataValidator();
-    @Mock
-    private CommandData commandData;
 
-    @BeforeMethod
-    public void setUp() {
-        MockitoAnnotations.initMocks(this);
+    @Test
+    public void validate_dataNullConstraintsNull_false() {
+        CommandData commandData = null;
+        CommandConstraints commandConstraints = null;
+
+        boolean actual = validator.validate(commandData, commandConstraints);
+
+        Assert.assertFalse(actual);
     }
 
     @Test
-    public void validateTestAllowedData() {
+    public void validate_dataNotNullConstraintsNull_false() {
+        CommandData commandData = new CommandData(null);
+        CommandConstraints commandConstraints = null;
+
+        boolean actual = validator.validate(commandData, commandConstraints);
+
+        Assert.assertFalse(actual);
+    }
+
+    @Test
+    public void validate_illegalHttpMethod_false() {
+        CommandData commandData = new CommandData(null);
+        CommandConstraints commandConstraints = CommandConstraints.builder().build();
+
+        boolean actual = validator.validate(commandData, commandConstraints);
+
+        Assert.assertFalse(actual);
+    }
+
+    @Test
+    public void validate_dataAccountNull_false() {
+        CommandData commandData = new CommandData(null);
         CommandConstraints commandConstraints = CommandConstraints.builder()
-                .buildAccountTypes(AccountType.ADMIN)
-                .buildHttpMethods(HttpMethodType.POST)
+                .buildHttpMethods(HttpMethodType.UNDEFINED)
                 .build();
 
-        when(commandData.getMethod()).thenReturn(HttpMethodType.POST);
-        Account account = new Account(1);
-        account.setAccountType(AccountType.ADMIN);
-        when(commandData.getSessionAccount()).thenReturn(account);
+        boolean actual = validator.validate(commandData, commandConstraints);
 
-        boolean result = validator.validate(commandData, commandConstraints);
-
-        verify(commandData).getSessionAccount();
-        Assert.assertTrue(result);
+        Assert.assertFalse(actual);
     }
 
     @Test
-    public void validateTestIllegalHttpMethod() {
+    public void validate_sessionAccountAccountTypeGuestConstraintsAccountTypesNone_false() {
+        CommandData commandData = new CommandData(HttpMethodType.UNDEFINED, new Account());
         CommandConstraints commandConstraints = CommandConstraints.builder()
-                .buildAccountTypes(AccountType.ADMIN)
-                .buildHttpMethods(HttpMethodType.POST)
+                .buildHttpMethods(HttpMethodType.UNDEFINED)
                 .build();
 
-        when(commandData.getMethod()).thenReturn(HttpMethodType.GET);
-        Account account = new Account(1);
-        account.setAccountType(AccountType.ADMIN);
+        boolean actual = validator.validate(commandData, commandConstraints);
 
-        boolean result = validator.validate(commandData, commandConstraints);
-
-        verify(commandData).getMethod();
-        Assert.assertFalse(result);
+        Assert.assertFalse(actual);
     }
 
     @Test
-    public void validateTestIllegalAccountType() {
+    public void validate_sessionAccountAccountTypeGuestConstraintsAccountTypeVolunteer_false() {
+        CommandData commandData = new CommandData(HttpMethodType.UNDEFINED, new Account());
         CommandConstraints commandConstraints = CommandConstraints.builder()
-                .buildAccountTypes(AccountType.USER)
-                .buildHttpMethods(HttpMethodType.PUT)
+                .buildHttpMethods(HttpMethodType.UNDEFINED)
+                .buildAccountTypes(AccountType.VOLUNTEER)
                 .build();
 
-        when(commandData.getMethod()).thenReturn(HttpMethodType.PUT);
-        Account account = new Account(1);
-        account.setAccountType(AccountType.ADMIN);
-        when(commandData.getSessionAccount()).thenReturn(account);
+        boolean actual = validator.validate(commandData, commandConstraints);
 
-        boolean result = validator.validate(commandData, commandConstraints);
-
-        verify(commandData).getSessionAccount();
-        Assert.assertFalse(result);
+        Assert.assertFalse(actual);
     }
 
     @Test
-    public void validateTestSessionAccountNullConstraintAccountTypeUser() {
-        CommandConstraints commandConstraints = CommandConstraints.builder()
-                .buildAccountTypes(AccountType.USER)
-                .buildHttpMethods(HttpMethodType.PUT)
-                .build();
-
-        when(commandData.getMethod()).thenReturn(HttpMethodType.PUT);
-        Account account = null;
-        when(commandData.getSessionAccount()).thenReturn(account);
-
-        boolean result = validator.validate(commandData, commandConstraints);
-
-        verify(commandData).getMethod();
-        verify(commandData).getSessionAccount();
-        Assert.assertFalse(result);
-    }
-
-    @Test
-    public void validateTestSessionAccountNullConstraintAccountTypeGuest() {
+    public void validate_sessionAccountAccountTypeGuestConstraintAccountTypeGuest_true() {
+        CommandData commandData = new CommandData(HttpMethodType.UNDEFINED, new Account());
         CommandConstraints commandConstraints = CommandConstraints.builder()
                 .buildAccountTypes(AccountType.GUEST)
-                .buildHttpMethods(HttpMethodType.GET)
+                .buildHttpMethods(HttpMethodType.UNDEFINED)
                 .build();
 
-        when(commandData.getMethod()).thenReturn(HttpMethodType.GET);
-        Account account = null;
-        when(commandData.getSessionAccount()).thenReturn(account);
+        boolean actual = validator.validate(commandData, commandConstraints);
 
-        boolean result = validator.validate(commandData, commandConstraints);
-
-        verify(commandData).getMethod();
-        verify(commandData).getSessionAccount();
-        Assert.assertTrue(result);
-    }
-
-    @Test
-    public void validateTestSessionAccountsAccountTypeNullConstraintAccountTypeAdmin() {
-        CommandConstraints commandConstraints = CommandConstraints.builder()
-                .buildAccountTypes(AccountType.ADMIN)
-                .buildHttpMethods(HttpMethodType.GET)
-                .build();
-
-        when(commandData.getMethod()).thenReturn(HttpMethodType.GET);
-        Account account = new Account(1);
-        when(commandData.getSessionAccount()).thenReturn(account);
-
-        boolean result = validator.validate(commandData, commandConstraints);
-
-        verify(commandData).getMethod();
-        verify(commandData).getSessionAccount();
-        Assert.assertFalse(result);
-    }
-
-    @Test
-    public void validateTestSessionAccountsAccountTypeNullConstraintAccountTypeGuest() {
-        CommandConstraints commandConstraints = CommandConstraints.builder()
-                .buildAccountTypes(AccountType.GUEST)
-                .buildHttpMethods(HttpMethodType.GET)
-                .build();
-
-        when(commandData.getMethod()).thenReturn(HttpMethodType.GET);
-        Account account = new Account(1);
-        when(commandData.getSessionAccount()).thenReturn(account);
-
-        boolean result = validator.validate(commandData, commandConstraints);
-
-        verify(commandData).getMethod();
-        verify(commandData).getSessionAccount();
-        Assert.assertTrue(result);
+        Assert.assertTrue(actual);
     }
 }

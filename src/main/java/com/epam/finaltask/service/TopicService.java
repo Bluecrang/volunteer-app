@@ -14,8 +14,6 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import java.util.*;
-import java.util.regex.Pattern;
-import java.util.regex.PatternSyntaxException;
 import java.util.stream.Collectors;
 
 /**
@@ -135,11 +133,11 @@ public class TopicService extends AbstractService {
             logger.log(Level.WARN, "account is null, cannot create topic");
             return false;
         }
-        if (title == null || StringUtils.isBlank(title)) {
+        if (StringUtils.isBlank(title)) {
             logger.log(Level.WARN, "title is null or blank, cannot create topic");
             return false;
         }
-        if (text == null || StringUtils.isBlank(text)) {
+        if (StringUtils.isBlank(text)) {
             logger.log(Level.WARN, "text is null or blank, cannot create topic");
             return false;
         }
@@ -316,8 +314,8 @@ public class TopicService extends AbstractService {
             try {
                 TopicDao topicDao = daoFactory.createTopicDao(connectionManager);
                 List<Topic> topics = topicDao.findPageTopics(currentPage, numberOfTopicsPerPage, showHidden);
+                AccountDao accountDao = daoFactory.createAccountDao(connectionManager);
                 for (Topic topic : topics) {
-                    AccountDao accountDao = daoFactory.createAccountDao(connectionManager);
                     Account account = accountDao.findEntityById(topic.getAccount().getAccountId());
                     topic.setAccount(account);
                 }

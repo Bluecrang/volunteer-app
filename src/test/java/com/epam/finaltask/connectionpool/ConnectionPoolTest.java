@@ -1,6 +1,7 @@
 package com.epam.finaltask.connectionpool;
 
 import com.epam.finaltask.dao.impl.DatabaseTestUtil;
+import com.epam.finaltask.dao.impl.PersistenceException;
 import org.testng.Assert;
 import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
@@ -9,6 +10,7 @@ import org.testng.annotations.Test;
 import java.io.IOException;
 import java.sql.Connection;
 import java.sql.SQLException;
+import java.time.Period;
 
 import static org.testng.Assert.fail;
 
@@ -24,17 +26,12 @@ public class ConnectionPoolTest {
     }
 
     @Test
-    public void getConnectionTest() {
-        try {
-            Connection connection = ConnectionPool.INSTANCE.getConnection();
-            Assert.assertTrue(connection instanceof ProxyConnection);
+    public void getConnection_databaseInitialized_true() throws ConnectionPoolException, SQLException {
+        Connection connection = ConnectionPool.INSTANCE.getConnection();
 
-            connection.close();
-        } catch (ConnectionPoolException e) {
-            fail("Unexpected ConnectionPoolException", e);
-        } catch (SQLException e) {
-            fail("Unexpected SQLException", e);
-        }
+        Assert.assertTrue(connection instanceof ProxyConnection);
+
+        connection.close();
     }
 
     @AfterClass(alwaysRun = true)

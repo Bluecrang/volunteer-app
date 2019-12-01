@@ -16,6 +16,7 @@ import java.util.List;
 
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
+import static org.testng.Assert.assertThrows;
 import static org.testng.Assert.fail;
 
 public class MessageDaoImplTest {
@@ -27,175 +28,165 @@ public class MessageDaoImplTest {
     private AbstractConnectionManager connectionManager;
 
     @BeforeClass
-    public void init() {
-        try {
-            MockitoAnnotations.initMocks(this);
-            DatabaseTestUtil.registerDrivers();
-            DatabaseTestUtil.initializeDatabase();
-            Connection connection = DatabaseTestUtil.getConnection();
-            when(connectionManager.getConnection()).thenReturn(connection);
-            messageDao = new MessageDaoImpl(connectionManager);
-        } catch (SQLException | IOException e) {
-            throw new RuntimeException(e);
-        }
+    public void init() throws SQLException {
+        DatabaseTestUtil.registerDrivers();
+    }
+
+    @AfterClass(alwaysRun = true)
+    public void cleanUp() throws SQLException {
+        DatabaseTestUtil.deregisterDrivers();
     }
 
     @BeforeMethod
-    public void initBeforeMethod() {
+    public void initBeforeMethod() throws IOException, SQLException {
+        MockitoAnnotations.initMocks(this);
+        DatabaseTestUtil.initializeDatabase();
+        Connection connection = DatabaseTestUtil.getConnection();
+        when(connectionManager.getConnection()).thenReturn(connection);
+        messageDao = new MessageDaoImpl(connectionManager);
         message = new Message(BEFORE_METHOD_MESSAGE_TEXT,
                 new Account(1),
                 LocalDateTime.of(2000, 2, 15, 21, 54),
                 new Topic(1));
     }
 
-    @AfterMethod
-    public void cleanUpDatabaseMessages() {
-        try {
-            for (Message databaseMessage : messageDao.findAll()) {
-                messageDao.delete(databaseMessage.getMessageId());
-            }
-        } catch (PersistenceException e) {
-            throw new RuntimeException(e);
-        }
+    @AfterMethod(alwaysRun = true)
+    public void cleanUpDatabaseMessages() throws SQLException, IOException {
+        DatabaseTestUtil.dropSchema();
     }
 
     @Test
-    public void findPageMessagesTest() {
-        try {
+    public void findPageMessages_TwoMessagesPerPageThreeMessagesExist_twoMessages() throws PersistenceException {
+        messageDao.create(message);
+        LocalDateTime localDateTime = LocalDateTime.of(2001, 5, 17, 5, 52);
+        messageDao.create(new Message("text1",
+                new Account(1),
+                localDateTime,
+                new Topic(1)));
+        messageDao.create(new Message("text2",
+                new Account(1),
+                LocalDateTime.of(2021, 1, 12, 2, 12),
+                new Topic(1)));
+
+        List<Message> actual = messageDao.findPageMessages(1, 1, 2);
+
+        Assert.assertEquals(actual.get(1).getDate(), localDateTime);
+    }
+
+    @Test
+    public void createWithGeneratedDate_validMessage_true() throws PersistenceException {
+        boolean actual = messageDao.createWithGeneratedDate(message);
+
+        Assert.assertTrue(actual);
+    }
+
+    @Test
+    public void findMessagesByTopicId_threeMessagesExist_threeMessages() throws PersistenceException {
+        messageDao.create(message);
+        messageDao.create(new Message("text1",
+                new Account(1),
+                LocalDateTime.of(2001, 5, 17, 5, 52),
+                new Topic(1)));
+        messageDao.create(new Message("text2",
+                new Account(1),
+                LocalDateTime.of(2021, 1, 12, 2, 12),
+                new Topic(1)));
+
+        List<Message> actual = messageDao.findMessagesByTopicId(1);
+
+        Assert.assertEquals(actual.size(), 3);
+    }
+
+    @Test
+    public void findAll_threeMessagesExist_threeMessages() throws PersistenceException {
+        messageDao.create(message);
+        messageDao.create(new Message("text1",
+                new Account(1),
+                LocalDateTime.of(2001, 5, 17, 5, 52),
+                new Topic(1)));
+        messageDao.create(new Message("text2",
+                new Account(1),
+                LocalDateTime.of(2021, 1, 12, 2, 12),
+                new Topic(1)));
+
+        List<Message> actual = messageDao.findAll();
+
+        Assert.assertEquals(actual.size(), 3);
+    }
+
+    @Test
+    public void findEntityById_messageExist_messageFound() throws PersistenceException {
+        long messageId = 1;
+        messageDao.create(message);
+
+        Message actual = messageDao.findEntityById(messageId);
+
+        Assert.assertEquals(actual.getText(), message.getText());
+    }
+
+    @Test
+    public void create_validMessage_true() throws PersistenceException {
+        boolean result = messageDao.create(message);
+
+        Assert.assertTrue(result);
+    }
+
+    @Test
+    public void create_topicDoesNotExist_persistenceException() {
+        message.setTopic(new Topic(15));
+
+        assertThrows(PersistenceException.class, () -> {
             messageDao.create(message);
-            LocalDateTime localDateTime = LocalDateTime.of(2001, 5, 17, 5, 52);
-            messageDao.create(new Message("text1",
-                    new Account(1),
-                    localDateTime,
-                    new Topic(1)));
-            messageDao.create(new Message("text2",
-                    new Account(1),
-                    LocalDateTime.of(2021, 1, 12, 2, 12),
-                    new Topic(1)));
-            List<Message> actual = messageDao.findPageMessages(1, 1, 2);
-
-            Assert.assertEquals(actual.get(1).getDate(), localDateTime);
-        } catch (PersistenceException e) {
-            fail("Unexpected PersistenceException", e);
-        }
+        });
     }
 
     @Test
-    public void createWithGeneratedDateTest() {
-        try {
-            messageDao.createWithGeneratedDate(message);
-            message.setDate(null);
-            Message actual = messageDao.findMessagesByTopicId(1).get(0);
-            Assert.assertNotNull(actual.getDate());
-        } catch (PersistenceException e) {
-            fail("Unexpected PersistenceException", e);
-        }
+    public void update_validMessage_success() throws PersistenceException {
+        int expected = 1;
+        messageDao.create(message);
+        message.setMessageId(1);
+        message.setText("changed");
+
+        int actual = messageDao.update(message);
+
+        Assert.assertEquals(actual, expected);
     }
 
     @Test
-    public void findMessagesByTopicIdTest() {
-        try {
-            messageDao.create(message);
-            messageDao.create(new Message("text1",
-                    new Account(1),
-                    LocalDateTime.of(2001, 5, 17, 5, 52),
-                    new Topic(1)));
-            messageDao.create(new Message("text2",
-                    new Account(1),
-                    LocalDateTime.of(2021, 1, 12, 2, 12),
-                    new Topic(1)));
-            List<Message> actual = messageDao.findMessagesByTopicId(1);
-            Assert.assertEquals(actual.size(), 3);
-        } catch (PersistenceException e) {
-            fail("Unexpected PersistenceException", e);
-        }
+    public void update_messageDoesNotExist_false() throws PersistenceException {
+        int expected = 0;
+        message.setMessageId(153);
+
+        int actual = messageDao.update(message);
+
+        Assert.assertEquals(actual, expected);
     }
 
     @Test
-    public void findAllTest() {
-        try {
-            messageDao.create(message);
-            messageDao.create(new Message("text1",
-                    new Account(1),
-                    LocalDateTime.of(2001, 5, 17, 5, 52),
-                    new Topic(1)));
-            messageDao.create(new Message("text2",
-                    new Account(1),
-                    LocalDateTime.of(2021, 1, 12, 2, 12),
-                    new Topic(1)));
-            List<Message> actual = messageDao.findAll();
-            Assert.assertEquals(actual.size(), 3);
-        } catch (PersistenceException e) {
-            fail("Unexpected PersistenceException", e);
-        }
+    public void update_topicDoesNotExist_persistenceException() throws PersistenceException {
+        messageDao.create(message);
+        message.setTopic(new Topic(2));
+        message.setMessageId(1);
+
+        assertThrows(PersistenceException.class, () -> {
+            messageDao.update(message);
+        });
     }
 
     @Test
-    public void findEntityByIdTest() {
-        try {
-            messageDao.create(message);
-            Message messageByTopicId = messageDao.findMessagesByTopicId(1).get(0);
+    public void countMessagesByTopicId_topicExistsThreeMessagesExist_three() throws PersistenceException {
+        messageDao.create(message);
+        messageDao.create(new Message("text1",
+                new Account(1),
+                LocalDateTime.of(2001, 5, 17, 5, 52),
+                new Topic(1)));
+        messageDao.create(new Message("text2",
+                new Account(1),
+                LocalDateTime.of(2021, 1, 12, 2, 12),
+                new Topic(1)));
 
-            Message actual = messageDao.findEntityById(messageByTopicId.getMessageId());
+        int actual = messageDao.countMessagesByTopicId(1);
 
-            Assert.assertEquals(actual.getText(), messageByTopicId.getText());
-        } catch (PersistenceException e) {
-            fail("Unexpected PersistenceException", e);
-        }
-    }
-
-    @Test
-    public void createTest() {
-        try {
-            boolean result = messageDao.create(message);
-
-            Assert.assertTrue(result);
-        } catch (PersistenceException e) {
-            fail("Unexpected PersistenceException", e);
-        }
-    }
-
-    @Test
-    public void updateTest() {
-        try {
-            messageDao.create(message);
-            Message messageToUpdate = messageDao.findMessagesByTopicId(1).get(0);
-            messageToUpdate.setText("changed");
-            System.out.println(messageToUpdate);
-            int actual = messageDao.update(messageToUpdate);
-
-            Assert.assertEquals(actual, 1);
-        } catch (PersistenceException e) {
-            fail("Unexpected PersistenceException", e);
-        }
-    }
-
-    @Test
-    public void countMessagesByTopicIdTest() {
-        try {
-            messageDao.create(message);
-            messageDao.create(new Message("text1",
-                    new Account(1),
-                    LocalDateTime.of(2001, 5, 17, 5, 52),
-                    new Topic(1)));
-            messageDao.create(new Message("text2",
-                    new Account(1),
-                    LocalDateTime.of(2021, 1, 12, 2, 12),
-                    new Topic(1)));
-            int actual = messageDao.countMessagesByTopicId(1);
-            Assert.assertEquals(actual, 3);
-        } catch (PersistenceException e) {
-            fail("Unexpected PersistenceException", e);
-        }
-    }
-
-    @AfterClass(alwaysRun = true)
-    public void cleanUp() {
-        try {
-            DatabaseTestUtil.dropSchema();
-            DatabaseTestUtil.deregisterDrivers();
-        } catch (SQLException | IOException e) {
-            throw new RuntimeException(e);
-        }
+        Assert.assertEquals(actual, 3);
     }
 }

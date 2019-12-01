@@ -29,20 +29,19 @@ public class CloseTopicCommand extends Command {
             long topicId = Long.parseLong(data.getRequestParameter(ApplicationConstants.TOPIC_ID_PARAMETER));
             commandResult.setPage(ApplicationConstants.SHOW_TOPIC + topicId);
             TopicService topicService = new TopicService();
-            try {
-                if (topicService.closeTopic(topicId)) {
-                    logger.log(Level.INFO, "topic with id=" + topicId + " closed");
-                    data.putSessionAttribute(ApplicationConstants.TOPIC_ACTION_NOTIFICATION_ATTRIBUTE, TOPIC_CLOSED);
-                } else {
-                    data.putSessionAttribute(ApplicationConstants.TOPIC_ACTION_NOTIFICATION_ATTRIBUTE,
-                            COULD_NOT_CLOSE_TOPIC_ERROR);
-                    logger.log(Level.WARN, "could not close topic id=" + topicId);
-                }
-            } catch (ServiceException e) {
-                throw new CommandException("unable to close topic", e);
+
+            if (topicService.closeTopic(topicId)) {
+                logger.log(Level.INFO, "topic with id=" + topicId + " closed");
+                data.putSessionAttribute(ApplicationConstants.TOPIC_ACTION_NOTIFICATION_ATTRIBUTE, TOPIC_CLOSED);
+            } else {
+                data.putSessionAttribute(ApplicationConstants.TOPIC_ACTION_NOTIFICATION_ATTRIBUTE,
+                        COULD_NOT_CLOSE_TOPIC_ERROR);
+                logger.log(Level.WARN, "could not close topic id=" + topicId);
             }
-    } catch (NumberFormatException e) {
+        } catch (NumberFormatException e) {
             throw new CommandException("could not parse topic id to long value", e);
+        } catch (ServiceException e) {
+            throw new CommandException("unable to close topic", e);
         }
         return commandResult;
     }

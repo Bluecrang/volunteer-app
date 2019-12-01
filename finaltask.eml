@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<component LANGUAGE_LEVEL="JDK_1_8" inheritJdk="true">
+	<output-test url="file://$MODULE_DIR$/target/test-classes"/>
+	<contentEntry url="file://$MODULE_DIR$">
+		<testFolder url="file://$MODULE_DIR$/src/test/java"/>
+		<excludeFolder url="file://$MODULE_DIR$/target"/>
+	</contentEntry>
+	<lib name="Tomcat 9.0.17" scope="PROVIDED"/>
+	<lib name="Maven: org.testng:testng:6.11" scope="TEST"/>
+	<lib name="Maven: com.beust:jcommander:1.64" scope="TEST"/>
+	<lib name="Maven: org.yaml:snakeyaml:1.17" scope="TEST"/>
+	<lib name="Maven: javax.servlet:javax.servlet-api:4.0.1" scope="PROVIDED"/>
+	<lib name="Maven: javax.servlet.jsp:javax.servlet.jsp-api:2.3.3" scope="PROVIDED"/>
+	<levels>
+		<level name="Tomcat 9.0.17" value="application_server_libraries"/>
+		<level name="Maven: org.apache.logging.log4j:log4j-api:2.11.0" value="project"/>
+		<level name="Maven: org.apache.logging.log4j:log4j-core:2.11.0" value="project"/>
+		<level name="Maven: org.apache.logging.log4j:log4j-web:2.11.0" value="project"/>
+		<level name="Maven: org.testng:testng:6.11" value="project"/>
+		<level name="Maven: com.beust:jcommander:1.64" value="project"/>
+		<level name="Maven: org.yaml:snakeyaml:1.17" value="project"/>
+		<level name="Maven: javax.servlet:javax.servlet-api:4.0.1" value="project"/>
+		<level name="Maven: javax.servlet.jsp:javax.servlet.jsp-api:2.3.3" value="project"/>
+		<level name="Maven: mysql:mysql-connector-java:5.1.47" value="project"/>
+		<level name="Maven: javax.servlet.jsp.jstl:jstl-api:1.2" value="project"/>
+		<level name="Maven: javax.servlet:servlet-api:2.5" value="project"/>
+		<level name="Maven: javax.servlet.jsp:jsp-api:2.1" value="project"/>
+		<level name="Maven: javax.servlet:jstl:1.2" value="project"/>
+	</levels>
+</component>

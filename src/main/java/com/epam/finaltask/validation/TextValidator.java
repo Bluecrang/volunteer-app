@@ -14,6 +14,12 @@ public class TextValidator {
      * @return {@code true} if text does not exceed maximal length. Returns {@code false} if text is null or blank
      */
     public boolean validate(String text, int maxLength) {
-        return (text != null && !StringUtils.isBlank(text) && text.length() <= maxLength);
+        boolean result = false;
+        if (StringUtils.isNotBlank(text)) {
+            if (text.length() <= maxLength) {
+                result = true;
+            }
+        }
+        return result;
     }
 }

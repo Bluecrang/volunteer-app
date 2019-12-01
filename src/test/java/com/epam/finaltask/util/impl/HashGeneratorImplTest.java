@@ -1,5 +1,6 @@
 package com.epam.finaltask.util.impl;
 
+import org.testng.Assert;
 import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
 
@@ -18,23 +19,31 @@ public class HashGeneratorImplTest {
     }
 
     @Test(dataProvider = "ValidParametersProvider")
-    public void hashTestValidParameters(String data, String salt, String algorithm) {
-        hashGeneratorImpl.hash(data, salt, algorithm);
+    public void hash_ValidParameters_hash(String data, String salt, String algorithm) {
+        String actual = hashGeneratorImpl.hash(data, salt, algorithm);;
+
+        Assert.assertNotNull(actual);
     }
 
-    @Test(expectedExceptions = RuntimeException.class)
-    public void hastTestNonexistentAlgorithm() {
+    @Test
+    public void hast_nonexistentAlgorithm_runtimeException() {
         String data = "data";
         String salt = "salt";
         String algorithm = "Nonexistent algorithm";
-        hashGeneratorImpl.hash(data, salt, algorithm);
+
+        Assert.assertThrows(RuntimeException.class, () -> {
+            hashGeneratorImpl.hash(data, salt, algorithm);
+        });
     }
 
-    @Test(expectedExceptions = RuntimeException.class)
-    public void hastTestAlgorithmNull() {
+    @Test
+    public void hast_algorithmNull_runtimeException() {
         String data = "data";
         String salt = "salt";
         String algorithm = null;
-        hashGeneratorImpl.hash(data, salt, algorithm);
+
+        Assert.assertThrows(RuntimeException.class, () -> {
+            hashGeneratorImpl.hash(data, salt, algorithm);
+        });
     }
 }

@@ -68,6 +68,15 @@ public class CommandData {
         }
     }
 
+    public CommandData(HttpMethodType httpMethod, Account account) {
+        if (httpMethod != null) {
+            method = httpMethod;
+        } else {
+            method = HttpMethodType.UNDEFINED;
+        }
+        sessionAccount = account;
+    }
+
     /**
      * Updates attributes of the chosen HttpSession or adds them if they do not exist.
      * @param session Session, attributes of that will be updated

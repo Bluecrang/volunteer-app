@@ -33,9 +33,10 @@ public class DatabaseTestUtil {
     }
 
     public static Connection getConnection() throws SQLException {
-        if (connection == null) {
-            connection = DriverManager.getConnection(urlAfterSchemaCreation);
+        if (connection != null) {
+            connection.close();
         }
+        connection = DriverManager.getConnection(urlAfterSchemaCreation);
         return connection;
     }
 

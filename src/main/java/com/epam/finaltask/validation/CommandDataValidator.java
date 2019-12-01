@@ -17,16 +17,23 @@ public class CommandDataValidator {
      * @return {@code true}, if account type and http method are valid, else returns {@code false}
      */
     public boolean validate(CommandData data, CommandConstraints constraints) {
-        if (constraints.checkIfAllowed(data.getMethod())) {
-            Account sessionAccount = data.getSessionAccount();
-            AccountType accountType;
-            if (sessionAccount != null) {
-                accountType = sessionAccount.getAccountType();
-            } else {
-                accountType = AccountType.GUEST;
+        boolean result = false;
+        if (data != null) {
+            if (constraints != null) {
+                if (constraints.checkIfAllowed(data.getMethod())) {
+                    Account sessionAccount = data.getSessionAccount();
+                    AccountType accountType;
+                    if (sessionAccount != null) {
+                        accountType = sessionAccount.getAccountType();
+                    } else {
+                        accountType = AccountType.GUEST;
+                    }
+                    if (constraints.checkIfAllowed(accountType)) {
+                        result = true;
+                    }
+                }
             }
-            return constraints.checkIfAllowed(accountType);
         }
-        return false;
+        return result;
     }
 }

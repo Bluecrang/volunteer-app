@@ -8,8 +8,8 @@ public class TextValidatorTest {
     private TextValidator textValidator = new TextValidator();
 
     @Test
-    public void validateTestTextLengthLessThanMaxLength() {
-        String text = "text";
+    public void validate_textLengthLessThanMaxLength_true() {
+        String text = "abc";
         int maxLength = 5;
 
         boolean actual = textValidator.validate(text, maxLength);
@@ -18,7 +18,7 @@ public class TextValidatorTest {
     }
 
     @Test
-    public void validateTestTextLengthEqualsMaxLength() {
+    public void validate_textLengthEqualsMaxLength_true() {
         String text = "house";
         int maxLength = 5;
 
@@ -28,29 +28,39 @@ public class TextValidatorTest {
     }
 
     @Test
-    public void validateTestTextLengthGreaterThanMaxLength() {
-        String text = "machine";
-        int maxLength = 3;
-
-        boolean actual = textValidator.validate(text, maxLength);
-
-        Assert.assertFalse(actual);
-    }
-
-    @Test
-    public void validateTestTextNull() {
-        String text = "null";
-        int maxLength = 3;
-
-        boolean actual = textValidator.validate(text, maxLength);
-
-        Assert.assertFalse(actual);
-    }
-
-    @Test
-    public void validateTestTextBlank() {
+    public void validate_textBlankMaxLengthZero_false() {
         String text = "";
         int maxLength = 0;
+
+        boolean actual = textValidator.validate(text, maxLength);
+
+        Assert.assertFalse(actual);
+    }
+
+    @Test
+    public void validate_textLengthGreaterThanMaxLengthBy1_false() {
+        String text = "ab";
+        int maxLength = 1;
+
+        boolean actual = textValidator.validate(text, maxLength);
+
+        Assert.assertFalse(actual);
+    }
+
+    @Test
+    public void validate_textLengthGreaterThanMaxLengthBy13_false() {
+        String text = "abcabcabcabcabc";
+        int maxLength = 2;
+
+        boolean actual = textValidator.validate(text, maxLength);
+
+        Assert.assertFalse(actual);
+    }
+
+    @Test
+    public void validate_textNull_false() {
+        String text = null;
+        int maxLength = 3;
 
         boolean actual = textValidator.validate(text, maxLength);
 

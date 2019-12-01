@@ -8,53 +8,8 @@ public class ImageFilenameValidatorTest {
 
     private ImageFilenameValidator imageFilenameValidator = new ImageFilenameValidator();
 
-    @DataProvider(name = "InvalidExtensionFilenameProvider")
-    public Object[][] provideFilenamesWithInvalidExtensions() {
-        return new Object[][] {
-                {"file.xml"},
-                {"image.jpek"},
-                {"img.doc"}
-        };
-    }
-
-    @DataProvider(name = "ValidFilenameProvider")
-    public Object[][] provideValidFilenames() {
-        return new Object[][] {
-                {"filename.jpeg"},
-                {"pic.jpg"},
-                {"something.png"},
-                {"file134.bmp"},
-                {"picture.img.png"},
-                {"pi4c.cat.jpeg"},
-                {"dog.imag3e.jpg"},
-        };
-    }
-
-    @Test(dataProvider = "ValidFilenameProvider")
-    public void validateTestValidImageFilename(String filename) {
-        boolean actual = imageFilenameValidator.validate(filename);
-
-        Assert.assertTrue(actual);
-    }
-
-    @Test(dataProvider = "InvalidExtensionFilenameProvider")
-    public void validateTestInvalidImageFilenameExtension(String filename) {
-        boolean actual = imageFilenameValidator.validate(filename);
-
-        Assert.assertFalse(actual);
-    }
-
     @Test
-    public void validateTestFilenameNull() {
-        String filename = null;
-
-        boolean actual = imageFilenameValidator.validate(filename);
-
-        Assert.assertFalse(actual);
-    }
-
-    @Test
-    public void validateTestFilenameBlank() {
+    public void validate_filenameBlank_false() {
         String filename = "";
 
         boolean actual = imageFilenameValidator.validate(filename);
@@ -63,8 +18,35 @@ public class ImageFilenameValidatorTest {
     }
 
     @Test
-    public void validateTestNoExtension() {
-        String filename = "picture";
+    public void validate_validImageFilename_true() {
+        String filename = "abc.jpg";
+
+        boolean actual = imageFilenameValidator.validate(filename);
+
+        Assert.assertTrue(actual);
+    }
+
+    @Test
+    public void validate_invalidImageExtension_false() {
+        String filename = "abc.zip";
+
+        boolean actual = imageFilenameValidator.validate(filename);
+
+        Assert.assertFalse(actual);
+    }
+
+    @Test
+    public void validate_noExtension_false() {
+        String filename = "abcd";
+
+        boolean actual = imageFilenameValidator.validate(filename);
+
+        Assert.assertFalse(actual);
+    }
+
+    @Test
+    public void validate_filenameNull_false() {
+        String filename = null;
 
         boolean actual = imageFilenameValidator.validate(filename);
 

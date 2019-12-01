@@ -30,29 +30,30 @@ public class PropertiesReaderTest {
     }
 
     @Test(dataProvider = "ValidPropertiesProvider")
-    public void readPropertiesTestValid(Properties expected) {
+    public void readProperties_ValidReader_propertiesRead(Properties expected) throws IOException {
         StringWriter writer = new StringWriter();
-        try {
-            expected.store(writer, "");
-            Reader reader = new StringReader(writer.toString());
+        expected.store(writer, "");
+        Reader reader = new StringReader(writer.toString());
 
-            Properties actual = propertiesReader.readProperties(reader);
+        Properties actual = propertiesReader.readProperties(reader);
 
-            Assert.assertEquals(actual, expected);
-        } catch (IOException e) {
-            fail("unexpected IOException");
-        }
+        Assert.assertEquals(actual, expected);
     }
 
-    @Test(expectedExceptions = RuntimeException.class)
-    public void readPropertiesTestReaderNull() {
+    @Test
+    public void readProperties_readerNull_runtimeException() {
         Reader reader = null;
-        propertiesReader.readProperties(reader);
-    }
 
-    @Test(expectedExceptions = RuntimeException.class)
-    public void readPropertiesTestFilenameNull() {
+        Assert.assertThrows(RuntimeException.class, () -> {
+            propertiesReader.readProperties(reader);
+        });    }
+
+    @Test
+    public void readProperties_filenameNull_runtimeException() {
         String filename = null;
-        propertiesReader.readProperties(filename);
+
+        Assert.assertThrows(RuntimeException.class, () -> {
+            propertiesReader.readProperties(filename);
+        });
     }
 }

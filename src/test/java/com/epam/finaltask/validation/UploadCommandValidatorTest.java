@@ -8,7 +8,7 @@ public class UploadCommandValidatorTest {
     private UploadCommandValidator uploadCommandValidator = new UploadCommandValidator();
 
     @Test
-    public void validateTestValidUploadCommand() {
+    public void validate_validUploadCommand_true() {
         String command = "upload_avatar";
 
         boolean actual = uploadCommandValidator.validate(command);
@@ -17,7 +17,7 @@ public class UploadCommandValidatorTest {
     }
 
     @Test
-    public void validateTestUploadCommandNull() {
+    public void validate_uploadCommandNull_false() {
         String command = null;
 
         boolean actual = uploadCommandValidator.validate(command);
@@ -26,7 +26,7 @@ public class UploadCommandValidatorTest {
     }
 
     @Test
-    public void validateTestNonexistentUploadCommand() {
+    public void validate_nonexistentUploadCommand_false() {
         String command = "nonexistent_command";
 
         boolean actual = uploadCommandValidator.validate(command);
