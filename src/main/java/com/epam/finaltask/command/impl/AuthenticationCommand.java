@@ -22,16 +22,22 @@ public class AuthenticationCommand extends Command {
     private static final String ACCOUNT_DOES_NOT_EXIST_OR_PASSWORD_DOES_NOT_MATCH_PROPERTY = "login.incorrect_email_or_password";
     private static final String AUTHENTICATION_ERROR_PROPERTY = "login.authentication_error";
 
+    private AuthenticationService authenticationService;
+
     public AuthenticationCommand(CommandConstraints commandConstraints) {
         super(commandConstraints);
+        this.authenticationService = new AuthenticationService();
     }
 
+    public AuthenticationCommand(CommandConstraints commandConstraints, AuthenticationService authenticationService) {
+        super(commandConstraints);
+        this.authenticationService = authenticationService;
+    }
     @Override
     public CommandResult performAction(CommandData data) {
         String email = data.getRequestParameter(ApplicationConstants.EMAIL_PARAMETER);
         String password = data.getRequestParameter(ApplicationConstants.PASSWORD_PARAMETER);
 
-        AuthenticationService authenticationService = new AuthenticationService();
         CommandResult commandResult = new CommandResult();
         commandResult.setPage(ApplicationConstants.SHOW_LOGIN_PAGE);
         try {

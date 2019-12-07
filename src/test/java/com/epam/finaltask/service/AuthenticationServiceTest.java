@@ -110,5 +110,6 @@ public class AuthenticationServiceTest {
         Assert.assertThrows(ServiceException.class, () -> {
             authenticationService.authenticate(email, password);
         });
+        verify(accountDao).findAccountByEmail(email);
     }
 }

@@ -16,8 +16,16 @@ public class ChangeAccountBlockStateCommand extends Command {
     private static final Logger logger = LogManager.getLogger();
     private static final String ACCOUNT_BLOCK_PARAMETER = "block";
 
+    private AccountService accountService;
+
     public ChangeAccountBlockStateCommand(CommandConstraints constraints) {
         super(constraints);
+        this.accountService = new AccountService();
+    }
+
+    public ChangeAccountBlockStateCommand(CommandConstraints commandConstraints, AccountService accountService) {
+        super(commandConstraints);
+        this.accountService = accountService;
     }
 
     @Override
@@ -28,11 +36,11 @@ public class ChangeAccountBlockStateCommand extends Command {
             commandResult.setPage(ApplicationConstants.SHOW_PROFILE + accountId);
             boolean block = Boolean.parseBoolean(data.getRequestParameter(ACCOUNT_BLOCK_PARAMETER));
             try {
-                AccountService accountService = new AccountService();
                 if (accountService.changeAccountBlockState(accountId, block)) {
                     logger.log(Level.INFO, "account id=" + accountId + " block state changed to " + block);
                 } else {
                     logger.log(Level.WARN, "could not change account id="+ accountId +" block state to " + block);
+                    throw new CommandException("unable to change account block state to " + block);
                 }
             } catch (ServiceException e) {
                 throw new CommandException("unable to change account block state to " + block, e);

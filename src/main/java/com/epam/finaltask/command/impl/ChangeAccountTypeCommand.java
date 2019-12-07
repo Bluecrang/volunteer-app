@@ -19,8 +19,17 @@ public class ChangeAccountTypeCommand extends Command {
     private static final String PROMOTION_ERROR = "profile.promotion_error";
     private static final String ACCOUNT_PROMOTED = "profile.account_promoted";
 
+    private AccountService accountService;
+
     public ChangeAccountTypeCommand(CommandConstraints constraints) {
         super(constraints);
+        this.accountService = new AccountService();
+    }
+
+    public ChangeAccountTypeCommand(CommandConstraints constraints, AccountService accountService) {
+        super(constraints);
+        this.accountService = accountService;
+
     }
 
     @Override
@@ -32,7 +41,6 @@ public class ChangeAccountTypeCommand extends Command {
             try {
                 String accountTypeString = data.getRequestParameter(ApplicationConstants.ACCOUNT_TYPE_PARAMETER);
                 AccountType accountType = AccountType.valueOf(accountTypeString.toUpperCase());
-                AccountService accountService = new AccountService();
                 if (accountService.changeAccountType(accountId, accountType)) {
                     data.putSessionAttribute(ApplicationConstants.PROFILE_ACTION_NOTIFICATION_ATTRIBUTE, ACCOUNT_PROMOTED);
                     logger.log(Level.INFO, "account id=" + accountId + " promoted to admin");

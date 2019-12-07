@@ -25,8 +25,16 @@ public class CreateTopicCommand extends Command {
     private static final int MAX_TOPIC_MESSAGE_LENGTH = 400;
     private static final String TOPIC_CREATION_ILLEGAL_TITLE_OR_TEXT_PROPERTY = "topics.illegal_title_or_text_length";
 
+    private TopicService topicService;
+
     public CreateTopicCommand(CommandConstraints constraints) {
         super(constraints);
+        this.topicService = new TopicService();
+    }
+
+    public CreateTopicCommand(CommandConstraints constraints, TopicService topicService) {
+        super(constraints);
+        this.topicService = topicService;
     }
 
     @Override
@@ -37,7 +45,6 @@ public class CreateTopicCommand extends Command {
         String text = data.getRequestParameter(TOPIC_TEXT_PARAMETER);
         Account sessionAccount = data.getSessionAccount();
         if (validateTopicData(title, text)) {
-            TopicService topicService = new TopicService();
             try {
                 if (topicService.createTopic(sessionAccount, title, text)) {
                     logger.log(Level.INFO, "user (id=" + sessionAccount.getAccountId() + ") created topic (title=" + title +

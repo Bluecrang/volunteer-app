@@ -18,8 +18,16 @@ public class CloseTopicCommand extends Command {
     private static final String COULD_NOT_CLOSE_TOPIC_ERROR = "topic.could_not_close_topic_error";
     private static final String TOPIC_CLOSED = "topic.topic_closed_successfully";
 
+    private TopicService topicService;
+
     public CloseTopicCommand(CommandConstraints constraints) {
         super(constraints);
+        this.topicService = new TopicService();
+    }
+
+    public CloseTopicCommand(CommandConstraints constraints, TopicService topicService) {
+        super(constraints);
+        this.topicService = topicService;
     }
 
     @Override
@@ -28,7 +36,6 @@ public class CloseTopicCommand extends Command {
         try {
             long topicId = Long.parseLong(data.getRequestParameter(ApplicationConstants.TOPIC_ID_PARAMETER));
             commandResult.setPage(ApplicationConstants.SHOW_TOPIC + topicId);
-            TopicService topicService = new TopicService();
 
             if (topicService.closeTopic(topicId)) {
                 logger.log(Level.INFO, "topic with id=" + topicId + " closed");

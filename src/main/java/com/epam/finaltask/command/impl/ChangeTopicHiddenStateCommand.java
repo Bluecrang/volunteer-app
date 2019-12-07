@@ -15,12 +15,20 @@ public class ChangeTopicHiddenStateCommand extends Command {
 
     private static final Logger logger = LogManager.getLogger();
 
-    private static final String MESSAGE_SUCCESSFULLY_DELETED_PROPERTY = "topic.message_deleted";
-    private static final String MESSAGE_DELETION_ERROR_PROPERTY = "topic.message_deletion_error";
+    private static final String TOPIC_HIDDEN_PROPERTY = "topic.hide.change_success";
+    private static final String TOPIC_HIDE_ERROR_PROPERTY = "topic.hide.change_error";
     private static final String TOPIC_CHANGE_HIDDEN_STATE_PARAMETER = "hide";
+
+    private TopicService topicService;
 
     public ChangeTopicHiddenStateCommand(CommandConstraints constraints) {
         super(constraints);
+        this.topicService = new TopicService();
+    }
+
+    public ChangeTopicHiddenStateCommand(CommandConstraints constraints, TopicService topicService) {
+        super(constraints);
+        this.topicService = topicService;
     }
 
     @Override
@@ -29,17 +37,16 @@ public class ChangeTopicHiddenStateCommand extends Command {
         try {
             long topicId = Long.parseLong(data.getRequestParameter(ApplicationConstants.TOPIC_ID_PARAMETER));
                 boolean hide = Boolean.parseBoolean(data.getRequestParameter(TOPIC_CHANGE_HIDDEN_STATE_PARAMETER));
-                TopicService topicService = new TopicService();
                 try {
                     commandResult.setPage(ApplicationConstants.SHOW_TOPICS);
                     if (topicService.changeTopicHiddenState(topicId, hide)) {
                         logger.log(Level.INFO, "topic hidden state successfully changed, topic id=" + topicId +
                                 ", new hidden state: " + hide);
                         data.putSessionAttribute(ApplicationConstants.TOPIC_ACTION_NOTIFICATION_ATTRIBUTE,
-                                MESSAGE_SUCCESSFULLY_DELETED_PROPERTY);
+                                TOPIC_HIDDEN_PROPERTY);
                     } else {
                         data.putSessionAttribute(ApplicationConstants.TOPIC_ACTION_NOTIFICATION_ATTRIBUTE,
-                                MESSAGE_DELETION_ERROR_PROPERTY);
+                                TOPIC_HIDE_ERROR_PROPERTY);
                         logger.log(Level.WARN, "unable to change topic hidden state, topicId=" + topicId);
                     }
                 } catch (ServiceException e) {

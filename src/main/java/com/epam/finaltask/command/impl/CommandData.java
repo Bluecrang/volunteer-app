@@ -38,6 +38,9 @@ public class CommandData {
      */
     private Account sessionAccount;
 
+    public CommandData() {
+    }
+
     /**
      * Creates CommandData, fetching data from the chosen request.
      * @param request HttpServletRequest to retrieve data from

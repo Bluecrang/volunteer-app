@@ -56,8 +56,8 @@ public class MessageService extends AbstractService {
             try {
                 MessageDao messageDao = daoFactory.createMessageDao(connectionManager);
                 List<Message> messageList = messageDao.findPageMessages(topicId, currentPage, numberOfMessagesPerPage);
+                AccountDao accountDao = daoFactory.createAccountDao(connectionManager);
                 for (Message message : messageList) {
-                    AccountDao accountDao = daoFactory.createAccountDao(connectionManager);
                     Account account = accountDao.findEntityById(message.getAccount().getAccountId());
                     message.setAccount(account);
                 }

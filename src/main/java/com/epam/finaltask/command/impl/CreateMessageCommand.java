@@ -3,6 +3,7 @@ package com.epam.finaltask.command.impl;
 import com.epam.finaltask.command.*;
 import com.epam.finaltask.entity.Account;
 import com.epam.finaltask.entity.AccountType;
+import com.epam.finaltask.entity.Message;
 import com.epam.finaltask.entity.Topic;
 import com.epam.finaltask.service.MessageService;
 import com.epam.finaltask.service.ServiceException;
@@ -24,17 +25,27 @@ public class CreateMessageCommand extends Command {
     private static final int MAX_MESSAGE_TEXT_LENGTH = 256;
     private static final String MESSAGE_CREATION_ILLEGAL_LENGTH_PROPERTY = "topic.message_creation_illegal_length";
 
+    private TopicService topicService;
+    private MessageService messageService;
+
     public CreateMessageCommand(CommandConstraints constraints) {
         super(constraints);
+        this.topicService = new TopicService();
+        this.messageService = new MessageService();
+    }
+
+    public CreateMessageCommand(CommandConstraints constraints, TopicService topicService, MessageService messageService) {
+        super(constraints);
+        this.topicService = topicService;
+        this.messageService = messageService;
     }
 
     @Override
     public CommandResult performAction(CommandData data) throws CommandException {
         try {
-            long topicId = Long.parseLong(data.getRequestParameter((ApplicationConstants.TOPIC_ID_PARAMETER)));
+            long topicId = Long.parseLong(data.getRequestParameter(ApplicationConstants.TOPIC_ID_PARAMETER));
             CommandResult result = new CommandResult();
             Account sessionAccount = data.getSessionAccount();
-            TopicService topicService = new TopicService();
             Topic topic = topicService.findTopicById(topicId);
             if ((topic == null || sessionAccount == null) ||
                     (sessionAccount.getAccountId() != topic.getAccount().getAccountId() &&
@@ -50,7 +61,6 @@ public class CreateMessageCommand extends Command {
             TextValidator textValidator = new TextValidator();
             if (textValidator.validate(text, MAX_MESSAGE_TEXT_LENGTH)) {
                 result.setPage(ApplicationConstants.SHOW_TOPIC_LAST_PAGE + topicId);
-                MessageService messageService = new MessageService();
                 try {
                     if (messageService.createMessage(sessionAccount, topicId, text)) {
                         logger.log(Level.INFO, "user (id=" + sessionAccount.getAccountId() + ") created message for topic (id="

@@ -18,8 +18,16 @@ public class ChangeRatingCommand extends Command {
     private static final String RATING_CHANGE_ERROR = "profile.could_not_change_rating";
     private static final String RATING_CHANGED = "profile.rating_changed";
 
+    private AccountService accountService;
+
     public ChangeRatingCommand(CommandConstraints constraints) {
         super(constraints);
+        this.accountService = new AccountService();
+    }
+
+    public ChangeRatingCommand(CommandConstraints constraints, AccountService accountService) {
+        super(constraints);
+        this.accountService = accountService;
     }
 
     @Override
@@ -30,7 +38,6 @@ public class ChangeRatingCommand extends Command {
             commandResult.setPage(ApplicationConstants.SHOW_PROFILE + accountId);
             int value = Integer.parseInt(data.getRequestParameter(ApplicationConstants.CHANGE_RATING_PARAMETER));
             try {
-                AccountService accountService = new AccountService();
                 if (accountService.addValueToRating(accountId, value)) {
                     data.putSessionAttribute(ApplicationConstants.PROFILE_ACTION_NOTIFICATION_ATTRIBUTE, RATING_CHANGED);
                     logger.log(Level.INFO, "account id=" + accountId + " rating changed by " + value);

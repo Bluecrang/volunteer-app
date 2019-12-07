@@ -18,17 +18,24 @@ public class DeleteMessageCommand extends Command {
     private static final String MESSAGE_SUCCESSFULLY_DELETED_PROPERTY = "topic.message_deleted";
     private static final String MESSAGE_DELETION_ERROR_PROPERTY = "topic.message_deletion_error";
 
+    private MessageService messageService;
+
     public DeleteMessageCommand(CommandConstraints constraints) {
         super(constraints);
+        this.messageService = new MessageService();
+    }
+
+    public DeleteMessageCommand(CommandConstraints constraints, MessageService messageService) {
+        super(constraints);
+        this.messageService = messageService;
     }
 
     @Override
     public CommandResult performAction(CommandData data) throws CommandException {
         CommandResult commandResult = new CommandResult();
         try {
-            long messageId = Long.parseLong(data.getRequestParameter(ApplicationConstants.MESSAGE_ID_PARAMETER));
             long topicId = Long.parseLong(data.getRequestParameter(ApplicationConstants.TOPIC_ID_PARAMETER));
-            MessageService messageService = new MessageService();
+            long messageId = Long.parseLong(data.getRequestParameter(ApplicationConstants.MESSAGE_ID_PARAMETER));
             try {
                 commandResult.setPage(ApplicationConstants.SHOW_TOPIC_LAST_PAGE + topicId);
                 if (messageService.deleteMessage(messageId)) {

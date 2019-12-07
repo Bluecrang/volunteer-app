@@ -35,13 +35,9 @@ public class MessageServiceTest {
     private ConnectionManagerFactory connectionManagerFactory;
 
     @BeforeMethod
-    public void setUp() {
+    public void setUp() throws PersistenceException {
         MockitoAnnotations.initMocks(this);
-        try {
-            when(connectionManagerFactory.createConnectionManager()).thenReturn(connectionManager);
-        } catch (PersistenceException e) {
-            throw new RuntimeException("Unexpected exception while performing setUp", e);
-        }
+        when(connectionManagerFactory.createConnectionManager()).thenReturn(connectionManager);
         when(daoFactory.createMessageDao(connectionManager)).thenReturn(messageDao);
 
         messageService = new MessageService(daoFactory, connectionManagerFactory);
@@ -63,8 +59,9 @@ public class MessageServiceTest {
 
         boolean result = messageService.createMessage(account, 1, "text");
 
-        verify(messageDao).createWithGeneratedDate(anyObject());
         Assert.assertTrue(result);
+        verify(daoFactory).createTopicDao(connectionManager);
+        verify(messageDao).createWithGeneratedDate(anyObject());
     }
 
     @DataProvider(name = "CreateMessageInvalidParametersProvider")
@@ -110,6 +107,8 @@ public class MessageServiceTest {
         boolean result = messageService.createMessage(account, 1, "text");
 
         Assert.assertFalse(result);
+        verify(daoFactory).createTopicDao(connectionManager);
+        verify(topicDao).findEntityById(anyLong());
     }
 
     @Test
@@ -128,8 +127,8 @@ public class MessageServiceTest {
 
         boolean result = messageService.createMessage(account, 1, "text");
 
-        verify(messageDao).createWithGeneratedDate(anyObject());
         Assert.assertFalse(result);
+        verify(messageDao).createWithGeneratedDate(anyObject());
     }
 
     @Test
@@ -146,6 +145,7 @@ public class MessageServiceTest {
         Assert.assertThrows(ServiceException.class, () -> {
             messageService.createMessage(account, topicId, text);
         });
+        verify(connectionManagerFactory).createConnectionManager();
     }
 
     @Test
@@ -164,6 +164,7 @@ public class MessageServiceTest {
 
         Assert.assertTrue(result);
         verify(messageDao).findEntityById(messageId);
+        verify(messageDao).delete(messageId);
     }
 
     @Test
@@ -235,8 +236,10 @@ public class MessageServiceTest {
 
         List<Message> actual = messageService.findTopicPageMessages(topicId, currentPage, numberOfMessagesPerPage);
 
-        verify(messageDao).findPageMessages(topicId, currentPage, numberOfMessagesPerPage);
         Assert.assertEquals(actual.size(), 3);
+        verify(daoFactory).createAccountDao(connectionManager);
+        verify(accountDao, times(3)).findEntityById(accountId);
+        verify(messageDao).findPageMessages(topicId, currentPage, numberOfMessagesPerPage);
     }
 
     @Test
@@ -250,6 +253,7 @@ public class MessageServiceTest {
         Assert.assertThrows(ServiceException.class, () -> {
             messageService.findTopicPageMessages(topicId, currentPage, numberOfMessagesPerPage);
         });
+        verify(messageDao).findPageMessages(topicId, currentPage, numberOfMessagesPerPage);
     }
 
     @Test
@@ -262,6 +266,7 @@ public class MessageServiceTest {
         Assert.assertThrows(ServiceException.class, () -> {
             messageService.findTopicPageMessages(topicId, currentPage, numberOfMessagesPerPage);
         });
+        verify(connectionManager).disableAutoCommit();
     }
 
     @Test
@@ -272,8 +277,8 @@ public class MessageServiceTest {
 
         int result = messageService.countMessages(topicId);
 
-        verify(messageDao).countMessagesByTopicId(topicId);
         Assert.assertEquals(result, messageCount);
+        verify(messageDao).countMessagesByTopicId(topicId);
     }
 
     @Test
@@ -284,6 +289,7 @@ public class MessageServiceTest {
         Assert.assertThrows(ServiceException.class, () -> {
             messageService.countMessages(topicId);
         });
+        verify(connectionManagerFactory).createConnectionManager();
     }
 
     @Test
@@ -297,8 +303,8 @@ public class MessageServiceTest {
 
         Message actual = messageService.findMessageById(id);
 
-        verify(messageDao).findEntityById(id);
         Assert.assertEquals(actual.getMessageId(), id);
+        verify(messageDao).findEntityById(id);
     }
 
     @Test
@@ -309,6 +315,6 @@ public class MessageServiceTest {
         Assert.assertThrows(ServiceException.class, () -> {
             messageService.findMessageById(id);
         });
-
+        verify(connectionManagerFactory).createConnectionManager();
     }
 }
