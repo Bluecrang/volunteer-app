@@ -392,7 +392,7 @@ public class AccountServiceTest {
     }
 
     @Test
-    public void changeAccountType_ôccountNotFoundInDatabase_false() throws PersistenceException, ServiceException {
+    public void changeAccountType_accountNotFoundInDatabase_false() throws PersistenceException, ServiceException {
         long accountId = 2;
         AccountDao accountDao2 = mock(AccountDao.class);
         when(daoFactory.createAccountDao(connectionManager)).thenReturn(accountDao2, accountDao);
