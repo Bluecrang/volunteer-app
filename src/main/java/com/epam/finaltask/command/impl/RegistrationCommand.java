@@ -25,8 +25,16 @@ public class RegistrationCommand extends Command {
     private static final String USERNAME_EXISTS = "registration.username_exists";
     private static final String ACCOUNT_SUCCESSFULLY_REGISTERED = "login.account_successfully_registered";
 
+    private RegistrationService registrationService;
+
     public RegistrationCommand(CommandConstraints constraints) {
         super(constraints);
+        this.registrationService = new RegistrationService();
+    }
+
+    public RegistrationCommand(CommandConstraints constraints, RegistrationService registrationService) {
+        super(constraints);
+        this.registrationService = registrationService;
     }
 
     @Override
@@ -54,7 +62,6 @@ public class RegistrationCommand extends Command {
             return commandResult;
         }
 
-        RegistrationService registrationService = new RegistrationService();
         try {
             RegistrationService.RegistrationResult registrationResult = registrationService.registerAccount(username, password, email);
             switch (registrationResult) {

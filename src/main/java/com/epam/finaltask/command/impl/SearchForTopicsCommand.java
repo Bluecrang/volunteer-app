@@ -25,8 +25,16 @@ public class SearchForTopicsCommand extends Command {
     private static final String SEARCH_STRING_PARAMETER = "text";
     private static final String NO_TOPICS_FOUND = "topics.no_topics_found";
 
+    private TopicService topicService;
+
     public SearchForTopicsCommand(CommandConstraints constraints) {
         super(constraints);
+        this.topicService = new TopicService();
+    }
+
+    public SearchForTopicsCommand(CommandConstraints constraints, TopicService topicService) {
+        super(constraints);
+        this.topicService = topicService;
     }
 
     @Override
@@ -42,8 +50,7 @@ public class SearchForTopicsCommand extends Command {
                 return commandResult;
             }
             String regex = data.getRequestParameter(SEARCH_STRING_PARAMETER);
-            TopicService service = new TopicService();
-            List<Topic> topicList = service.findTopicsByTitleSubstring(sessionAccount, regex);
+            List<Topic> topicList = topicService.findTopicsByTitleSubstring(sessionAccount, regex);
             if (sessionAccount.getAccountType() != AccountType.ADMIN) {
                 topicList.removeIf(Topic::isHidden);
             }
