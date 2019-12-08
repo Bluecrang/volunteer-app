@@ -13,9 +13,7 @@ import java.sql.SQLException;
 import java.time.LocalDateTime;
 import java.util.List;
 
-import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
-import static org.testng.Assert.fail;
 
 public class TopicDaoImplTest {
 

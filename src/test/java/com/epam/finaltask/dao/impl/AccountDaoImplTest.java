@@ -1,8 +1,8 @@
 package com.epam.finaltask.dao.impl;
 
 import com.epam.finaltask.dao.AccountDao;
-import com.epam.finaltask.entity.AccountType;
 import com.epam.finaltask.entity.Account;
+import com.epam.finaltask.entity.AccountType;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.testng.Assert;
@@ -14,7 +14,6 @@ import java.sql.SQLException;
 import java.util.List;
 
 import static org.mockito.Mockito.when;
-import static org.testng.Assert.fail;
 
 public class AccountDaoImplTest {
 

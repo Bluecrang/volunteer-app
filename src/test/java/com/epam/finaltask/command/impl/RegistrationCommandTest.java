@@ -1,11 +1,8 @@
 package com.epam.finaltask.command.impl;
 
 import com.epam.finaltask.command.CommandException;
-import com.epam.finaltask.entity.Account;
-import com.epam.finaltask.entity.AccountType;
 import com.epam.finaltask.service.RegistrationService;
 import com.epam.finaltask.service.ServiceException;
-import com.epam.finaltask.service.TopicService;
 import com.epam.finaltask.util.ApplicationConstants;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;

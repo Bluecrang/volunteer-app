@@ -1,6 +1,7 @@
 package com.epam.finaltask.command.impl;
 
-import com.epam.finaltask.command.*;
+import com.epam.finaltask.command.Command;
+import com.epam.finaltask.command.CommandException;
 import com.epam.finaltask.service.RegistrationService;
 import com.epam.finaltask.service.ServiceException;
 import com.epam.finaltask.util.ApplicationConstants;

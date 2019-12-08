@@ -1,6 +1,7 @@
 package com.epam.finaltask.command.impl;
 
-import com.epam.finaltask.command.*;
+import com.epam.finaltask.command.Command;
+import com.epam.finaltask.command.CommandException;
 import com.epam.finaltask.entity.Account;
 import com.epam.finaltask.entity.AccountType;
 import com.epam.finaltask.entity.Message;
@@ -29,8 +30,19 @@ public class ShowTopicPageCommand extends Command {
     private static final String LAST_PAGE = "last";
     private static final Integer PAGE_STEP = 5;
 
+    private TopicService topicService;
+    private MessageService messageService;
+
     public ShowTopicPageCommand(CommandConstraints constraints) {
         super(constraints);
+        this.topicService = new TopicService();
+        this.messageService = new MessageService();
+    }
+
+    public ShowTopicPageCommand(CommandConstraints constraints, TopicService topicService, MessageService messageService) {
+        super(constraints);
+        this.topicService = topicService;
+        this.messageService = messageService;
     }
 
     @Override
@@ -38,7 +50,6 @@ public class ShowTopicPageCommand extends Command {
         CommandResult commandResult = new CommandResult();
         try {
             long topicId = Long.parseLong(data.getRequestParameter(ApplicationConstants.TOPIC_ID_PARAMETER));
-            TopicService topicService = new TopicService();
             try {
                 Topic topic = topicService.findTopicById(topicId);
                 Account sessionAccount = data.getSessionAccount();
@@ -61,14 +72,13 @@ public class ShowTopicPageCommand extends Command {
                 data.putRequestAttribute(TOPIC_ATTRIBUTE, topic);
                 commandResult.assignTransitionTypeForward();
                 String currentPageString = data.getRequestParameter(ApplicationConstants.PAGE_PARAMETER);
-                MessageService messageService = new MessageService();
                 int messageCount = messageService.countMessages(topicId);
                 int numberOfPages = Math.toIntExact(Math.round(Math.ceil((double)messageCount / NUMBER_OF_MESSAGES_PER_PAGE)));
                 int currentPage;
                 if (currentPageString.equals(LAST_PAGE)) {
                     currentPage = (numberOfPages != 0) ? numberOfPages : 1;
                 } else {
-                    currentPage = Integer.parseInt(data.getRequestParameter(ApplicationConstants.PAGE_PARAMETER));
+                    currentPage = Integer.parseInt(currentPageString);
                 }
                 data.putRequestAttribute(ApplicationConstants.TOPIC_CURRENT_PAGE_ATTRIBUTE, currentPage);
                 List<Message> messageList = messageService.findTopicPageMessages(topicId, currentPage, NUMBER_OF_MESSAGES_PER_PAGE);

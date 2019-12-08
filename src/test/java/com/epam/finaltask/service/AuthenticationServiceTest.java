@@ -5,8 +5,8 @@ import com.epam.finaltask.dao.ConnectionManagerFactory;
 import com.epam.finaltask.dao.DaoFactory;
 import com.epam.finaltask.dao.impl.AbstractConnectionManager;
 import com.epam.finaltask.dao.impl.PersistenceException;
-import com.epam.finaltask.entity.AccountType;
 import com.epam.finaltask.entity.Account;
+import com.epam.finaltask.entity.AccountType;
 import com.epam.finaltask.util.HashGenerator;
 import com.epam.finaltask.util.HashGeneratorFactory;
 import org.mockito.Mock;
@@ -17,8 +17,8 @@ import org.testng.annotations.Test;
 
 import static org.mockito.Matchers.anyString;
 import static org.mockito.Matchers.eq;
-import static org.mockito.Mockito.*;
-import static org.testng.Assert.fail;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 public class AuthenticationServiceTest {
 

@@ -32,6 +32,10 @@ public class Message extends Entity {
     public Message() {
     }
 
+    public Message(long messageId) {
+        this.messageId = messageId;
+    }
+
     public Message(String text, Account account, LocalDateTime date, Topic topic) {
         this.text = text;
         this.account = account;

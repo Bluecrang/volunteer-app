@@ -1,7 +1,6 @@
 package com.epam.finaltask.connectionpool;
 
 import com.epam.finaltask.dao.impl.DatabaseTestUtil;
-import com.epam.finaltask.dao.impl.PersistenceException;
 import org.testng.Assert;
 import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
@@ -10,9 +9,6 @@ import org.testng.annotations.Test;
 import java.io.IOException;
 import java.sql.Connection;
 import java.sql.SQLException;
-import java.time.Period;
-
-import static org.testng.Assert.fail;
 
 public class ConnectionPoolTest {
 

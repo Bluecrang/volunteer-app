@@ -5,14 +5,8 @@ import com.epam.finaltask.command.impl.CommandData;
 import com.epam.finaltask.command.impl.HttpMethodType;
 import com.epam.finaltask.entity.Account;
 import com.epam.finaltask.entity.AccountType;
-import org.mockito.Mock;
-import org.mockito.MockitoAnnotations;
 import org.testng.Assert;
-import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
-
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
 
 public class CommandDataValidatorTest {
 

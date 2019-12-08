@@ -11,8 +11,6 @@ import java.io.StringReader;
 import java.io.StringWriter;
 import java.util.Properties;
 
-import static org.testng.Assert.fail;
-
 public class PropertiesReaderTest {
 
     private PropertiesReader propertiesReader = new PropertiesReader();

@@ -2,7 +2,8 @@ package com.epam.finaltask.command.impl;
 
 import com.epam.finaltask.entity.AccountType;
 
-import java.util.*;
+import java.util.HashSet;
+import java.util.Set;
 
 /**
  * Class, instances of that contain allowed account types and http methods to execute command with.

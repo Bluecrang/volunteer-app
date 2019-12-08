@@ -1,6 +1,7 @@
 package com.epam.finaltask.command.impl;
 
-import com.epam.finaltask.command.*;
+import com.epam.finaltask.command.Command;
+import com.epam.finaltask.command.CommandException;
 import com.epam.finaltask.entity.Account;
 import com.epam.finaltask.service.AccountService;
 import com.epam.finaltask.service.ServiceException;
@@ -18,8 +19,16 @@ public class ShowProfileCommand extends Command {
     private static final Logger logger = LogManager.getLogger();
     private static final String PROFILE_ATTRIBUTE = "profile";
 
+    private AccountService accountService;
+
     public ShowProfileCommand(CommandConstraints constraints) {
         super(constraints);
+        this.accountService = new AccountService();
+    }
+
+    public ShowProfileCommand(CommandConstraints constraints, AccountService accountService) {
+        super(constraints);
+        this.accountService = accountService;
     }
 
     @Override
@@ -30,7 +39,6 @@ public class ShowProfileCommand extends Command {
         try {
             long accountId = Long.parseLong(data.getRequestParameter(ApplicationConstants.ACCOUNT_ID_PARAMETER));
             try {
-                AccountService accountService = new AccountService();
                 Account account = accountService.findAccountById(accountId);
                 if (account == null) {
                     throw new CommandException("Could not find account by chosen id, id=" + accountId);

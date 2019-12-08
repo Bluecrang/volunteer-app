@@ -1,6 +1,7 @@
 package com.epam.finaltask.command.impl;
 
-import com.epam.finaltask.command.*;
+import com.epam.finaltask.command.CommandException;
+import com.epam.finaltask.command.UploadCommand;
 import com.epam.finaltask.entity.Account;
 import com.epam.finaltask.service.AccountService;
 import com.epam.finaltask.service.ServiceException;
@@ -21,8 +22,16 @@ public class UploadAvatarCommand extends UploadCommand {
     private static final String PROFILE_MESSAGE_ATTRIBUTE = "action_message";
     private static final String UNABLE_TO_UPLOAD_AVATAR_PROPERTY = "profile.action_message.unable_to_upload_avatar";
 
+    private AccountService accountService;
+
     public UploadAvatarCommand(CommandConstraints constraints) {
         super(constraints);
+        this.accountService = new AccountService();
+    }
+
+    public UploadAvatarCommand(CommandConstraints constraints, AccountService accountService) {
+        super(constraints);
+        this.accountService = accountService;
     }
 
     @Override
@@ -31,7 +40,6 @@ public class UploadAvatarCommand extends UploadCommand {
         Account sessionAccount = commandData.getSessionAccount();
         if (sessionAccount != null) {
             result.setPage(ApplicationConstants.SHOW_PROFILE + sessionAccount.getAccountId());
-            AccountService accountService = new AccountService();
             try {
                 if (accountService.updateAvatar(sessionAccount, parts.stream().findFirst().get())) {
                     logger.log(Level.INFO, "sessionAccount id=" + sessionAccount.getAccountId() + " avatar was successfully updated");

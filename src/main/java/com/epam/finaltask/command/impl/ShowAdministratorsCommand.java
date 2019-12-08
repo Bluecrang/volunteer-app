@@ -1,6 +1,7 @@
 package com.epam.finaltask.command.impl;
 
-import com.epam.finaltask.command.*;
+import com.epam.finaltask.command.Command;
+import com.epam.finaltask.command.CommandException;
 import com.epam.finaltask.entity.Account;
 import com.epam.finaltask.service.AccountService;
 import com.epam.finaltask.service.ServiceException;
@@ -20,8 +21,16 @@ public class ShowAdministratorsCommand extends Command {
 
     private static final String ACCOUNT_LIST_ATTRIBUTE = "account_list";
 
+    private AccountService accountService;
+
     public ShowAdministratorsCommand(CommandConstraints constraints) {
         super(constraints);
+        this.accountService = new AccountService();
+    }
+
+    public ShowAdministratorsCommand(CommandConstraints constraints, AccountService accountService) {
+        super(constraints);
+        this.accountService = accountService;
     }
 
     @Override
@@ -29,7 +38,6 @@ public class ShowAdministratorsCommand extends Command {
         CommandResult commandResult = new CommandResult();
         commandResult.assignTransitionTypeForward();
         try {
-            AccountService accountService = new AccountService();
             List<Account> accountList = accountService.findAdministrators();
             logger.log(Level.DEBUG, "account list: " + accountList);
             data.putRequestAttribute(ACCOUNT_LIST_ATTRIBUTE, accountList);

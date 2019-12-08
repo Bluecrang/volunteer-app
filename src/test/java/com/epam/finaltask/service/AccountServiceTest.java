@@ -5,8 +5,8 @@ import com.epam.finaltask.dao.ConnectionManagerFactory;
 import com.epam.finaltask.dao.DaoFactory;
 import com.epam.finaltask.dao.impl.AbstractConnectionManager;
 import com.epam.finaltask.dao.impl.PersistenceException;
-import com.epam.finaltask.entity.AccountType;
 import com.epam.finaltask.entity.Account;
+import com.epam.finaltask.entity.AccountType;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.testng.Assert;
@@ -14,8 +14,8 @@ import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
 import javax.servlet.http.Part;
-
-import java.io.*;
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;

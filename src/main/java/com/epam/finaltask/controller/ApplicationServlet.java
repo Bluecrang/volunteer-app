@@ -1,10 +1,10 @@
 package com.epam.finaltask.controller;
 
 import com.epam.finaltask.command.Command;
-import com.epam.finaltask.command.impl.CommandData;
 import com.epam.finaltask.command.CommandException;
-import com.epam.finaltask.command.impl.CommandResult;
+import com.epam.finaltask.command.impl.CommandData;
 import com.epam.finaltask.command.impl.CommandFactory;
+import com.epam.finaltask.command.impl.CommandResult;
 import com.epam.finaltask.connectionpool.ConnectionPool;
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
@@ -26,6 +26,16 @@ public class ApplicationServlet extends AbstractServlet {
     private static final Logger logger = LogManager.getLogger();
     private static final int POOL_MAINTENANCE_PERIOD_MILLIS = 1000 * 60 * 60;
     private static final String POOL_PROPERTIES_FILENAME = "/WEB-INF/pool.properties";
+
+    private CommandFactory commandFactory;
+
+    public ApplicationServlet() {
+        this.commandFactory = CommandFactory.getInstance();
+    }
+
+    public ApplicationServlet(CommandFactory commandFactory) {
+        this.commandFactory = commandFactory;
+    }
 
     /**
      * Initializes connection pool.
@@ -77,7 +87,6 @@ public class ApplicationServlet extends AbstractServlet {
      */
     private void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws IOException, ServletException {
-        CommandFactory commandFactory = CommandFactory.getInstance();
         Command command = commandFactory.defineCommand(request);
         logger.log(Level.INFO, "defined command=" + command);
         CommandData commandData = new CommandData(request);

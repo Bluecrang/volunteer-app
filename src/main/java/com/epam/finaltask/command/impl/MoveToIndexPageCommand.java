@@ -1,7 +1,6 @@
 package com.epam.finaltask.command.impl;
 
 import com.epam.finaltask.command.Command;
-import com.epam.finaltask.util.ApplicationConstants;
 import com.epam.finaltask.util.PageConstants;
 
 /**

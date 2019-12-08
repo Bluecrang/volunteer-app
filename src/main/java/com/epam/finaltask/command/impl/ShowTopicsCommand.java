@@ -1,6 +1,7 @@
 package com.epam.finaltask.command.impl;
 
-import com.epam.finaltask.command.*;
+import com.epam.finaltask.command.Command;
+import com.epam.finaltask.command.CommandException;
 import com.epam.finaltask.entity.Account;
 import com.epam.finaltask.entity.AccountType;
 import com.epam.finaltask.entity.Topic;
@@ -28,8 +29,16 @@ public class ShowTopicsCommand extends Command {
     private static final int DEFAULT_CURRENT_PAGE = 1;
     private static final Integer PAGE_STEP = 5;
 
+    private TopicService topicService;
+
     public ShowTopicsCommand(CommandConstraints constraints) {
         super(constraints);
+        this.topicService = new TopicService();
+    }
+
+    public ShowTopicsCommand(CommandConstraints constraints, TopicService topicService) {
+        super(constraints);
+        this.topicService = topicService;
     }
 
     @Override
@@ -46,7 +55,6 @@ public class ShowTopicsCommand extends Command {
             }
             AccountType sessionAccountType = sessionAccount.getAccountType();
             long sessionAccountId = sessionAccount.getAccountId();
-            TopicService service = new TopicService();
             List<Topic> topicList;
             if (sessionAccountType == AccountType.ADMIN ||
                     sessionAccountType == AccountType.VOLUNTEER) {
@@ -60,15 +68,15 @@ public class ShowTopicsCommand extends Command {
                 if (sessionAccountType == AccountType.ADMIN) {
                     showHidden = true;
                 }
-                topicList = service.findPageTopics(currentPage, NUMBER_OF_TOPICS_PER_PAGE, showHidden);
+                topicList = topicService.findPageTopics(currentPage, NUMBER_OF_TOPICS_PER_PAGE, showHidden);
                 logger.log(Level.DEBUG, "topic list: " + topicList);
-                int topicCount = service.countTopics(showHidden);
+                int topicCount = topicService.countTopics(showHidden);
                 int numberOfPages = Math.toIntExact(Math.round(Math.ceil((double)topicCount / NUMBER_OF_TOPICS_PER_PAGE)));
                 data.putRequestAttribute(ApplicationConstants.TOPICS_PAGE_COUNT_ATTRIBUTE, numberOfPages);
                 data.putRequestAttribute(ApplicationConstants.TOPICS_CURRENT_PAGE_ATTRIBUTE, currentPage);
                 data.putRequestAttribute(ApplicationConstants.PAGE_STEP_ATTRIBUTE, PAGE_STEP);
             } else {
-                topicList = service.findTopicsByAuthorId(sessionAccountId);
+                topicList = topicService.findTopicsByAuthorId(sessionAccountId);
             }
             logger.log(Level.DEBUG, "number of found topics: " + topicList.size());
             if (!topicList.isEmpty()) {

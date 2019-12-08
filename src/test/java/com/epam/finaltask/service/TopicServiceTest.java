@@ -3,8 +3,8 @@ package com.epam.finaltask.service;
 import com.epam.finaltask.dao.*;
 import com.epam.finaltask.dao.impl.AbstractConnectionManager;
 import com.epam.finaltask.dao.impl.PersistenceException;
-import com.epam.finaltask.entity.AccountType;
 import com.epam.finaltask.entity.Account;
+import com.epam.finaltask.entity.AccountType;
 import com.epam.finaltask.entity.Message;
 import com.epam.finaltask.entity.Topic;
 import org.mockito.Mock;
@@ -20,7 +20,6 @@ import java.util.List;
 
 import static org.mockito.Matchers.anyObject;
 import static org.mockito.Mockito.*;
-import static org.testng.Assert.fail;
 
 public class TopicServiceTest {
 

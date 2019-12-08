@@ -1,9 +1,9 @@
 package com.epam.finaltask.controller;
 
-import com.epam.finaltask.command.impl.CommandData;
 import com.epam.finaltask.command.CommandException;
-import com.epam.finaltask.command.impl.CommandResult;
 import com.epam.finaltask.command.UploadCommand;
+import com.epam.finaltask.command.impl.CommandData;
+import com.epam.finaltask.command.impl.CommandResult;
 import com.epam.finaltask.command.impl.UploadCommandFactory;
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
@@ -24,6 +24,16 @@ import java.io.IOException;
 public class FileServlet extends AbstractServlet {
 
     private static final Logger logger = LogManager.getLogger();
+
+    private UploadCommandFactory uploadCommandFactory;
+
+    public FileServlet() {
+        this.uploadCommandFactory = new UploadCommandFactory();
+    }
+
+    public FileServlet(UploadCommandFactory uploadCommandFactory) {
+        this.uploadCommandFactory = uploadCommandFactory;
+    }
 
     /**
      *  Delegates request processing to {@link FileServlet#processRequest(HttpServletRequest, HttpServletResponse)}.
@@ -46,7 +56,6 @@ public class FileServlet extends AbstractServlet {
      */
     private void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws IOException, ServletException {
-        UploadCommandFactory uploadCommandFactory = new UploadCommandFactory();
         try {
             UploadCommand uploadCommand = uploadCommandFactory.defineCommand(request);
             logger.log(Level.INFO, "defined command=" + uploadCommand);
