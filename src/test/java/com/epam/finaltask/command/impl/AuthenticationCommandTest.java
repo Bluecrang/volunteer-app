@@ -23,7 +23,7 @@ public class AuthenticationCommandTest {
     @InjectMocks
     private AuthenticationCommand authenticationCommand;
 
-    private String email = "abc@mail.ru";
+    private String email = "email@mail.ru";
     private String password = "password";
 
     @BeforeMethod

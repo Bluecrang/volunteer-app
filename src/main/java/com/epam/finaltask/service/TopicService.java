@@ -8,6 +8,7 @@ import com.epam.finaltask.entity.AccountType;
 import com.epam.finaltask.entity.Message;
 import com.epam.finaltask.entity.Topic;
 import com.epam.finaltask.util.ApplicationConstants;
+import com.epam.finaltask.validation.TextValidator;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
@@ -135,12 +136,13 @@ public class TopicService extends AbstractService {
             logger.log(Level.WARN, "account is null, cannot create topic");
             return false;
         }
-        if (StringUtils.isBlank(title)) {
-            logger.log(Level.WARN, "title is null or blank, cannot create topic");
+        TextValidator textValidator = new TextValidator();
+        if (!textValidator.validate(title, 100)) {
+            logger.log(Level.WARN, "title is invalid, cannot create topic");
             return false;
         }
-        if (StringUtils.isBlank(text)) {
-            logger.log(Level.WARN, "text is null or blank, cannot create topic");
+        if (!textValidator.validate(text, 400)) {
+            logger.log(Level.WARN, "text is invalid, cannot create topic");
             return false;
         }
         try (AbstractConnectionManager connectionManager = connectionManagerFactory.createConnectionManager()) {

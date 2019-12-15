@@ -179,4 +179,28 @@ public class CreateMessageCommandTest {
         verify(commandData).getSessionAccount();
         verify(topicService).findTopicById(longTopicId);
     }
+
+    @Test
+    public void performAction_textEmpty_showTopicsPageShown() throws ServiceException, CommandException {
+        Account account = new Account();
+        account.setAccountType(AccountType.VOLUNTEER);
+        String text = "";
+        Topic topic = new Topic(longTopicId);
+        topic.setAccount(account);
+        when(commandData.getRequestParameter(ApplicationConstants.TOPIC_ID_PARAMETER))
+                .thenReturn(topicId);
+        when(commandData.getSessionAccount())
+                .thenReturn(account);
+        when(commandData.getRequestParameter("text"))
+                .thenReturn(text);
+        when(topicService.findTopicById(longTopicId))
+                .thenReturn(topic);
+
+        CommandResult actual = createMessageCommand.performAction(commandData);
+
+        Assert.assertEquals(actual.getPage(), ApplicationConstants.SHOW_TOPICS);
+        verify(commandData).getRequestParameter(ApplicationConstants.TOPIC_ID_PARAMETER);
+        verify(commandData).getSessionAccount();
+        verify(commandData).getRequestParameter("text");
+    }
 }

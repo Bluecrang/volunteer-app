@@ -1,6 +1,5 @@
 package com.epam.finaltask.command.impl;
 
-import com.epam.finaltask.command.Command;
 import com.epam.finaltask.command.CommandException;
 import com.epam.finaltask.command.UploadCommand;
 import com.epam.finaltask.util.ApplicationConstants;

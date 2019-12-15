@@ -100,7 +100,15 @@ public class AccountService extends AbstractService {
             try {
                 Account account = findAccountById(accountId, connectionManager);
                 if (account != null) {
-                    account.setRating(account.getRating() + value);
+                    if (account.getRating() + value >= 0) {
+                        if (account.getRating() + value > 1_000_000) {
+                            account.setRating(1_000_000);
+                        } else {
+                            account.setRating(account.getRating() + value);
+                        }
+                    } else {
+                        account.setRating(0);
+                    }
                     AccountDao accountDao = daoFactory.createAccountDao(connectionManager);
                     if (accountDao.update(account) == 1) {
                         connectionManager.commit();

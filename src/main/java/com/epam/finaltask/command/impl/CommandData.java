@@ -132,6 +132,10 @@ public class CommandData {
         sessionAttributes.put(key, value);
     }
 
+    public void putRequestParameter(String key, String value) {
+        requestParameters.put(key, value);
+    }
+
     /**
      * Returns session attribute by key
      * @param key Key of the session attribute
@@ -147,5 +151,9 @@ public class CommandData {
 
     public Account getSessionAccount() {
         return sessionAccount;
+    }
+
+    public Account setSessionAccount(Account sessionAccount) {
+        return this.sessionAccount = sessionAccount;
     }
 }

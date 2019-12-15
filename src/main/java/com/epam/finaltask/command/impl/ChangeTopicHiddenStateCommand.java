@@ -37,22 +37,22 @@ public class ChangeTopicHiddenStateCommand extends Command {
         CommandResult commandResult = new CommandResult();
         try {
             long topicId = Long.parseLong(data.getRequestParameter(ApplicationConstants.TOPIC_ID_PARAMETER));
-                boolean hide = Boolean.parseBoolean(data.getRequestParameter(TOPIC_CHANGE_HIDDEN_STATE_PARAMETER));
-                try {
-                    commandResult.setPage(ApplicationConstants.SHOW_TOPICS);
-                    if (topicService.changeTopicHiddenState(topicId, hide)) {
-                        logger.log(Level.INFO, "topic hidden state successfully changed, topic id=" + topicId +
-                                ", new hidden state: " + hide);
-                        data.putSessionAttribute(ApplicationConstants.TOPIC_ACTION_NOTIFICATION_ATTRIBUTE,
-                                TOPIC_HIDDEN_PROPERTY);
-                    } else {
-                        data.putSessionAttribute(ApplicationConstants.TOPIC_ACTION_NOTIFICATION_ATTRIBUTE,
-                                TOPIC_HIDE_ERROR_PROPERTY);
-                        logger.log(Level.WARN, "unable to change topic hidden state, topicId=" + topicId);
-                    }
-                } catch (ServiceException e) {
-                    throw new CommandException("could not change topic hidden state: topicId=" + topicId, e);
+            boolean hide = Boolean.parseBoolean(data.getRequestParameter(TOPIC_CHANGE_HIDDEN_STATE_PARAMETER));
+            try {
+                commandResult.setPage(ApplicationConstants.SHOW_TOPICS);
+                if (topicService.changeTopicHiddenState(topicId, hide)) {
+                    logger.log(Level.INFO, "topic hidden state successfully changed, topic id=" + topicId +
+                            ", new hidden state: " + hide);
+                    data.putSessionAttribute(ApplicationConstants.TOPIC_ACTION_NOTIFICATION_ATTRIBUTE,
+                            TOPIC_HIDDEN_PROPERTY);
+                } else {
+                    data.putSessionAttribute(ApplicationConstants.TOPIC_ACTION_NOTIFICATION_ATTRIBUTE,
+                            TOPIC_HIDE_ERROR_PROPERTY);
+                    logger.log(Level.WARN, "unable to change topic hidden state, topicId=" + topicId);
                 }
+            } catch (ServiceException e) {
+                throw new CommandException("could not change topic hidden state: topicId=" + topicId, e);
+            }
         } catch (NumberFormatException e) {
             throw new CommandException("could not parse topic id to long value", e);
         }

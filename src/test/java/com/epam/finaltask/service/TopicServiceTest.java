@@ -7,6 +7,7 @@ import com.epam.finaltask.entity.Account;
 import com.epam.finaltask.entity.AccountType;
 import com.epam.finaltask.entity.Message;
 import com.epam.finaltask.entity.Topic;
+import org.apache.commons.lang3.StringUtils;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.testng.Assert;
@@ -59,6 +60,8 @@ public class TopicServiceTest {
                 {account, "title", null},
                 {account, null, "text"},
                 {account, "", "text"},
+                {account, StringUtils.repeat('c', 101), "text"},
+                {account, "title", StringUtils.repeat('c', 401)},
         };
     }
 

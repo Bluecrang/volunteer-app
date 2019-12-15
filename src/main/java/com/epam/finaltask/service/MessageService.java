@@ -146,10 +146,6 @@ public class MessageService extends AbstractService {
             logger.log(Level.WARN, "cannot create message in topic id=" + topicId + " because account is null");
             return false;
         }
-        if (text == null || StringUtils.isBlank(text)) {
-            logger.log(Level.WARN, "cannot create message in topic id=" + topicId + " because text is null or blank");
-            return false;
-        }
         TextValidator textValidator = new TextValidator();
         if (!textValidator.validate(text,256)) {
             logger.log(Level.WARN, "cannot create message in topic id=" + topicId + " because text more than 256 characters long");

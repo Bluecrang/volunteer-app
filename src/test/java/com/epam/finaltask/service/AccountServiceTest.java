@@ -63,6 +63,48 @@ public class AccountServiceTest {
 
         verify(accountDao).findEntityById(accountId);
         Assert.assertTrue(result);
+        Assert.assertEquals(account.getRating(), 2);
+    }
+
+    @Test
+    public void addValueToRating_ratingAndValueSumLessThanZero_trueAndRatingZero() throws PersistenceException, ServiceException {
+        long accountId = 2;
+        String username2 = "username2";
+        String hash2 = "hash2";
+        String email2 = "email2@mail.com";
+        Account account = new Account(accountId, username2, hash2,
+                email2, AccountType.USER, 0, false, "salt", null);
+        when(accountDao.findEntityById(accountId)).thenReturn(account);
+        AccountDao updater = mock(AccountDao.class);
+        when(updater.update(account)).thenReturn(1);
+        when(daoFactory.createAccountDao(connectionManager)).thenReturn(accountDao, updater);
+
+        boolean result = accountService.addValueToRating(accountId, -2);
+
+        verify(accountDao).findEntityById(accountId);
+        Assert.assertTrue(result);
+        Assert.assertEquals(account.getRating(), 0);
+    }
+
+    @Test
+    public void addValueToRating_ratingAndValueSumGreaterThanMillion_trueAndRatingMillion()
+            throws PersistenceException, ServiceException {
+        long accountId = 2;
+        String username2 = "username2";
+        String hash2 = "hash2";
+        String email2 = "email2@mail.com";
+        Account account = new Account(accountId, username2, hash2,
+                email2, AccountType.USER, 0, false, "salt", null);
+        when(accountDao.findEntityById(accountId)).thenReturn(account);
+        AccountDao updater = mock(AccountDao.class);
+        when(updater.update(account)).thenReturn(1);
+        when(daoFactory.createAccountDao(connectionManager)).thenReturn(accountDao, updater);
+
+        boolean result = accountService.addValueToRating(accountId, 1_000_000_0);
+
+        verify(accountDao).findEntityById(accountId);
+        Assert.assertTrue(result);
+        Assert.assertEquals(account.getRating(), 1_000_000);
     }
 
     @Test
@@ -197,7 +239,7 @@ public class AccountServiceTest {
     }
 
     @Test
-    public void updateAvatarTestAccountNull() throws ServiceException {
+    public void updateAvatar_testAccountNull_false() throws ServiceException {
         Part part = mock(Part.class);
         Account account = null;
 

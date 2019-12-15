@@ -11,7 +11,7 @@ public class EmailValidator {
     /**
      * Email regular expression
      */
-    private static final String EMAIL_REGEX = "^[\\w!#$%'*+\\-/=?^_`{|}~]{3,15}([.][\\w!#$%'*+\\-/=?^_`{|}~]{3,10}){0,5}@[a-z]{2,20}([.][a-z]{2,10}){1,4}$";
+    private static final String EMAIL_REGEX = "^[\\w!#$%'*+\\-/=?^_`{|}~]{3,300}([.][\\w!#$%'*+\\-/=?^_`{|}~]{3,10}){0,5}@[a-z]{2,20}([.][a-z]{2,10}){1,4}$";
 
     /**
      * {@link Pattern} used for validation.
@@ -25,7 +25,7 @@ public class EmailValidator {
      */
     public boolean validate(String email) {
         boolean result = false;
-        if (email != null) {
+        if (email != null && email.length() < 254) {
             Matcher matcher = EMAIL_PATTERN.matcher(email);
             if (matcher.matches()) {
                 result = true;
