@@ -28,6 +28,7 @@ public class RegistrationCommand extends Command {
 
     private RegistrationService registrationService;
 
+
     public RegistrationCommand(CommandConstraints constraints) {
         super(constraints);
         this.registrationService = new RegistrationService();
@@ -49,17 +50,17 @@ public class RegistrationCommand extends Command {
 
         EmailValidator emailValidator = new EmailValidator();
         if (!emailValidator.validate(email)) {
-            data.putRequestAttribute(ApplicationConstants.REGISTRATION_MESSAGE_ATTRIBUTE, ILLEGAL_EMAIL);
+            data.putSessionAttribute(ApplicationConstants.REGISTRATION_MESSAGE_ATTRIBUTE, ILLEGAL_EMAIL);
             return commandResult;
         }
         UsernameValidator usernameValidator = new UsernameValidator();
         if (!usernameValidator.validate(username)) {
-            data.putRequestAttribute(ApplicationConstants.REGISTRATION_MESSAGE_ATTRIBUTE, ILLEGAL_USERNAME);
+            data.putSessionAttribute(ApplicationConstants.REGISTRATION_MESSAGE_ATTRIBUTE, ILLEGAL_USERNAME);
             return commandResult;
         }
         PasswordValidator passwordValidator = new PasswordValidator();
         if (!passwordValidator.validate(password)) {
-            data.putRequestAttribute(ApplicationConstants.REGISTRATION_MESSAGE_ATTRIBUTE, ILLEGAL_PASSWORD);
+            data.putSessionAttribute(ApplicationConstants.REGISTRATION_MESSAGE_ATTRIBUTE, ILLEGAL_PASSWORD);
             return commandResult;
         }
 

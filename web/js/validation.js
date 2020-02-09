@@ -1,7 +1,7 @@
 function validateRegistrationForm() {
     let form = document.forms["registration"];
     let emailRegex = /^[\w!#$%'*+\-/=?^_`{|}~]{3,300}([.][\w!#$%'*+\-/=?^_`{|}~]{3,10}){0,5}@[a-z]{2,20}([.][a-z]{2,10}){1,4}$/;
-    if (!emailRegex.test(form["email"].value)) {
+    if (!emailRegex.test(form["email"].value) || form["email"].value.length > 254) {
         document.getElementById("registration_message").innerHTML = "Illegal email";
         return false;
     }

@@ -11,6 +11,9 @@
 <body>
     <div class="container align-content-center">
         <h4><c:out value="${topic.title}"/></h4>
+        <c:if test="${topic.hidden}">
+            <fmt:message key="topics.topic_hidden"/>
+        </c:if>
         <c:if test="${(account.accountType == 'ADMIN' || account.accountType == 'VOLUNTEER') && !topic.closed}">
             <form class="my-2" method="post" id="close_topic" action="${pageContext.request.contextPath}/controller">
                 <input type="hidden" name="topic_id" value="${topic.topicId}"/>

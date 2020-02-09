@@ -25,7 +25,7 @@ public class EmailValidator {
      */
     public boolean validate(String email) {
         boolean result = false;
-        if (email != null && email.length() < 254) {
+        if (email != null && email.length() <= 254) {
             Matcher matcher = EMAIL_PATTERN.matcher(email);
             if (matcher.matches()) {
                 result = true;

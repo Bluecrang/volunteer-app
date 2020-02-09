@@ -161,7 +161,7 @@ public class RegistrationCommandTest {
         verify(commandData).getRequestParameter(ApplicationConstants.USERNAME_PARAMETER);
         verify(commandData).getRequestParameter(ApplicationConstants.PASSWORD_PARAMETER);
         verify(commandData).getRequestParameter(ApplicationConstants.EMAIL_PARAMETER);
-        verify(commandData).putRequestAttribute(ApplicationConstants.REGISTRATION_MESSAGE_ATTRIBUTE, "registration.illegal_email");
+        verify(commandData).putSessionAttribute(ApplicationConstants.REGISTRATION_MESSAGE_ATTRIBUTE, "registration.illegal_email");
     }
 
     @Test
@@ -182,7 +182,7 @@ public class RegistrationCommandTest {
         verify(commandData).getRequestParameter(ApplicationConstants.USERNAME_PARAMETER);
         verify(commandData).getRequestParameter(ApplicationConstants.PASSWORD_PARAMETER);
         verify(commandData).getRequestParameter(ApplicationConstants.EMAIL_PARAMETER);
-        verify(commandData).putRequestAttribute(ApplicationConstants.REGISTRATION_MESSAGE_ATTRIBUTE, "registration.illegal_username");
+        verify(commandData).putSessionAttribute(ApplicationConstants.REGISTRATION_MESSAGE_ATTRIBUTE, "registration.illegal_username");
     }
 
     @Test
@@ -203,6 +203,6 @@ public class RegistrationCommandTest {
         verify(commandData).getRequestParameter(ApplicationConstants.USERNAME_PARAMETER);
         verify(commandData).getRequestParameter(ApplicationConstants.PASSWORD_PARAMETER);
         verify(commandData).getRequestParameter(ApplicationConstants.EMAIL_PARAMETER);
-        verify(commandData).putRequestAttribute(ApplicationConstants.REGISTRATION_MESSAGE_ATTRIBUTE, "registration.illegal_password");
+        verify(commandData).putSessionAttribute(ApplicationConstants.REGISTRATION_MESSAGE_ATTRIBUTE, "registration.illegal_password");
     }
 }

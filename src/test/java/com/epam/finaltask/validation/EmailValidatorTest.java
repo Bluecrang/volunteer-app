@@ -27,12 +27,12 @@ public class EmailValidatorTest {
     }
 
     @Test
-    public void validate_emailLength254_false() {
+    public void validate_emailLength254_true() {
         String email = StringUtils.repeat('b', 245) + "@mail.com";
 
         boolean actual = emailValidator.validate(email);
 
-        Assert.assertFalse(actual);
+        Assert.assertTrue(actual);
     }
 
     @Test

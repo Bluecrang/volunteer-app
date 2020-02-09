@@ -10,7 +10,7 @@
 <body>
     <div class="container mt-3 col-sm-6 offset-sm-3">
         <h2 class="display-4 text-center"><fmt:message key="registration.form_header"/></h2>
-        <form class="justify-content-center" method="post" name="registration" onsubmit="return validateRegistrationForm();" action="${pageContext.request.contextPath}/controller">
+        <form class="justify-content-center" method="post" name="registration" action="${pageContext.request.contextPath}/controller">
             <div class="form-group">
                 <label for="inputEmail"><fmt:message key="registration.email"/></label>
                 <input class="form-control" type="email" id="inputEmail" name="email" placeholder="<fmt:message key="registration.email_placeholder"/>"/>
