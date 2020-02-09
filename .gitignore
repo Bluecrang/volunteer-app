@@ -4,3 +4,7 @@ out/
 target/
 *.zip
 *.log
+.classpath
+.eml
+.iml
+.userlibraries

@@ -41,7 +41,7 @@ public class DatabaseTestUtil {
     }
 
     public static void registerDrivers() throws SQLException {
-        DriverManager.registerDriver(new com.mysql.jdbc.Driver());
+        DriverManager.registerDriver(new org.h2.Driver());
     }
 
     public static void dropSchema() throws SQLException, IOException {

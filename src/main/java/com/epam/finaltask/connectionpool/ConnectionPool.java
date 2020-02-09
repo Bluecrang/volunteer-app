@@ -4,11 +4,10 @@ import com.epam.finaltask.validation.FileValidator;
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.h2.tools.Server;
 
-import java.sql.Connection;
-import java.sql.Driver;
-import java.sql.DriverManager;
-import java.sql.SQLException;
+import java.io.*;
+import java.sql.*;
 import java.util.Enumeration;
 import java.util.Properties;
 import java.util.Set;
@@ -19,6 +18,7 @@ import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
+import java.util.stream.Collectors;
 
 /**
  * Database connection pool. Requires call of the method {@link ConnectionPool#init(String, int)} before any interactions.
@@ -27,6 +27,8 @@ public enum ConnectionPool {
     INSTANCE;
 
     private static final Logger logger = LogManager.getLogger();
+
+    private static Server server;
 
     /**
      * Object that contains pool configurations.
@@ -63,7 +65,10 @@ public enum ConnectionPool {
      */
     public void init(String configFilename, int maintenancePeriod) {
         try {
-            DriverManager.registerDriver(new com.mysql.jdbc.Driver());
+            server = Server.createTcpServer();
+            server.start();
+            logger.info("h2 server started");
+            DriverManager.registerDriver(new org.h2.Driver());
         } catch (SQLException e) {
             logger.log(Level.FATAL, "could not register database driver", e);
             throw new RuntimeException(e);
@@ -79,6 +84,23 @@ public enum ConnectionPool {
         PropertiesReader reader = new PropertiesReader();
         Properties propertiesConfig = reader.readProperties(configFilename);
         config = new PoolConfig(propertiesConfig);
+
+        try (Connection connection =
+                     DriverManager.getConnection(config.getDatabaseUrl(), config.getUser(), "")) {
+            BufferedReader bufferedReader =
+                    new BufferedReader(new InputStreamReader(getClass().getResourceAsStream("/create_tables.sql")));
+            String initQueries = bufferedReader.lines().collect(Collectors.joining());
+            for (String query : initQueries.split("(?<=;)")) {
+                try (Statement statement = connection.createStatement()) {
+                    statement.execute(query);
+                    Thread.sleep(50);
+                }
+            }
+        } catch (Exception e) {
+            String message = "could not create database tables";
+            logger.log(Level.FATAL, message);
+            throw new RuntimeException(e);
+        }
 
         for (int i = 0; i < config.getPoolSize(); i++) {
             addConnection();
@@ -215,5 +237,7 @@ public enum ConnectionPool {
             }
         }
         logger.log(Level.INFO, "drivers deregistered");
+        server.stop();
+        logger.log(Level.INFO, "h2 server stopped");
     }
 }

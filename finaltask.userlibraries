@@ -54,5 +54,8 @@
   <library name="Maven: org.yaml:snakeyaml:1.17">
     <archive path="C:/Users/Володя мститель/.m2/repository/org/yaml/snakeyaml/1.17/snakeyaml-1.17.jar" />
   </library>
+  <library name="Maven: com.h2database:h2:1.4.197">
+    <archive path="C:/Users/Володя мститель/.m2/repository/com/h2database/h2/1.4.197/h2-1.4.197.jar" />
+  </library>
 </eclipse-userlibraries>
 
